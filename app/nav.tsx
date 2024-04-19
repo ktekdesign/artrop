@@ -8,7 +8,7 @@ import { signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
 
 const navigation = [
-  { name: 'Dashboard', href: '/' },
+  //{ name: 'Dashboard', href: '/' },
   { name: 'Motoristas', href: '/users' },
   { name: 'Clientes', href: '/customers' },
   { name: 'Navios', href: '/ships' },
