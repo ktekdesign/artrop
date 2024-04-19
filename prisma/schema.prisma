@@ -1,0 +1,236 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  name          String          @db.VarChar(255)
+  govID         String          @unique @db.VarChar(11)
+  phone         String          @unique @db.VarChar(13)
+  email         String          @unique
+  password      String
+  address       Json?
+  cnh           Json?
+  cnh_expires   DateTime?       @db.Timestamp(0)
+  type          Role?           @default(DRIVER)
+  Turn          Turn[]
+  Account       Account[]
+  Session       Session[]
+  Authenticator Authenticator[]
+  VehiclesTurn  VehiclesTurn[]
+  Operation     Operation[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  id                   String  @id @default(cuid())
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Customer {
+  id        String          @id @default(cuid())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  name      String          @db.VarChar(255)
+  govID     String          @unique @db.VarChar(14)
+  phone     String          @db.VarChar(13)
+  email     String          @unique
+  operation OperationType[] @default([])
+  info      Json?
+  address   Json?
+  Turn      Turn[]
+}
+
+model Ship {
+  id        String      @id @default(cuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  name      String      @db.VarChar(255)
+  line_up   String
+  product   String
+  landingAt DateTime
+  departAt  DateTime?
+  Operation Operation[]
+}
+
+model Vehicle {
+  id              String         @id @default(cuid())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  licence_plate_1 String         @unique
+  licence_plate_2 String?
+  licence_plate_3 String?
+  capacity        Float?
+  info            Json?
+  truck           Truck?
+  bodytruck       Bodytruck?
+  VehiclesTurn    VehiclesTurn[]
+}
+
+model Turn {
+  id           String         @id @default(cuid())
+  startedAt    DateTime       @default(now())
+  startedKm    Int
+  endedAt      DateTime?
+  endedKm      Int?
+  status       Boolean?       @default(false)
+  customer     Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId   String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  Operation    Operation[]
+  VehiclesTurn VehiclesTurn[]
+}
+
+model VehiclesTurn {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  vehicleId String
+  turn      Turn     @relation(fields: [turnId], references: [id], onDelete: Cascade)
+  turnId    String
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?
+
+  @@unique([turnId, vehicleId])
+}
+
+model Operation {
+  id                     String        @id @default(cuid())
+  startedAt              DateTime      @default(now())
+  endAt                  DateTime?
+  type                   OperationType
+  start_load             DateTime?
+  end_load               DateTime?
+  start_balance_loaded   DateTime?
+  end_balance_loaded     DateTime?
+  start_unload           DateTime?
+  end_unload             DateTime?
+  start_balance_unloaded DateTime?
+  end_balance_unloaded   DateTime?
+  start_block_container  DateTime?
+  end_block_container    DateTime?
+  weight                 Float?
+  status                 Status        @default(INICO_VIAGEM)
+  turn                   Turn          @relation(fields: [turnId], references: [id], onDelete: Cascade)
+  turnId                 String
+  ship                   Ship          @relation(fields: [shipId], references: [id], onDelete: Cascade)
+  shipId                 String
+  user                   User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                 String?
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  DRIVER
+}
+
+enum AddressType {
+  RESIDENCE
+  COMERCIAL
+  OTHER
+}
+
+enum OperationType {
+  VIRINHA_CACAMBA
+  VIRINHA_PRANCHA
+  VIRINHA_CONTAINER
+  ENTRE_ARMAZENS
+}
+
+enum Truck {
+  TRUC
+  TOCO
+  CAVALO_4X2
+  CAVALO_6X2
+  CAVALO_6X4
+}
+
+enum Bodytruck {
+  VIRINHA_CACAMBA
+  PORTA_CONTAINER
+  PRANCHA
+  GRANELEIRO
+  GRADE_BAIXA
+  SIDER
+}
+
+enum Status {
+  INICO_VIAGEM
+  INICIO_CARREGAMENTO
+  FIM_CARREGAMENTO
+  CHEGADA_BALANCA_CARREGADO
+  SAIDA_BALANCA_CARREGADO
+  INICIO_DESCARREGAMENTO
+  FIM_DESCARREGAMENTO
+  CHEGADA_BALANCA_VAZIO
+  SAIDA_BALANCA_VAZIO
+  INICIO_TRAVA_CONTAINER
+  FIM_TRAVA_CONTAINER
+  FIM_VIAGEM
+}
