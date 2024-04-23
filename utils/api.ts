@@ -1,42 +1,51 @@
+import { toast } from 'react-toastify';
 import getError from './getError';
 
-export const getRecords = async ({ url }: { url: string }) => {
-  const response = await fetch(url, {
+export async function getRecords<T>({ url }: { url: string }) {
+  return fetch(url, {
     next: { revalidate: 60 * 60 * 10000 },
     headers: {
       'Content-Type': 'application/json'
       // 'Content-Type': 'application/x-www-form-urlencoded',
     }
-  });
-  return await response.json();
-};
-export const getRecord = async ({ url, id }: { url: string; id: string }) => {
-  const response = await fetch(`${url}${id}`, {
+  })
+    .then((res) => res.json())
+    .then((data) => data as T[]);
+}
+export async function getRecord<T>({ url, id }: { url?: string; id?: string }) {
+  return fetch(`${url}${id}`, {
     headers: {
       'Content-Type': 'application/json'
       // 'Content-Type': 'application/x-www-form-urlencoded',
     }
-  });
-  return await response.json();
-};
-export async function updateRecord<T>({ url, data }: { url: string; data: T }) {
-  try {
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify(data)
-    });
-    return {
+  })
+    .then((res) => res.json())
+    .then((data) => data as T);
+}
+export async function updateRecord({
+  url,
+  data
+}: {
+  url: string;
+  data: unknown;
+}) {
+  return fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    redirect: 'follow', // manual, *follow, error
+    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify(data)
+  })
+    .then((data) => data.json())
+    .then((data) => ({
       message: 'Informação atualizada com sucesso',
-      data: await response.json()
-    };
-  } catch (err) {
-    getError(err);
-  }
+      data
+    }))
+    .catch((err) => {
+      toast(getError(err));
+    });
 }
 
 export async function deleteRecord({ url }: { url: string }) {
@@ -58,7 +67,13 @@ export async function deleteRecord({ url }: { url: string }) {
   }
 }
 
-export async function insertRecord<T>({ url, data }: { url: string; data: T }) {
+export async function insertRecord({
+  url,
+  data
+}: {
+  url: string;
+  data: unknown;
+}) {
   try {
     const response = await fetch(url, {
       method: 'POST',

@@ -1,18 +1,30 @@
-import {
-  Table,
-  Card,
-} from '@tremor/react';
-import { pk } from '../interfaces';
-import EntityTableBody from './entity-table-body';
-import EntityTableHeader from './entity-table-header';
+import { PairKeyLabel, pk } from '../interfaces';
+import pickObjectKeys from '../utils/pickKeys';
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, getKeyValue } from '@nextui-org/react';
+import ActionsButton from './actions-button';
+import LoadingComponent from './loading-component';
 
-const EntityTable = <T extends pk, K extends keyof T>({ entities, titles, fields }: { entities: T[], titles: string[], fields: Exclude<K, 'id'>[] }) => (
-  <Card className="mt-6">
-    <Table>
-      <EntityTableHeader titles={titles} />
-      <EntityTableBody entities={entities} fields={fields} />
+const EntityTable = <T extends pk, K extends keyof T>({ entities, titles, fields }: { entities?: T[], titles: string[], fields: K[] }) => {
+  const columns: PairKeyLabel[]= titles.map((title, key) => ({id: fields[key].toString(), label: title}))
+  columns.push({id: "actions", label: "Ações"})
+  const rows = entities?.map(entity => pickObjectKeys(entity, fields)).map(row => ({...row, actions: ""}))
+  
+  return (
+    <LoadingComponent isLoading={!rows}>
+    <Table aria-label='Lista das entidades' className='mt-8'>
+      <TableHeader columns={columns}>
+        {(column) => <TableColumn key={column.id}>{column.label}</TableColumn>}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <TableRow key={item.id}>
+            {(columnKey) => <TableCell>{columnKey !== "actions" ? getKeyValue(item, columnKey) : <ActionsButton id={item.id} />}</TableCell>}
+          </TableRow>
+        )}
+      </TableBody>
     </Table>
-  </Card>
+    </LoadingComponent>
 )
+  }
 
 export default EntityTable

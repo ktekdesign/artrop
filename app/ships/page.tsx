@@ -5,24 +5,24 @@ import useEntities from '../../hooks/useEntities';
 import { Ship } from "@prisma/client";
 import { API_SHIP_URL } from '../../utils/constants';
 import EntityTable from '../entity-table';
-import EntityModal from '../../forms/entity-modal';
+import EntityModal from '../entity-modal';
 import ShipTabs from '../../forms/ship-tabs';
 import AddButton from '../add-button';
 
-export default function IndexPage({
-  searchParams
-}: {
-  searchParams: { q: string };
-}) {
+export default function IndexPage() {
   const url = API_SHIP_URL
-  const ships = useEntities<Ship[]>(url)
+  const {entities: ships} = useEntities<Ship>(url)
   const titles = ['Nome', 'Produto', 'Data atracação', 'Data Desatracação']
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <Title>Navios</Title>
-      <Text>A lista dos navios.</Text>
+      <div className='flex justify-between items-center'>
+        <div>
+          <Title>Navios</Title>
+          <Text>A lista dos navios.</Text>
+        </div>
+        <AddButton />
+      </div>
       <Search />
-      <AddButton />
       <EntityTable entities={ships} titles={titles} fields={['name', 'product', 'landingAt', 'departAt']} />
       <EntityModal url={url} label='navio'>
         <ShipTabs />

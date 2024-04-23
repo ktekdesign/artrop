@@ -32,6 +32,7 @@ model User {
   Authenticator Authenticator[]
   VehiclesTurn  VehiclesTurn[]
   Operation     Operation[]
+  Travel        Travel[]
 }
 
 model Account {
@@ -160,10 +161,24 @@ model VehiclesTurn {
 }
 
 model Operation {
-  id                     String        @id @default(cuid())
-  startedAt              DateTime      @default(now())
+  id        String        @id @default(cuid())
+  startedAt DateTime      @default(now())
+  endAt     DateTime?
+  type      OperationType
+  status    Boolean?      @default(false)
+  turn      Turn          @relation(fields: [turnId], references: [id], onDelete: Cascade)
+  turnId    String
+  ship      Ship          @relation(fields: [shipId], references: [id], onDelete: Cascade)
+  shipId    String
+  user      User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?
+  travels   Travel[]
+}
+
+model Travel {
+  id                     String    @id @default(cuid())
+  startedAt              DateTime  @default(now())
   endAt                  DateTime?
-  type                   OperationType
   start_load             DateTime?
   end_load               DateTime?
   start_balance_loaded   DateTime?
@@ -175,12 +190,10 @@ model Operation {
   start_block_container  DateTime?
   end_block_container    DateTime?
   weight                 Float?
-  status                 Status        @default(INICO_VIAGEM)
-  turn                   Turn          @relation(fields: [turnId], references: [id], onDelete: Cascade)
-  turnId                 String
-  ship                   Ship          @relation(fields: [shipId], references: [id], onDelete: Cascade)
-  shipId                 String
-  user                   User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status                 Status    @default(INICIO_VIAGEM)
+  operation              Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  operationId            String
+  user                   User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                 String?
 }
 
@@ -188,12 +201,6 @@ enum Role {
   ADMIN
   STAFF
   DRIVER
-}
-
-enum AddressType {
-  RESIDENCE
-  COMERCIAL
-  OTHER
 }
 
 enum OperationType {
@@ -221,7 +228,7 @@ enum Bodytruck {
 }
 
 enum Status {
-  INICO_VIAGEM
+  INICIO_VIAGEM
   INICIO_CARREGAMENTO
   FIM_CARREGAMENTO
   CHEGADA_BALANCA_CARREGADO

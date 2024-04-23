@@ -5,8 +5,8 @@ import { Analytics } from '@vercel/analytics/react';
 import Nav from './nav';
 import { Suspense } from 'react';
 import AppProvider from './providers';
-import TurnButton from './turn-button';
 import { ToastContainer } from 'react-toastify';
+import OperationButton from './operation-button';
 
 export const metadata = {
   title: 'Next.js App Router + NextAuth + Tailwind CSS',
@@ -27,7 +27,7 @@ export default async function RootLayout({
             <Nav />
           </Suspense>
           {children}
-          <TurnButton />
+          <OperationButton />
           <ToastContainer />
         </AppProvider>
         <Analytics />

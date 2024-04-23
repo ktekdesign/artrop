@@ -4,16 +4,17 @@ import { Fragment } from 'react';
 import { usePathname } from 'next/navigation';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { signIn, signOut } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import Image from 'next/image';
+import TurnButton from './turn-button';
 
 const navigation = [
   //{ name: 'Dashboard', href: '/' },
-  { name: 'Motoristas', href: '/users' },
+  { name: 'Usuários', href: '/users' },
   { name: 'Clientes', href: '/customers' },
   { name: 'Navios', href: '/ships' },
   { name: 'Caminhões', href: '/vehicles' },
-  { name: 'Turnos', href: '/turns' }
+  //{ name: 'Turnos', href: '/turns' }
 ];
 
 function classNames(...classes: string[]) {
@@ -22,6 +23,7 @@ function classNames(...classes: string[]) {
 
 export default function Nav() {
   const pathname = usePathname()
+
   return (
     <Disclosure as="nav" className="bg-white shadow-sm">
       {({ open }) => (
@@ -71,17 +73,12 @@ export default function Nav() {
                 </div>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                <TurnButton />
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
                       <span className="sr-only">Open user menu</span>
-                      <Image
-                        className="h-8 w-8 rounded-full"
-                        src={'https://avatar.vercel.sh/leerob'}
-                        height={32}
-                        width={32}
-                        alt='placeholder avatar' 
-                      />
+                      <div className='h-10 w-10 rounded-full shadow bg-black'></div>
                     </Menu.Button>
                   </div>
                   <Transition
@@ -103,7 +100,7 @@ export default function Nav() {
                               )}
                               onClick={() => signOut()}
                             >
-                              Sign out
+                              Sair
                             </button>
                           )}
                         </Menu.Item>
@@ -112,6 +109,7 @@ export default function Nav() {
                 </Menu>
               </div>
               <div className="-mr-2 flex items-center sm:hidden">
+                <TurnButton />
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
@@ -149,7 +147,7 @@ export default function Nav() {
                     onClick={() => signOut()}
                     className="flex w-full px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                   >
-                    Sign out
+                    Sair
                   </button>
                 </div>
             </div>

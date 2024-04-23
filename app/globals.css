@@ -5,3 +5,6 @@
 .form-row {
   @apply flex flex-col gap-2
 }
+button svg {
+  @apply w-6
+}

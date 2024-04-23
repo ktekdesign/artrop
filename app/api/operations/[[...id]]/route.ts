@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../utils/client';
-import { getToken } from 'next-auth/jwt';
+import { getUserId } from '../../../../utils/api-action';
 
 export async function GET(
   req: NextRequest,
@@ -17,54 +17,65 @@ export async function GET(
 }
 
 export async function POST(req: NextRequest) {
-  const { shipId, ...data } = await req.json();
-  const token = await getToken({ req });
-  if (!token) return NextResponse.json({ status: 401 });
-  const turn = await prisma.turn.findFirst({
-    select: { id: true },
-    where: { userId: token.sub, status: false }
-  });
-  if (turn) {
-    const operation = await prisma.operation.create({
-      data: {
-        ...data,
-        ship: {
-          connect: { id: shipId }
-        },
-        turn: {
-          connect: { id: turn.id }
-        }
-      }
-    });
-    return NextResponse.json({
-      turnId: turn.id,
-      id: operation.id,
-      status: operation.status,
-      type: operation.type
-    });
-  }
+  const { turnId, shipId, ...data } = await req.json();
+  const userId = await getUserId(req);
 
-  return NextResponse.json(null);
+  const operation = await prisma.operation.create({
+    data: {
+      ...data,
+      ship: {
+        connect: { id: shipId }
+      },
+      turn: {
+        connect: { id: turnId }
+      },
+      user: {
+        connect: { id: userId }
+      }
+    },
+    select: {
+      id: true,
+      status: true,
+      turnId: true,
+      type: true
+    }
+  });
+
+  return NextResponse.json(operation);
 }
 
-export async function PUT(req: Request) {
-  const { id, ...data } = await req.json();
-  return NextResponse.json(
-    await prisma.operation.update({
-      where: { id },
-      data
-    })
-  );
+export async function PUT(req: NextRequest) {
+  const { turnId, id, ...data } = await req.json();
+  const userId = await getUserId(req);
+  const operation = await prisma.operation.update({
+    where: { id, userId, turnId },
+    data,
+    select: {
+      id: true,
+      status: true,
+      turnId: true,
+      type: true,
+      travels: {
+        select: {
+          id: true,
+          status: true,
+          weight: true
+        }
+      }
+    }
+  });
+  return NextResponse.json(operation);
 }
 
 export async function DELETE(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { id: string[] } }
 ) {
   if (params?.id) {
+    const userId = await getUserId(req);
     return NextResponse.json(
       await prisma.operation.delete({
-        where: { id: params.id[0] }
+        where: { id: params.id[0], userId }
       })
     );
   }

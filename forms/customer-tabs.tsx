@@ -10,34 +10,28 @@ import {CheckboxGroup, Checkbox} from "@nextui-org/react";
 import ModalFormFooter from "../app/modal-form-footer";
 import { Customer, OperationType } from "@prisma/client";
 import preventNull from "../utils/prevent-null";
-import { cepRegExp, cpfRegExp, phoneRegExp } from "../utils/regex";
+import { cpfRegExp, phoneRegExp } from "../utils/regex";
 import { getOnlyDigit, sanitize, transformJsonValue } from "../utils/transform";
 import enumValue from "../utils/enumValue";
 import { operations } from "../utils/constants";
-import AddressForm from "./address";
+import AddressForm, { schemaAddress } from "./address";
 import useEntity from "../hooks/useEntity";
 import LoadingComponent from "../app/loading-component";
+import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
+import { useMutation } from 'react-query';
 
 const schema = yup
   .object({
-    name: yup.string().transform(value => sanitize(value)).required(),
-    govID: yup.string().matches(cpfRegExp.regex, cpfRegExp.message).transform(value => getOnlyDigit(value)).required(),
-    phone: yup.string().matches(phoneRegExp.regex, phoneRegExp.message).transform(value => getOnlyDigit(value)).required(),
+    name: yup.string().transform(value => sanitize(value)).required(errorMessage.name.required),
+    govID: yup.string().matches(cpfRegExp, errorMessage.cnpj.invalid).transform(value => getOnlyDigit(value)).required(errorMessage.cnpj.required),
+    phone: yup.string().matches(phoneRegExp, errorMessage.phone.invalid).transform(value => getOnlyDigit(value)).required(errorMessage.phone.required),
     email: yup.string().email().required(),
     operation: yup.array<OperationType[]>().transform(value => enumValue(value, Object.values(OperationType))).default([]),
-    address: yup.object({
-      code: yup.string().matches(cepRegExp.regex, cepRegExp.message).nullable().default(null),
-      address: yup.string().transform(value => sanitize(value)).nullable().default(null),
-      number: yup.string().transform(value => sanitize(value)).nullable().default(null),
-      complement: yup.string().transform(value => sanitize(value)).nullable().default(null),
-      district: yup.string().transform(value => sanitize(value)).nullable().default(null),
-      city: yup.string().transform(value => sanitize(value)).nullable().default(null),
-      state: yup.string().transform(value => sanitize(value)).nullable().default(null)
-    }).nullable().default(null),
+    address: schemaAddress,
     info: yup.object({
       name: yup.string().transform(value => sanitize(value)).nullable().default(null),
       name_in_charge: yup.string().transform(value => sanitize(value)).nullable().default(null),
-      phone: yup.string().matches(phoneRegExp.regex, phoneRegExp.message).transform(value => getOnlyDigit(value)).nullable().default(null)
+      phone: yup.string().matches(phoneRegExp, errorMessage.phone.invalid).transform(value => getOnlyDigit(value)).nullable().default(null)
     }).nullable().default(null)
   })
   .required()
@@ -54,12 +48,7 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
     resolver: yupResolver(schema),
   })
 
-  const {handleToast} = useToast()
-  const {action: {id, operation}, handleClose} = useModal()
-  const isInsert = operation === 'insert'
-  const [selected, setSelected] = useState<string | number>(0)
-  const [isLoading, setIsLoading] = useState(false)
-  const {entity, setEntity} = useEntity<Customer>({url, id})
+  const {entity, isLoading, saveMutation, operation, selected, setSelected} = useEntity<Customer, CustomerRegister>({url})
   const info = transformJsonValue(entity?.info)
   const address = transformJsonValue(entity?.address)
   
@@ -80,10 +69,10 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
       .catch (console.error)
   }
   
-  const onSubmit = async (data: CustomerRegister) => setEntity(await submit(setIsLoading, handleToast, handleClose, {url, data: handleUpdate(data), action: {id, operation}}))
+  const onSubmit = async (data: CustomerRegister) => saveMutation.mutate(handleUpdate(data))
   
   return (
-    <LoadingComponent isLoading={!isInsert && !entity.id}>
+    <LoadingComponent isLoading={isLoading}>
     <form onSubmit={handleSubmit(onSubmit)}>
       <Tabs
         fullWidth
@@ -94,16 +83,12 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
       >
       <Tab title="Dados pessoais">
         <div className="form-row">
-          <Input {...register("name")} defaultValue={preventNull(entity?.name)} label="Nome" placeholder="Digite o nome empresarial" />
-          <p>{errors.name?.message}</p>
-          <Input {...register("govID")} defaultValue={preventNull(entity?.govID)} label="CNPJ" placeholder="Digite o CNPJ" />
-          <p>{errors.govID?.message}</p>
-          <Input type="email" {...register("email")} defaultValue={preventNull(entity?.email)} label="Email" placeholder="Digite o e-mail" />
-          <p>{errors.email?.message}</p>
-          <Input type="tel" {...register("phone")} defaultValue={preventNull(entity?.phone)} label="Telephone" placeholder="Digite o celular" />
-          <p>{errors.phone?.message}</p>
+          <Input {...register("name")} defaultValue={preventNull(entity?.name)} label="Nome" placeholder="Digite o nome empresarial" isClearable isInvalid={!!errors.name} color={getInputColor(errors.name)} errorMessage={getInputErrorMessage(errors.name)} />
+          <Input {...register("govID")} defaultValue={preventNull(entity?.govID)} label="CNPJ" placeholder="Digite o CNPJ" isClearable isInvalid={!!errors.govID} color={getInputColor(errors.govID)} errorMessage={getInputErrorMessage(errors.govID)} />
+          <Input type="email" {...register("email")} defaultValue={preventNull(entity?.email)} label="Email" placeholder="Digite o e-mail" isClearable isInvalid={!!errors.email} color={getInputColor(errors.email)} errorMessage={getInputErrorMessage(errors.email)} />
+          <Input type="tel" {...register("phone")} defaultValue={preventNull(entity?.phone)} label="Telephone" placeholder="Digite o celular" isClearable isInvalid={!!errors.phone} color={getInputColor(errors.phone)} errorMessage={getInputErrorMessage(errors.phone)} />
           <CheckboxGroup
-            label={`Escolha as operações. ${!isInsert && entity?.operation ? `Current: (${entity?.operation.join(', ')})` : '' }`}
+            label={`Escolha as operações. ${operation !== 'insert' && entity?.operation ? `Current: (${entity?.operation.join(', ')})` : '' }`}
             orientation="horizontal"
           >
             {operations.map((operation, key) => <Controller
@@ -115,7 +100,7 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
             )}
           </CheckboxGroup>
         </div>
-        <ModalFormFooter isLoading={isLoading} buttonLabel={buttonLabel} />
+        <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
       </Tab>
     {operation === 'update' && (
       <Tab title="Endereço">
@@ -127,17 +112,17 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
           {...register("address.district")},
           {...register("address.city")},
           {...register("address.state")}]} />
-        <ModalFormFooter isLoading={isLoading} buttonLabel={buttonLabel} />
+        <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
       </Tab>
       )}
       {operation === 'update' && (
         <Tab title="Demais">
           <div className="form-row">
-            <Input {...register("info.name")} defaultValue={preventNull(info?.name)} label="Nome Fantasia" placeholder="Digite o nome fantasia" />
-            <Input {...register("info.name_in_charge")} defaultValue={preventNull(info?.name_in_charge)} label="Nome do Responsável" placeholder="Digite o nome do responsável" />
-            <Input {...register("info.phone")} type="tel"  defaultValue={preventNull(info?.phone)} label="Contato do Responsável" placeholder="Digite o celular do responsável" />
+            <Input {...register("info.name")} defaultValue={preventNull(info?.name)} label="Nome Fantasia" placeholder="Digite o nome fantasia" isClearable />
+            <Input {...register("info.name_in_charge")} defaultValue={preventNull(info?.name_in_charge)} label="Nome do Responsável" placeholder="Digite o nome do responsável" isClearable />
+            <Input {...register("info.phone")} type="tel"  defaultValue={preventNull(info?.phone)} label="Contato do Responsável" placeholder="Digite o celular do responsável" isClearable />
           </div>
-          <ModalFormFooter isLoading={isLoading} buttonLabel={buttonLabel} />
+          <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
         </Tab>
       )}
     </Tabs>

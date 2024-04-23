@@ -14,3 +14,7 @@ export interface Address {
   city?: string;
   state?: string;
 }
+export interface PairKeyLabel {
+  id: string;
+  label: string;
+}

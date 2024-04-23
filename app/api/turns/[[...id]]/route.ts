@@ -1,28 +1,47 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../utils/client';
 import { getToken } from 'next-auth/jwt';
+import { getUserId } from '../../../../utils/api-action';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string[] } }
 ) {
   if (params?.id && params?.id[0] === 'open') {
-    const token = await getToken({ req });
-    if (!token) return NextResponse.json({ status: 401 });
-    const turn = await prisma.turn.findFirst({
-      select: { id: true },
-      where: { userId: token.sub, status: false }
+    const userId = await getUserId(req);
+
+    const operation = await prisma.operation.findFirst({
+      where: { status: false, userId },
+      select: {
+        id: true,
+        status: true,
+        turnId: true,
+        type: true,
+        travels: {
+          select: {
+            id: true,
+            status: true,
+            weight: true
+          }
+        }
+      }
     });
-    if (turn) {
-      const operation = await prisma.operation.findFirst({
-        select: { id: true, status: true },
-        where: { turnId: turn.id, status: { not: 'FIM_VIAGEM' } }
-      });
-      return operation
-        ? NextResponse.json({ turnId: turn.id, ...operation })
-        : NextResponse.json({ turnId: turn.id });
+    if (operation) {
+      const { travels, ...fields } = operation;
+      const travel = travels.find((travel) => travel.status !== 'FIM_VIAGEM');
+      return travel
+        ? NextResponse.json({ ...fields, travel })
+        : NextResponse.json(fields);
     }
-    return NextResponse.json({});
+    const turn = await prisma.turn.findFirst({
+      where: { status: false, userId },
+      select: {
+        id: true
+      }
+    });
+    return turn
+      ? NextResponse.json({ turnId: turn.id })
+      : NextResponse.json({});
   }
   if (params?.id) {
     return NextResponse.json(

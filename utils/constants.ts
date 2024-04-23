@@ -4,6 +4,7 @@ export const API_SHIP_URL = '/api/ships/';
 export const API_VEHICLE_URL = '/api/vehicles/';
 export const API_TURN_URL = '/api/turns/';
 export const API_OPERATION_URL = '/api/operations/';
+export const API_TRAVEL_URL = '/api/travels/';
 export const renderButtonLabel = (operation?: string) =>
   operation === 'update'
     ? 'Atualize'

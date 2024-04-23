@@ -3,9 +3,8 @@ import dompurify from 'dompurify';
 
 export const sanitize = (value: string) => dompurify.sanitize(value).trim();
 
-export const transformDate = (value: string) => {
-  const response = value && value !== 'Invalid Date' ? new Date(value) : null;
-  if (value === `Invalid Date`) console.log(value);
+export const transformDate = (value?: string) => {
+  const response = value ? new Date(value) : null;
   return response;
 };
 
@@ -13,7 +12,7 @@ export const transformNumber = (value: string) => Number(value) || 0;
 
 export const getOnlyDigit = (data: string) => data.replaceAll(/[^0-9]/gi, '');
 
-export const transformJsonValue = (data: JsonValue) =>
+export const transformJsonValue = (data?: JsonValue) =>
   data && typeof data === 'object' && !Array.isArray(data) ? data : {};
 
 export const JsonValuetoString = (data: JsonValue) =>

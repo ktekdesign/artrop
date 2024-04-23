@@ -4,21 +4,13 @@ import StartTurn from "./start-turn"
 import EndTurn from "./end-turn"
 
 import useOperation from "../hooks/useOperation"
-import Operation from "./operation"
+import VehicleButton from "./vehicle-button"
 
 export default function TurnButton () {
-  const {operation} = useOperation()
-
+  const operation = useOperation()
+  
+  if(operation === undefined) return
   return (
-    <div className="fixed w-full bottom-10 flex gap-x-8 justify-center items-center">
-      {!operation?.turnId ? 
-        <StartTurn />
-      : 
-        <>
-          <Operation />
-          {!operation?.id && <EndTurn />}
-        </>
-      }
-    </div>
+    !operation?.turnId ? <StartTurn /> : <div className="flex gap-4"><VehicleButton />{!operation?.id && <EndTurn id={operation.turnId} />}</div>
   )
 }

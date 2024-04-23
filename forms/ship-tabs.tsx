@@ -1,11 +1,7 @@
 import { Input, Tab, Tabs } from "@nextui-org/react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
-import submit from "../utils/submit";
-import useToast from "../hooks/useToast";
-import useModal from "../hooks/useModal";
 import { Ship } from "@prisma/client";
 import ModalFormFooter from "../app/modal-form-footer";
 import formatDate from "../utils/formatDate";
@@ -13,14 +9,15 @@ import preventNull from "../utils/prevent-null";
 import { sanitize, transformDate } from "../utils/transform";
 import useEntity from "../hooks/useEntity";
 import LoadingComponent from "../app/loading-component";
+import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
 
 const schema = yup
   .object({
-    name: yup.string().transform(value => sanitize(value)).required(),
-    line_up: yup.string().transform(value => sanitize(value)).required(),
-    product: yup.string().transform(value => sanitize(value)).required(),
-    landingAt: yup.date().transform(value => transformDate(value)).required(),
-    departAt: yup.string().transform(value => transformDate(value)).nullable().default(null)
+    name: yup.string().transform(value => sanitize(value)).required(errorMessage.name.required),
+    line_up: yup.string().transform(value => sanitize(value)).required(errorMessage.generic.required),
+    product: yup.string().transform(value => sanitize(value)).required(errorMessage.generic.required),
+    landingAt: yup.date().transform(value => transformDate(value)).required(errorMessage.generic.required),
+    departAt: yup.string().nullable().default(null)
   })
   .required()
 
@@ -35,39 +32,32 @@ export default function ShipTabs ({buttonLabel, url}: {buttonLabel?: string, url
   } = useForm({
     resolver: yupResolver(schema),
   })
-  const {handleToast} = useToast()
-  const {action: {id, operation}, handleClose} = useModal()
-  const isInsert = operation === 'insert'
-  const [selected, setSelected] = useState<string | number>(0);
-  const [isLoading, setIsLoading] = useState(false)
+   
+  const {entity, isLoading, saveMutation, selected, setSelected} = useEntity<Ship, ShipRegister>({url})
+  const handleData = (data: ShipRegister) => {
+    data.departAt = transformDate(data?.departAt || entity?.departAt?.toString())?.toISOString()
+    return data
+  }
   
-  const {entity, setEntity} = useEntity<Ship>({url, id})
-  
-  const onSubmit = async (data: ShipRegister) => setEntity(await submit(setIsLoading, handleToast, handleClose, {url, data, action: {id, operation}}))
+  const onSubmit = async (data: ShipRegister) => saveMutation.mutate(handleData(data))
   
   return (
-    <LoadingComponent isLoading={!isInsert && !entity.id}>
+    <LoadingComponent isLoading={isLoading}>
     <Tabs
       fullWidth
       size="md"
       aria-label="Tabs form"
       selectedKey={selected}
       onSelectionChange={setSelected}
-      disabledKeys={!id ? [1, 2] : []}
     >
       <Tab title="Dados do navio">
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
-          <Input {...register("name")} defaultValue={preventNull(entity?.name)} label="Nome" placeholder="Digite o nome" />
-          <p>{errors.name?.message}</p>
-          <Input {...register("line_up")} defaultValue={preventNull(entity?.line_up)} label="Line Up" placeholder="Digite o Line Up" />
-          <p>{errors.line_up?.message}</p>
-          <Input {...register("product")} defaultValue={preventNull(entity?.product)} label="Produto" placeholder="Digite o produto" />
-          <p>{errors.product?.message}</p>
-          <Input type="date" {...register("landingAt")} defaultValue={preventNull(formatDate(entity?.landingAt))} label="Data atracação" />
-          <p>{errors.landingAt?.message}</p>
+          <Input {...register("name")} defaultValue={preventNull(entity?.name)} label="Nome" placeholder="Digite o nome" isClearable isInvalid={!!errors.name} color={getInputColor(errors.name)} errorMessage={getInputErrorMessage(errors.name)} />
+          <Input {...register("line_up")} defaultValue={preventNull(entity?.line_up)} label="Line Up" placeholder="Digite o Line Up" isClearable isInvalid={!!errors.line_up} color={getInputColor(errors.line_up)} errorMessage={getInputErrorMessage(errors.line_up)} />
+          <Input {...register("product")} defaultValue={preventNull(entity?.product)} label="Produto" placeholder="Digite o produto" isClearable isInvalid={!!errors.product} color={getInputColor(errors.product)} errorMessage={getInputErrorMessage(errors.product)} />
+          <Input type="date" {...register("landingAt")} defaultValue={preventNull(formatDate(entity?.landingAt))} label="Data atracação" isInvalid={!!errors.landingAt} color={getInputColor(errors.landingAt)} errorMessage={getInputErrorMessage(errors.landingAt)} />
           <Input type="date" {...register("departAt")} defaultValue={preventNull(formatDate(entity?.departAt))} label="Data Desatracação" />
-          <p>{errors.departAt?.message}</p>
-          <ModalFormFooter isLoading={isLoading} buttonLabel={buttonLabel} />
+          <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
         </form>
       </Tab>
     </Tabs>

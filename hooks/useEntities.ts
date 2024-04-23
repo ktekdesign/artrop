@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
 import { getRecords } from '../utils/api';
-import useModal from './useModal';
+import { useQuery } from 'react-query';
 
-export default function useEntities<T>(url: string): T {
-  const [entities, setEntities] = useState([] as T);
-  const { refresh } = useModal();
-  useEffect(() => {
-    (async () => setEntities(await getRecords({ url })))();
-  }, [refresh, url]);
-  return entities;
+export default function useEntities<T>(url: string) {
+  const fetchPosts = () => getRecords<T>({ url });
+
+  const {
+    data: entities,
+    error,
+    isLoading: isLoadingEntity
+  } = useQuery([url], fetchPosts);
+
+  return { entities, error, isLoadingEntity };
 }

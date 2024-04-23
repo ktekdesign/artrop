@@ -6,11 +6,12 @@ export type OperationData = {
   id?: string;
   status?: string;
   type?: OperationType;
+  travel?: {
+    id: string;
+    status: Status;
+    weight?: number;
+  };
 };
-type OperationContextData = {
-  operation: OperationData;
-  setOperation: Dispatch<SetStateAction<OperationData>>;
-};
-const OperationContext = createContext({} as OperationContextData);
+const OperationContext = createContext({} as OperationData);
 
 export default OperationContext;
