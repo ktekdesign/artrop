@@ -8,11 +8,11 @@ import { signOut } from 'next-auth/react';
 import TurnButton from './turn-button';
 
 const navigation = [
-  //{ name: 'Dashboard', href: '/' },
   { name: 'Usuários', href: '/users' },
   { name: 'Clientes', href: '/customers' },
   { name: 'Navios', href: '/ships' },
   { name: 'Caminhões', href: '/vehicles' },
+  { name: 'Dashboard', href: '/' }
   //{ name: 'Turnos', href: '/turns' }
 ];
 

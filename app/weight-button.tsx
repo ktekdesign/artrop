@@ -7,15 +7,15 @@ import useModal from "../hooks/useModal";
 export default function WeightButton ({condition}: {condition: boolean}) {
   
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-  const {travel} = useOperation()
+  const {operation} = useOperation() || {}
   const {handleAction} = useModal()
   
   const onPress = () => {
-    handleAction({id: travel?.id, operation: 'update'});
+    handleAction({id: operation?.travel?.id, operation: 'update'});
     onOpen();
   }
   
-  if(!condition || travel?.weight) return
+  if(!condition || operation?.travel?.weight) return
 
   return (
     <div className="text-center">

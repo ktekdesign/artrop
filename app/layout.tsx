@@ -9,9 +9,9 @@ import { ToastContainer } from 'react-toastify';
 import OperationButton from './operation-button';
 
 export const metadata = {
-  title: 'Next.js App Router + NextAuth + Tailwind CSS',
+  title: 'Artrop Sistema',
   description:
-    'A user admin dashboard configured with Next.js, Postgres, NextAuth, Tailwind CSS, TypeScript, ESLint, and Prettier.'
+    'Sistema de gerenciamento das Operações Portuárias'
 };
 
 export default async function RootLayout({
