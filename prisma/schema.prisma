@@ -26,13 +26,13 @@ model User {
   cnh           Json?
   cnh_expires   DateTime?       @db.Timestamp(0)
   type          Role?           @default(DRIVER)
-  Turn          Turn[]
+  turn          Turn[]
   Account       Account[]
   Session       Session[]
   Authenticator Authenticator[]
-  VehiclesTurn  VehiclesTurn[]
-  Operation     Operation[]
-  Travel        Travel[]
+  vehiclesTurn  VehiclesTurn[]
+  operation     Operation[]
+  travel        Travel[]
 }
 
 model Account {
@@ -102,7 +102,7 @@ model Customer {
   operation OperationType[] @default([])
   info      Json?
   address   Json?
-  Turn      Turn[]
+  turn      Turn[]
 }
 
 model Ship {
@@ -114,7 +114,7 @@ model Ship {
   product   String
   landingAt DateTime
   departAt  DateTime?
-  Operation Operation[]
+  operation Operation[]
 }
 
 model Vehicle {
@@ -128,7 +128,7 @@ model Vehicle {
   info            Json?
   truck           Truck?
   bodytruck       Bodytruck?
-  VehiclesTurn    VehiclesTurn[]
+  vehiclesTurn    VehiclesTurn[]
 }
 
 model Turn {
@@ -138,12 +138,13 @@ model Turn {
   endedAt      DateTime?
   endedKm      Int?
   status       Boolean?       @default(false)
+  duration     Int?           @default(0)
   customer     Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId   String
   user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String
-  Operation    Operation[]
-  VehiclesTurn VehiclesTurn[]
+  operation    Operation[]
+  vehiclesTurn VehiclesTurn[]
 }
 
 model VehiclesTurn {
@@ -163,22 +164,24 @@ model VehiclesTurn {
 model Operation {
   id        String        @id @default(cuid())
   startedAt DateTime      @default(now())
-  endAt     DateTime?
+  endedAt   DateTime?
   type      OperationType
   status    Boolean?      @default(false)
+  duration  Int?          @default(0)
   turn      Turn          @relation(fields: [turnId], references: [id], onDelete: Cascade)
   turnId    String
   ship      Ship          @relation(fields: [shipId], references: [id], onDelete: Cascade)
   shipId    String
   user      User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String?
-  travels   Travel[]
+  travel    Travel[]
 }
 
 model Travel {
   id                     String    @id @default(cuid())
   startedAt              DateTime  @default(now())
-  endAt                  DateTime?
+  endedAt                DateTime?
+  duration               Int?      @default(0)
   start_load             DateTime?
   end_load               DateTime?
   start_balance_loaded   DateTime?

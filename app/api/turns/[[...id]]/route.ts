@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../utils/client';
 import { getToken } from 'next-auth/jwt';
 import { getUserId } from '../../../../utils/api-action';
+import { Status } from '@prisma/client';
 
 export async function GET(
   req: NextRequest,
@@ -10,40 +11,40 @@ export async function GET(
   if (params?.id && params?.id[0] === 'open') {
     const userId = await getUserId(req);
 
-    const operation = await prisma.operation.findFirst({
+    const turn = await prisma.turn.findFirst({
       where: { status: false, userId },
       select: {
         id: true,
-        status: true,
-        turnId: true,
-        type: true,
-        travels: {
+        startedAt: true,
+        endedAt: true,
+        operation: {
           select: {
             id: true,
             status: true,
-            weight: true
+            turnId: true,
+            type: true,
+            travel: {
+              where: {
+                status: {
+                  not: Status.FIM_VIAGEM
+                }
+              },
+              take: 1,
+              select: {
+                id: true,
+                status: true,
+                weight: true,
+                startedAt: true,
+                endedAt: true
+              }
+            }
           }
         }
       }
     });
-    if (operation) {
-      const { travels, ...fields } = operation;
-      const travel = travels.find((travel) => travel.status !== 'FIM_VIAGEM');
-      return travel
-        ? NextResponse.json({ ...fields, travel })
-        : NextResponse.json(fields);
-    }
-    const turn = await prisma.turn.findFirst({
-      where: { status: false, userId },
-      select: {
-        id: true
-      }
-    });
-    return turn
-      ? NextResponse.json({ turnId: turn.id })
-      : NextResponse.json({});
-  }
-  if (params?.id) {
+
+    NextResponse.json(turn || {});
+  } else if (params?.id) {
     return NextResponse.json(
       await prisma.turn.findUnique({
         where: { id: params.id[0] }

@@ -4,46 +4,44 @@ import { Button } from "@nextui-org/react";
 import { API_OPERATION_URL, API_TURN_URL } from "../utils/constants";
 import useOperation from "../hooks/useOperation";
 import { Operation } from "@prisma/client";
-import { useEffect } from "react";
 import { useMutation, useQueryClient } from 'react-query';
 import { updateRecord } from "../utils/api";
+import { minutesDiff } from "../utils/transform";
 
-interface OperationClose extends Pick<Operation, 'id' | 'status' | 'turnId'> {}
+interface OperationClose extends Pick<Operation, 'id' | 'status' | 'turnId' | 'endedAt' | 'duration'> {}
 
 export default function EndOperation () {
   
-  const {turnId, id, travel} = useOperation()
+  const {id: turnId, operation} = useOperation() || {}
   const url = API_OPERATION_URL
   const queryClient = useQueryClient();
   
   const saveMutation = useMutation({
     mutationFn: async (data: OperationClose) => {
-      const response = await updateRecord({url, data})
-      if(response) {
-      await queryClient.invalidateQueries({
-        queryKey: [`${API_TURN_URL}open`]
+      return updateRecord({url, data})
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [API_TURN_URL]
       });
     }
-      return response;
-    }
   });
-
-  useEffect(() => {
-    if(saveMutation.isSuccess) queryClient.invalidateQueries([`${API_TURN_URL}open`]);
-  })
   
   const close = async () => {
-    if(turnId && id) {
+    if(turnId && operation) {
+      const endedAt = new Date()
       const data: OperationClose = {
         status: true,
         turnId,
-        id
+        id: operation.id,
+        endedAt,
+        duration: minutesDiff(endedAt, operation.startedAt)
       }
       saveMutation.mutate(data)
     }
   }
 
-  if (!id || !turnId || travel) return
+  if (operation && !operation.travel) return
 
   return (
     <Button size="lg" color="danger" isLoading={saveMutation.isLoading} className="text-white p-2" endContent={<LockClosedIcon />} onClick={close}>

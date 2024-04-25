@@ -41,7 +41,7 @@ export default function WeightForm ({isOpen, onOpenChange, onClose}: {isOpen: bo
   useEffect(() => {
     if(saveMutation.isSuccess) {
       onClose()
-      queryClient.invalidateQueries([`${API_TURN_URL}open`]);
+      queryClient.invalidateQueries([API_TURN_URL]);
     }
   })
   return (

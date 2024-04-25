@@ -1,4 +1,3 @@
-
 import { Children, ReactNode, cloneElement, isValidElement } from 'react'
 import {Modal, ModalContent, ModalHeader, ModalBody} from "@nextui-org/react";
 import { renderButtonLabel } from "../utils/constants";

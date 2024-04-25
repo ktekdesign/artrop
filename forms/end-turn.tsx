@@ -7,8 +7,7 @@ import { Turn } from "@prisma/client";
 import { API_TURN_URL } from "../utils/constants";
 import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import useEntity from "../hooks/useEntity";
-import { useQueryClient } from 'react-query';
-import { useEffect } from "react";
+import { minutesDiff } from "../utils/transform";
 
 const schema = yup
   .object({
@@ -16,9 +15,10 @@ const schema = yup
   })
   .required()
 
-interface TurnEnd extends Omit<Turn, "id" | "userId" | "startedAt" | "endedAt" | "startedKm" | "vehicleId" | "customerId" | "status"> {
-  endedAt?: string;
+interface TurnEnd extends Omit<Turn, "id" | "userId" | "startedAt" | "endedAt" | "startedKm" | "vehicleId" | "customerId" | "status" | "duration"> {
+  endedAt?: Date;
   status?: boolean;
+  duration?: number;
 }
 export default function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: boolean, onOpenChange(): void, onClose(): void}) {
   const {
@@ -30,24 +30,19 @@ export default function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: b
   })
   
   const url = API_TURN_URL
-  const queryClient = useQueryClient();
-  const {saveMutation} = useEntity<Turn, TurnEnd>({url})
+  const {saveMutation, entity} = useEntity<Turn, TurnEnd>({url})
   
+  if(!entity) return
+
   const handleData = (data: TurnEnd) => {
-    data.endedAt = (new Date()).toISOString()
+    data.endedAt = new Date()
     data.status = true
+    data.duration = minutesDiff(data.endedAt, entity.startedAt)
     return data
   }
 
   const onSubmit = async (data: TurnEnd) => saveMutation.mutate(handleData(data))
- 
-  useEffect(() => {
-    if(saveMutation.isSuccess) {
-      onClose()
-      queryClient.invalidateQueries([`${API_TURN_URL}open`]);
-    }
-  })
-  
+
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>

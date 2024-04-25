@@ -49,20 +49,7 @@ export async function PUT(req: NextRequest) {
   const userId = await getUserId(req);
   const operation = await prisma.operation.update({
     where: { id, userId, turnId },
-    data,
-    select: {
-      id: true,
-      status: true,
-      turnId: true,
-      type: true,
-      travels: {
-        select: {
-          id: true,
-          status: true,
-          weight: true
-        }
-      }
-    }
+    data
   });
   return NextResponse.json(operation);
 }

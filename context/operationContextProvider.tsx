@@ -17,9 +17,9 @@ export default function OperationContextProvider ({ children } : {
   const url = `${API_TURN_URL}open`
   const fetchData = () => hasOpen<OperationData>({url});
   
-  const {data: operation} = useQuery([url], fetchData);
+  const {data: operation} = useQuery([API_TURN_URL, 'open'], fetchData);
   
-  return <OperationContext.Provider value={operation || {}}>
+  return <OperationContext.Provider value={operation}>
     {children}
   </OperationContext.Provider>;
 };

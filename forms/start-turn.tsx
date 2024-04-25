@@ -4,12 +4,10 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
 import { Customer, Turn, Vehicle } from "@prisma/client";
-import { useEffect } from "react";
 import { API_CUSTOMER_URL, API_TURN_URL, API_VEHICLE_URL } from "../utils/constants";
 import useEntities from "../hooks/useEntities";
 import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import useEntity from "../hooks/useEntity";
-import { useQueryClient } from 'react-query';
 
 const schema = yup
   .object({
@@ -33,19 +31,11 @@ export default function StartTurnForm ({isOpen, onOpenChange, onClose}: {isOpen:
   })
   
   const url = API_TURN_URL
-  const queryClient = useQueryClient();
   const {saveMutation} = useEntity<Turn, TurnInit>({url})
   const {entities: customers} = useEntities<Customer>(API_CUSTOMER_URL)
   const {entities: vehicles} = useEntities<Vehicle>(API_VEHICLE_URL)
 
   const onSubmit = async (data: TurnInit) => saveMutation.mutate(data)
-
-  useEffect(() => {
-    if(saveMutation.isSuccess) {
-      onClose()
-      queryClient.invalidateQueries([`${API_TURN_URL}open`]);
-    }
-  })
   
   return (
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

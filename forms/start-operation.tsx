@@ -4,12 +4,10 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
 import { Operation, OperationType, Ship } from "@prisma/client";
-import { useEffect } from "react";
-import { API_OPERATION_URL, API_SHIP_URL, API_TURN_URL } from "../utils/constants";
+import { API_OPERATION_URL, API_SHIP_URL } from "../utils/constants";
 import useEntities from "../hooks/useEntities";
 import useOperation from "../hooks/useOperation";
 import useEntity from "../hooks/useEntity";
-import { useQueryClient } from 'react-query';
 
 const schema = yup
   .object({
@@ -32,18 +30,10 @@ export default function StartOperationForm ({isOpen, onOpenChange, onClose}: {is
   })
   
   const url = API_OPERATION_URL
-  const queryClient = useQueryClient();
   const {saveMutation} = useEntity<Operation, OperationInit>({url})
   const {turnId} = useOperation()
   const {entities: ships} = useEntities<Ship>(API_SHIP_URL)
   const operations = [{key: 'VIRINHA_CACAMBA', value: 'Caçamba'}, {key: 'VIRINHA_PRANCHA', value: 'Prancha'}, {key: 'VIRINHA_CONTAINER', value: 'Container'}, {key: 'ENTRE_ARMAZENS', value: 'Entre Armazéns'}];
-  
-  useEffect(() => {
-    if(saveMutation.isSuccess) {
-      onClose()
-      queryClient.invalidateQueries([`${API_TURN_URL}open`]);
-    }
-  })
   
   if(!turnId) return
 

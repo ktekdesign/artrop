@@ -15,7 +15,7 @@ export default function WeightButton ({condition}: {condition: boolean}) {
     onOpen();
   }
   
-  if(!condition) return
+  if(!condition || travel?.weight) return
 
   return (
     <div className="text-center">

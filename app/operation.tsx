@@ -11,11 +11,12 @@ import WeightButton from "./weight-button";
 import EndOperation from "./end-operation";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { useMutation, useQueryClient } from "react-query";
+import { useState } from "react";
 
 export default function Operation () {
   
   const queryClient = useQueryClient();
-  const {id, type, travel} = useOperation()
+  const {operation} = useOperation() || {}
   
   const {handleToast} = useToast()
   const statuses: {status: Status, label: string, field?: string}[] = [
@@ -32,52 +33,60 @@ export default function Operation () {
     {status: Status.FIM_TRAVA_CONTAINER, label: "Encerrar Trava Container", field: "end_block_container"},
     {status: Status.FIM_VIAGEM, label: "Encerrar viagem", field: "endAt"},
   ]
-  const statusesFiltered = type !== OperationType.VIRINHA_CONTAINER ? statuses.filter(data => data.status !== Status.INICIO_TRAVA_CONTAINER && data.status !== Status.FIM_TRAVA_CONTAINER) : statuses
-  const currentStatus = statusesFiltered.findIndex(index => index.status === travel?.status)
-  const nextStatus = currentStatus + 1
+  const statusesFiltered = operation?.type !== OperationType.VIRINHA_CONTAINER ? statuses.filter(data => data.status !== Status.INICIO_TRAVA_CONTAINER && data.status !== Status.FIM_TRAVA_CONTAINER) : statuses
+  const currentStatus = statusesFiltered.findIndex(index => index.status === operation?.travel?.status)
+  const [nextStatus, setNextStatus] = useState(currentStatus + 1)
+  
   const url = API_TRAVEL_URL
   const saveMutation = useMutation({
     mutationFn: async (data) => {
-      const response = travel ? 
+      return operation?.travel?.id ? 
       (await updateRecord({url, data}))?.data
       :
       (await insertRecord({url, data}))?.data
-      if(response) {
-      await queryClient.invalidateQueries({
-        queryKey: [`${API_TURN_URL}open`]
+    },
+    onSuccess: (data: Operation) => {
+      queryClient.invalidateQueries({
+        queryKey: [API_TURN_URL, 'open']
       });
-      if(response.endAt) handleToast(`Viagem encerrada em ${minutesDiff(new Date(response.endAt), new Date(response.startedAt))} minutos`)
+      setNextStatus((prev) => statusesFiltered.length - 1 <= prev ? 0 : prev + 1)
+      if(data.duration) handleToast(`Viagem encerrada em ${data.duration} minutos`)
     }
-      return response;
-    }
-  });
-  
+    
+    });
+
+  if(!operation) return
+
   const updateStatus = async () => {
     const statusToUpdate = statusesFiltered[nextStatus].status
-    if(statusToUpdate === Status.FIM_VIAGEM && !travel?.weight) return handleToast("É preciso informar o peso antes de encerrar a viagem");
-    const data = travel ? {
-      id: travel.id,
+    if(statusToUpdate === Status.FIM_VIAGEM && !operation?.travel?.weight) return handleToast("É preciso informar o peso antes de encerrar a viagem");
+    const statusTime = new Date()
+    const data = operation.travel ? {
+      id: operation.travel.id,
       status: statusesFiltered[nextStatus].status,
-      operationId: id,
-      ...JSON.parse(`{"${statusesFiltered[nextStatus].field}": "${(new Date()).toISOString()}"}`)
+      operationId: operation.id,
+      duration: statusToUpdate === Status.FIM_VIAGEM ? minutesDiff(statusTime, operation.startedAt) : 0,
+      ...JSON.parse(`{"${statusesFiltered[nextStatus].field}": "${statusTime.toISOString()}"}`)
     } : {
       status: Status.INICIO_VIAGEM,
-      operationId: id
+      operationId: operation.id
     }
+    
     saveMutation.mutate(data)
 
   }
+
   if(nextStatus >= statusesFiltered.length) return
   return (
     <div className="text-center">
-      {!id ?
+      {!operation.id ?
         <StartOperation />
         :
-        <div className="flex gap-x-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:gap-8">
           <Button size="lg" color={nextStatus % 2 ? "success" : "warning"} isLoading={saveMutation.isLoading} onClick={() => updateStatus()} endContent={<ArrowRightIcon />}>
             {statusesFiltered[nextStatus].label}
           </Button>
-          <WeightButton condition={!travel?.weight && nextStatus >= 3} />
+          <WeightButton condition={!operation.travel?.weight && nextStatus >= 3} />
           <EndOperation />
         </div>
       }
