@@ -28,20 +28,20 @@ export default function EndOperation () {
   });
   
   const close = async () => {
-    if(turnId && operation) {
+    if(turnId && operation?.length) {
       const endedAt = new Date()
       const data: OperationClose = {
         status: true,
         turnId,
-        id: operation.id,
+        id: operation[0].id,
         endedAt,
-        duration: minutesDiff(endedAt, operation.startedAt)
+        duration: minutesDiff(endedAt, operation[0].startedAt)
       }
       saveMutation.mutate(data)
     }
   }
 
-  if (operation && !operation.travel) return
+  if (!operation?.length || operation[0].travel.length) return
 
   return (
     <Button size="lg" color="danger" isLoading={saveMutation.isLoading} className="text-white p-2" endContent={<LockClosedIcon />} onClick={close}>

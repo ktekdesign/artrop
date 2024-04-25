@@ -6,20 +6,20 @@ export type OperationData = {
   startedAt: Date;
   endedAt: Date | null;
   status: boolean;
-  operation?: {
+  operation: {
     id: string;
     status: boolean;
     type: OperationType;
     startedAt: Date;
     endedAt: Date | null;
-    travel?: {
+    travel: {
       id: string;
       status: Status;
       weight: number | null;
       startedAt: Date;
       endedAt: Date | null;
-    };
-  };
+    }[];
+  }[];
 };
 const OperationContext = createContext<OperationData | undefined>(undefined);
 

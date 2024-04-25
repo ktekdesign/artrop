@@ -17,7 +17,7 @@ const schema = yup
   })
   .required()
 
-interface TurnInit extends Omit<Turn, "id" | "userId" | "startedAt" | "endedAt" | "endedKm" | "status"> {
+interface TurnInit extends Omit<Turn, "id" | "userId" | "startedAt" | "endedAt" | "endedKm" | "status" | "duration"> {
   userId?: string
 }
 export default function StartTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: boolean, onOpenChange(): void, onClose(): void}) {

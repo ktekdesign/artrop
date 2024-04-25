@@ -11,6 +11,6 @@ export default function TurnButton () {
   
   if(turn === undefined) return
   return (
-    !turn?.id ? <StartTurn /> : <div className="flex gap-4"><VehicleButton />{!turn.operation?.id && <EndTurn id={turn.id} />}</div>
+    !turn?.id ? <StartTurn /> : <div className="flex gap-4"><VehicleButton />{!turn.operation[0]?.id && <EndTurn id={turn.id} />}</div>
   )
 }

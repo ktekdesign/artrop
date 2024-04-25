@@ -49,7 +49,8 @@ export async function PUT(req: NextRequest) {
         status: true,
         weight: true,
         endedAt: true,
-        startedAt: true
+        startedAt: true,
+        duration: true
       }
     })
   );

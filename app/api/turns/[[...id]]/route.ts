@@ -10,14 +10,18 @@ export async function GET(
 ) {
   if (params?.id && params?.id[0] === 'open') {
     const userId = await getUserId(req);
-
+    const where = {
+      status: {
+        not: true
+      },
+      userId
+    };
     const turn = await prisma.turn.findFirst({
-      where: { status: false, userId },
-      select: {
-        id: true,
-        startedAt: true,
-        endedAt: true,
+      where,
+      include: {
         operation: {
+          where,
+          take: 1,
           select: {
             id: true,
             status: true,
@@ -42,8 +46,8 @@ export async function GET(
         }
       }
     });
-
-    NextResponse.json(turn || {});
+    console.log(turn);
+    return NextResponse.json(turn || {});
   } else if (params?.id) {
     return NextResponse.json(
       await prisma.turn.findUnique({

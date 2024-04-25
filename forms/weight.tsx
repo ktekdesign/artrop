@@ -32,18 +32,21 @@ export default function WeightForm ({isOpen, onOpenChange, onClose}: {isOpen: bo
   const queryClient = useQueryClient();
   const url = API_TRAVEL_URL
   const {saveMutation} = useEntity<Travel, Weight>({url})
-  const {id: operationId} = useOperation()
+  const {operation} = useOperation() || {}
   
-  const onSubmit = async (data: Weight) => {
-    saveMutation.mutate({...data, operationId})
-  }
-
   useEffect(() => {
     if(saveMutation.isSuccess) {
       onClose()
       queryClient.invalidateQueries([API_TURN_URL]);
     }
   })
+  
+  if(!operation?.length) return
+  
+  const onSubmit = async (data: Weight) => {
+    saveMutation.mutate({...data, operationId: operation[0].id})
+  }
+
   return (
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>

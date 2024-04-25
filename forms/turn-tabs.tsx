@@ -20,7 +20,7 @@ const schema = yup
     status: yup.boolean().default(false)
   })
   .required()
-interface TurnRegister extends Omit<Turn, "id" | "userId" | "customerId" | "endedAt"> {
+interface TurnRegister extends Omit<Turn, "id" | "userId" | "customerId" | "endedAt" | "duration"> {
   endedAt?: string | null;
 }
 export default function TurnTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {

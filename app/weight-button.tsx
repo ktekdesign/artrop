@@ -10,12 +10,14 @@ export default function WeightButton ({condition}: {condition: boolean}) {
   const {operation} = useOperation() || {}
   const {handleAction} = useModal()
   
+  if(!operation?.length || !operation[0].travel?.length ) return
+  
   const onPress = () => {
-    handleAction({id: operation?.travel?.id, operation: 'update'});
+    handleAction({id: operation[0].travel[0].id, operation: 'update'});
     onOpen();
   }
   
-  if(!condition || operation?.travel?.weight) return
+  if(!condition || operation[0].travel[0].weight) return
 
   return (
     <div className="text-center">

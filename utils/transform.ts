@@ -20,7 +20,8 @@ export const JsonValuetoString = (data: JsonValue) =>
 
 export const minutesDiff = (dateTimeValue2: Date, dateTimeValue1: Date) => {
   var differenceValue =
-    (dateTimeValue2.getTime() - dateTimeValue1.getTime()) / 1000;
+    (new Date(dateTimeValue2).getTime() - new Date(dateTimeValue1).getTime()) /
+    1000;
   differenceValue /= 60;
   return Math.abs(Math.round(differenceValue));
 };

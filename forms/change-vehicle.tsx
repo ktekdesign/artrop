@@ -32,9 +32,9 @@ export default function ChangeVehicleForm ({isOpen, onOpenChange, onClose}: {isO
   const url = API_VEHICLESTURN_URL
   const {saveMutation} = useEntity<VehiclesTurn, VehiclesTurnInit>({url})
   const {entities: vehicles} = useEntities<Vehicle>(API_VEHICLE_URL)
-  const {turnId} = useOperation()
+  const {id} = useOperation() || {}
 
-  const onSubmit = async (data: VehiclesTurnInit) => saveMutation.mutate({...data, turnId})
+  const onSubmit = async (data: VehiclesTurnInit) => saveMutation.mutate({...data, turnId: id})
   
   useEffect(() => {
     if(saveMutation.isSuccess) onClose()
