@@ -46,7 +46,7 @@ export async function GET(
         }
       }
     });
-    console.log(turn);
+
     return NextResponse.json(turn || {});
   } else if (params?.id) {
     return NextResponse.json(
