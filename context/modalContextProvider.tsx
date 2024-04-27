@@ -12,14 +12,12 @@ export default function ModalContextProvider ({ children } : {
 }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [action, setAction] = useState({} as Action);
-  const [refresh, setRefresh] = useState(false);
   const handleAction = (newAction: Action) => setAction(newAction);
   const handleClose = () => {
     onClose();
-    setRefresh(!refresh)
   }
   const value = {
-    isOpen, onOpen, onOpenChange, handleAction, action, handleClose, refresh, setRefresh
+    isOpen, onOpen, onOpenChange, handleAction, action, handleClose
   };
   
   return <ModalContext.Provider value={value}>{children}</ModalContext.Provider>;

@@ -49,9 +49,8 @@ export default function UserTabs ({buttonLabel, url}: {buttonLabel?: string, url
   
   const roles: {label: string, value: Role}[] = [{label: "Admin", value: Role.ADMIN}, {label: "Staff", value: Role.STAFF}, {label: "Motorista", value: Role.DRIVER}]
   
-  const {entity, isLoading, saveMutation, operation, selected, setSelected} = useEntity<User, UserRegister>({url})
-  const cnh = transformJsonValue(entity?.cnh)
-  const address = transformJsonValue(entity?.address)
+  const {entity, isLoading, isHandlingMutation, operation, selected, setSelected, onSubmit} = useEntity<User, UserRegister>({url})
+  const [cnh, address] = transformJsonValue([entity?.cnh, entity?.address])
   
   const handleInsert = (data: UserRegister) => {
     if(!data.password) throw new Error("Escolha uma senha para continuar")
@@ -61,20 +60,17 @@ export default function UserTabs ({buttonLabel, url}: {buttonLabel?: string, url
   }
 
   const handleUpdate = (data: UserRegister) => {
-    const cnhData = transformJsonValue(data.cnh)
-    const cnh_expires = preventNull(cnhData.expires)
-    if(!transformJsonValue(data.address).code && address.code) data.address = address
-    if(!cnhData.id && cnh.id) data.cnh = cnh
+    const [cnhData, addressData] = transformJsonValue([data.cnh, data.address])
+    const cnh_expires = preventNull(cnhData?.expires)
+    if(!addressData?.code && address?.code) data.address = address
+    if(!cnhData?.id && cnh?.id) data.cnh = cnh
     data.cnh_expires = transformDate(cnh_expires || cnh?.expires?.toString())?.toISOString()
-    if((!data.type || data.type === Role.DRIVER) && entity?.type?.length) data.type = entity.type
+    if((!data.type || data.type === Role.DRIVER) && entity?.type) data.type = entity.type
     return data
   }
-
-  const onSubmit = async (data: UserRegister) => {
-      const userData = operation === "insert" ? handleInsert(data) : handleUpdate(data)
-      saveMutation.mutate(userData)
-  }
-
+  
+  const handleData = (data: UserRegister) => onSubmit((operation === "insert" ? handleInsert : handleUpdate)(data))
+  
   return (
     <LoadingComponent isLoading={isLoading}>
       <Tabs
@@ -85,7 +81,7 @@ export default function UserTabs ({buttonLabel, url}: {buttonLabel?: string, url
         onSelectionChange={setSelected}
       >
         <Tab title="Dados pessoais">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(handleData)}>
           <div className="form-row">
             <Input {...register("name")} defaultValue={preventNull(entity?.name)} label="Nome" placeholder="Digite o nome" isClearable isInvalid={!!errors.name} color={getInputColor(errors.name)} errorMessage={getInputErrorMessage(errors.name)} />
             <Input {...register("govID")} defaultValue={preventNull(entity?.govID)} label="CPF" placeholder="Digite o CPF" isClearable isInvalid={!!errors.govID} color={getInputColor(errors.govID)} errorMessage={getInputErrorMessage(errors.govID)} />
@@ -115,25 +111,25 @@ export default function UserTabs ({buttonLabel, url}: {buttonLabel?: string, url
                 <Input type="password" {...register("password2")} label="Confirmação Senha" placeholder="Digite novamente a mesma senha" />
               </>
             }
-            <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
+            <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
           </div>
           </form>
         </Tab>
         {operation === 'update' && (
           <Tab title="CNH">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(handleData)}>
             <div className="form-row">
               <Input isClearable {...register("cnh.id")} defaultValue={preventNull(cnh?.id)} label="CNH" placeholder="Digite o registro da CNH" />
               <Input type="date" {...register("cnh.expires")} defaultValue={preventNull(formatDate(cnh?.expires))} label="Expiração" placeholder="Qual é a data de expiração" />
               <Input isClearable {...register("cnh.category")} defaultValue={preventNull(cnh?.category)} label="Categoria" placeholder="Digite a categoria da CNH" />
-              <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
+              <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
             </div>
             </form>
           </Tab>
         )}
         {operation === 'update' && (
           <Tab title="Endereço">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(handleData)}>
               <AddressForm {...{address: entity?.address, props: [
                 {...register("address.code")},
                 {...register("address.address")},
@@ -143,7 +139,7 @@ export default function UserTabs ({buttonLabel, url}: {buttonLabel?: string, url
                 {...register("address.city")},
                 {...register("address.state")}
               ]}} />
-              <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
+              <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
             </form>
           </Tab>
         )}

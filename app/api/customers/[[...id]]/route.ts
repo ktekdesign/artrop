@@ -23,8 +23,12 @@ export async function POST(req: Request) {
   );
 }
 
-export async function PUT(req: Request) {
-  const { id, ...data } = await req.json();
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string[] } }
+) {
+  const data = await req.json();
+  const id = params?.id[0];
   return NextResponse.json(
     await prisma.customer.update({
       where: { id },

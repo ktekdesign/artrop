@@ -6,48 +6,48 @@ import useModal from './useModal';
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { pk } from '../interfaces';
-import { API_TURN_URL } from '../utils/constants';
 
-export default function useEntity<T extends pk, K>({ url }: { url?: string }) {
+export default function useEntity<T, K>({ url }: { url?: string }) {
   const { handleToast } = useToast();
-  const {
-    action: { id, operation },
-    handleClose
-  } = useModal();
+  const { action, handleClose } = useModal();
+  const { id, operation } = action;
   const queryClient = useQueryClient();
-
+  const endpoint = [url || '', id || ''];
   const [selected, setSelected] = useState<string | number>(0);
 
   const saveMutation = useMutation({
-    mutationFn: async (data: K) => {
-      return submit(handleToast, handleClose, {
+    mutationFn: async (data: K) =>
+      submit({
         url,
         data,
-        action: { id, operation }
-      });
-    },
-    onSuccess: (data: T) => {
+        action
+      }),
+    onSuccess: ({ message, ...data }: T & pk) => {
+      if (operation !== 'update') handleClose();
+      handleToast(message);
       queryClient.setQueryData([url, data.id], data);
       queryClient.invalidateQueries({
         queryKey: [url]
       });
-      queryClient.invalidateQueries({
-        queryKey: [API_TURN_URL]
-      });
-    }
+    },
+    onError: (err: Error) => handleToast(err.message)
   });
 
-  const fetchData = () => getRecord<T>({ url, id });
+  const onSubmit = (data: K) => saveMutation.mutate(data);
 
-  const { data: entity, error, isLoading } = useQuery([url, id], fetchData);
+  const fetchData = () => (id && url ? getRecord<T>(endpoint) : undefined);
+
+  const { data, isError, isSuccess, isLoading } = useQuery(endpoint, fetchData);
 
   return {
-    entity,
-    error,
+    entity: data,
+    isError,
+    isSuccess,
     isLoading,
-    saveMutation,
+    isHandlingMutation: saveMutation.isLoading,
     operation,
     selected,
-    setSelected
+    setSelected,
+    onSubmit
   };
 }

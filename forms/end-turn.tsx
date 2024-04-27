@@ -6,8 +6,9 @@ import * as yup from "yup"
 import { Turn } from "@prisma/client";
 import { API_TURN_URL } from "../utils/constants";
 import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
-import useEntity from "../hooks/useEntity";
 import { minutesDiff } from "../utils/transform";
+import useSaveMutation from "../hooks/useSaveMutation";
+import useOperation from "../hooks/useOperation";
 
 const schema = yup
   .object({
@@ -30,24 +31,23 @@ export default function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: b
   })
   
   const url = API_TURN_URL
-  const {saveMutation, entity} = useEntity<Turn, TurnEnd>({url})
-  
-  if(!entity) return
+  const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, TurnEnd>({url, onClose})
+  const {startedAt} = useOperation()
 
   const handleData = (data: TurnEnd) => {
     data.endedAt = new Date()
     data.status = true
-    data.duration = minutesDiff(data.endedAt, entity.startedAt)
+    data.duration = minutesDiff(data.endedAt, startedAt)
     return data
   }
 
-  const onSubmit = async (data: TurnEnd) => saveMutation.mutate(handleData(data))
+  const handleTurn = (data: TurnEnd) => onSubmit(handleData(data))
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
         {() => (
-          <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+          <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleTurn)}>
             <ModalHeader className="flex flex-col gap-1">Encerrar turno</ModalHeader>
             <ModalBody>
               <Input type="number" {...register("endedKm")} label="Kilometragem do vehiculo" placeholder="Insira a kilometragem para finalisar o turno" isClearable isInvalid={!!errors.endedKm} color={getInputColor(errors.endedKm)} errorMessage={getInputErrorMessage(errors.endedKm)} />
@@ -56,7 +56,7 @@ export default function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: b
               <Button color="danger" variant="light" onPress={onClose}>
                 Fechar
               </Button>
-              <Button type="submit" color="primary" isLoading={saveMutation.isLoading}>
+              <Button type="submit" color="primary" isLoading={isHandlingMutation}>
                 Encerrar
               </Button>
             </ModalFooter>

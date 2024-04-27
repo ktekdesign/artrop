@@ -1,50 +1,39 @@
 "use client"
 import { LockClosedIcon } from "@heroicons/react/24/solid";
 import { Button } from "@nextui-org/react";
-import { API_OPERATION_URL, API_TURN_URL } from "../utils/constants";
+import { API_OPERATION_URL } from "../utils/constants";
 import useOperation from "../hooks/useOperation";
 import { Operation } from "@prisma/client";
-import { useMutation, useQueryClient } from 'react-query';
-import { updateRecord } from "../utils/api";
 import { minutesDiff } from "../utils/transform";
+import { getVars } from "../utils/getVars";
+import useSaveMutation from "../hooks/useSaveMutation";
 
 interface OperationClose extends Pick<Operation, 'id' | 'status' | 'turnId' | 'endedAt' | 'duration'> {}
 
 export default function EndOperation () {
   
-  const {id: turnId, operation} = useOperation() || {}
+  const {id: turnId, operation} = useOperation()
+  const {operationId, operationStartedAt} = getVars(operation)
   const url = API_OPERATION_URL
-  const queryClient = useQueryClient();
   
-  const saveMutation = useMutation({
-    mutationFn: async (data: OperationClose) => {
-      return updateRecord({url, data})
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [API_TURN_URL]
-      });
-    }
-  });
-  
-  const close = async () => {
-    if(turnId && operation?.length) {
-      const endedAt = new Date()
-      const data: OperationClose = {
-        status: true,
-        turnId,
-        id: operation[0].id,
-        endedAt,
-        duration: minutesDiff(endedAt, operation[0].startedAt)
-      }
-      saveMutation.mutate(data)
-    }
-  }
+  const {isHandlingMutation, onSubmit} = useSaveMutation({url})
 
-  if (!operation?.length || operation[0].travel.length) return
+  if (!operationId) return
+
+  const close = async () => {
+    const endedAt = new Date()
+    const data: OperationClose = {
+      status: true,
+      turnId,
+      id: operationId,
+      endedAt,
+      duration: minutesDiff(endedAt, operationStartedAt)
+    }
+    onSubmit(data)
+}
 
   return (
-    <Button size="lg" color="danger" isLoading={saveMutation.isLoading} className="text-white p-2" endContent={<LockClosedIcon />} onClick={close}>
+    <Button size="lg" color="danger" isLoading={isHandlingMutation} className="text-white p-2" endContent={<LockClosedIcon />} onClick={close}>
       Encerrar Operação
     </Button>
   )

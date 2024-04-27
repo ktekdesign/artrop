@@ -7,8 +7,6 @@ type ModalContextData = {
   onOpenChange: (isOpen: boolean) => void;
   handleAction: (action: Action) => void;
   handleClose(): void;
-  refresh: boolean;
-  setRefresh: Dispatch<SetStateAction<boolean>>;
   action: Action;
 };
 

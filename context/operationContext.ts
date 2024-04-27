@@ -1,26 +1,8 @@
-import { OperationType, Status } from '@prisma/client';
 import { createContext } from 'react';
+import { TurnData, initialOperationData, success } from '../interfaces';
 
-export type OperationData = {
-  id: string;
-  startedAt: Date;
-  endedAt: Date | null;
-  status: boolean;
-  operation: {
-    id: string;
-    status: boolean;
-    type: OperationType;
-    startedAt: Date;
-    endedAt: Date | null;
-    travel: {
-      id: string;
-      status: Status;
-      weight: number | null;
-      startedAt: Date;
-      endedAt: Date | null;
-    }[];
-  }[];
-};
-const OperationContext = createContext<OperationData | undefined>(undefined);
+const OperationContext = createContext<TurnData & success>(
+  initialOperationData
+);
 
 export default OperationContext;

@@ -2,13 +2,12 @@ import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
-import { API_TRAVEL_URL, API_TURN_URL } from "../utils/constants";
+import { API_TRAVEL_URL } from "../utils/constants";
 import useOperation from "../hooks/useOperation";
 import { errorMessage } from "../utils/input-errors";
 import { Travel } from "@prisma/client";
-import useEntity from "../hooks/useEntity";
-import { useQueryClient } from 'react-query';
-import { useEffect } from "react";
+import useSaveMutation from "../hooks/useSaveMutation";
+import { getVars } from "../utils/getVars";
 
 const schema = yup
   .object({
@@ -29,29 +28,20 @@ export default function WeightForm ({isOpen, onOpenChange, onClose}: {isOpen: bo
     resolver: yupResolver(schema),
   })
 
-  const queryClient = useQueryClient();
   const url = API_TRAVEL_URL
-  const {saveMutation} = useEntity<Travel, Weight>({url})
-  const {operation} = useOperation() || {}
+  const {isHandlingMutation, onSubmit} = useSaveMutation<Travel, Weight>({url, onClose})
+  const {operation} = useOperation()
+  const {operationId} = getVars(operation)
   
-  useEffect(() => {
-    if(saveMutation.isSuccess) {
-      onClose()
-      queryClient.invalidateQueries([API_TURN_URL]);
-    }
-  })
+  if(!operationId) return
   
-  if(!operation?.length) return
-  
-  const onSubmit = async (data: Weight) => {
-    saveMutation.mutate({...data, operationId: operation[0].id})
-  }
+  const handleData = (data: Weight) => onSubmit({...data, operationId})
 
   return (
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
-            <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+            <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
               <ModalHeader className="flex flex-col gap-1">Informe o Peso</ModalHeader>
               <ModalBody>
                   <Input type="number" {...register("weight")} label="Peso" placeholder="Informe o peso da carga" />
@@ -60,7 +50,7 @@ export default function WeightForm ({isOpen, onOpenChange, onClose}: {isOpen: bo
                     <Button color="danger" variant="light" onPress={onClose}>
                       Fechar
                     </Button>
-                    <Button type="submit" color="primary" isLoading={saveMutation.isLoading}>
+                    <Button type="submit" color="primary" isLoading={isHandlingMutation}>
                       Enviar
                     </Button>
                   </ModalFooter>

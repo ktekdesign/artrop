@@ -32,20 +32,18 @@ export async function POST(req: NextRequest) {
       user: {
         connect: { id: userId }
       }
-    },
-    select: {
-      id: true,
-      status: true,
-      turnId: true,
-      type: true
     }
   });
 
   return NextResponse.json(operation);
 }
 
-export async function PUT(req: NextRequest) {
-  const { turnId, id, ...data } = await req.json();
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string[] } }
+) {
+  const { turnId, ...data } = await req.json();
+  const id = params?.id[0];
   const userId = await getUserId(req);
   const operation = await prisma.operation.update({
     where: { id, userId, turnId },

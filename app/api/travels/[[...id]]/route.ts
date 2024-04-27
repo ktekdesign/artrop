@@ -37,8 +37,12 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(null);
 }
 
-export async function PUT(req: NextRequest) {
-  const { id, ...data } = await req.json();
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string[] } }
+) {
+  const data = await req.json();
+  const id = params?.id[0];
   const userId = await getUserId(req);
   return NextResponse.json(
     await prisma.travel.update({

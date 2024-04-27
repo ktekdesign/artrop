@@ -5,12 +5,14 @@ import EndTurn from "./end-turn"
 
 import useOperation from "../hooks/useOperation"
 import VehicleButton from "./vehicle-button"
+import { getVars } from "../utils/getVars"
 
 export default function TurnButton () {
-  const turn = useOperation()
-  
-  if(turn === undefined) return
+  const {isSuccess, id, operation} = useOperation()
+  const {operationId} = getVars(operation)
+
+  if(!isSuccess) return
   return (
-    !turn?.id ? <StartTurn /> : <div className="flex gap-4"><VehicleButton />{!turn.operation[0]?.id && <EndTurn id={turn.id} />}</div>
+    !id ? <StartTurn /> : <div className="flex gap-4"><VehicleButton />{!operationId && <EndTurn />}</div>
   )
 }

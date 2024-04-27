@@ -16,14 +16,14 @@ type Props = {
 const AppProvider = ({ children }: Props) => (
   <SessionProvider>
     <NextUIProvider>
-    <QueryClientProvider client={queryClient}>
-      <ModalContextProvider>
-        <ToastContextProvider>
-          <OperationContextProvider>
-          {children}
-          </OperationContextProvider>
-        </ToastContextProvider>
-      </ModalContextProvider>
+      <QueryClientProvider client={queryClient}>
+        <ModalContextProvider>
+          <ToastContextProvider>
+            <OperationContextProvider>
+              {children}
+            </OperationContextProvider>
+          </ToastContextProvider>
+        </ModalContextProvider>
       </QueryClientProvider>
     </NextUIProvider>
   </SessionProvider>

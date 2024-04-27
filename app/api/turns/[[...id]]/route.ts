@@ -11,9 +11,7 @@ export async function GET(
   if (params?.id && params?.id[0] === 'open') {
     const userId = await getUserId(req);
     const where = {
-      status: {
-        not: true
-      },
+      status: false,
       userId
     };
     const turn = await prisma.turn.findFirst({
@@ -22,25 +20,14 @@ export async function GET(
         operation: {
           where,
           take: 1,
-          select: {
-            id: true,
-            status: true,
-            turnId: true,
-            type: true,
+          include: {
             travel: {
               where: {
                 status: {
                   not: Status.FIM_VIAGEM
                 }
               },
-              take: 1,
-              select: {
-                id: true,
-                status: true,
-                weight: true,
-                startedAt: true,
-                endedAt: true
-              }
+              take: 1
             }
           }
         }
@@ -89,8 +76,12 @@ export async function POST(req: NextRequest) {
   return turn ? NextResponse.json({ turnId: turn.id }) : NextResponse.json({});
 }
 
-export async function PUT(req: Request) {
-  const { id, ...data } = await req.json();
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string[] } }
+) {
+  const data = await req.json();
+  const id = params?.id[0];
   return NextResponse.json(
     await prisma.turn.update({
       where: { id },

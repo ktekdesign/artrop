@@ -6,9 +6,8 @@ import * as yup from "yup"
 import { Vehicle, VehiclesTurn } from "@prisma/client";
 import { API_VEHICLESTURN_URL, API_VEHICLE_URL } from "../utils/constants";
 import useEntities from "../hooks/useEntities";
-import useEntity from "../hooks/useEntity";
 import useOperation from "../hooks/useOperation";
-import { useEffect } from "react";
+import useSaveMutation from "../hooks/useSaveMutation";
 
 const schema = yup
   .object({
@@ -23,28 +22,23 @@ interface VehiclesTurnInit extends Omit<VehiclesTurn, "id" | "turnId" | "created
 export default function ChangeVehicleForm ({isOpen, onOpenChange, onClose}: {isOpen: boolean, onOpenChange(): void, onClose(): void}) {
   const {
     handleSubmit,
-    control,
-    formState: { errors },
+    control
   } = useForm({
     resolver: yupResolver(schema),
   })
   
   const url = API_VEHICLESTURN_URL
-  const {saveMutation} = useEntity<VehiclesTurn, VehiclesTurnInit>({url})
+  const {isHandlingMutation, onSubmit} = useSaveMutation<VehiclesTurn, VehiclesTurnInit>({url, onClose})
   const {entities: vehicles} = useEntities<Vehicle>(API_VEHICLE_URL)
-  const {id} = useOperation() || {}
+  const {id} = useOperation()
 
-  const onSubmit = async (data: VehiclesTurnInit) => saveMutation.mutate({...data, turnId: id})
-  
-  useEffect(() => {
-    if(saveMutation.isSuccess) onClose()
-  })
+  const handleData = async (data: VehiclesTurnInit) => onSubmit({...data, turnId: id})
   
   return (
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {() => (
-            <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+            <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
               <ModalHeader className="flex flex-col gap-1">Trocar Caminhão</ModalHeader>
               <ModalBody>
                   <Controller
@@ -65,7 +59,7 @@ export default function ChangeVehicleForm ({isOpen, onOpenChange, onClose}: {isO
                     <Button color="danger" variant="light" onPress={onClose}>
                       Fechar
                     </Button>
-                    <Button type="submit" color="primary" isLoading={saveMutation.isLoading}>
+                    <Button type="submit" color="primary" isLoading={isHandlingMutation}>
                       Trocar
                     </Button>
                   </ModalFooter>

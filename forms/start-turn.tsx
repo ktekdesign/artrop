@@ -7,7 +7,7 @@ import { Customer, Turn, Vehicle } from "@prisma/client";
 import { API_CUSTOMER_URL, API_TURN_URL, API_VEHICLE_URL } from "../utils/constants";
 import useEntities from "../hooks/useEntities";
 import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
-import useEntity from "../hooks/useEntity";
+import useSaveMutation from "../hooks/useSaveMutation";
 
 const schema = yup
   .object({
@@ -20,6 +20,7 @@ const schema = yup
 interface TurnInit extends Omit<Turn, "id" | "userId" | "startedAt" | "endedAt" | "endedKm" | "status" | "duration"> {
   userId?: string
 }
+
 export default function StartTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: boolean, onOpenChange(): void, onClose(): void}) {
   const {
     register,
@@ -31,16 +32,14 @@ export default function StartTurnForm ({isOpen, onOpenChange, onClose}: {isOpen:
   })
   
   const url = API_TURN_URL
-  const {saveMutation} = useEntity<Turn, TurnInit>({url})
+  const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, TurnInit>({url, onClose})
+  
   const {entities: customers} = useEntities<Customer>(API_CUSTOMER_URL)
   const {entities: vehicles} = useEntities<Vehicle>(API_VEHICLE_URL)
 
-  const onSubmit = async (data: TurnInit) => saveMutation.mutate(data)
-  
   return (
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
-          {() => (
             <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
               <ModalHeader className="flex flex-col gap-1">Iniciar turno</ModalHeader>
               <ModalBody>
@@ -77,13 +76,12 @@ export default function StartTurnForm ({isOpen, onOpenChange, onClose}: {isOpen:
                     <Button color="danger" variant="light" onPress={onClose}>
                       Fechar
                     </Button>
-                    <Button type="submit" color="primary" isLoading={saveMutation.isLoading}>
+                    <Button type="submit" color="primary" isLoading={isHandlingMutation}>
                       Iniciar
                     </Button>
                   </ModalFooter>
               </ModalBody>
             </form>
-          )}
         </ModalContent>
       </Modal>
   )

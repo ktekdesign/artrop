@@ -6,7 +6,7 @@ import Nav from './nav';
 import { Suspense } from 'react';
 import AppProvider from './providers';
 import { ToastContainer } from 'react-toastify';
-import OperationButton from './operation-button';
+import OperationButton from './operation';
 
 export const metadata = {
   title: 'Artrop Sistema',

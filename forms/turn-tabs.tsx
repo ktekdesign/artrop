@@ -32,9 +32,7 @@ export default function TurnTabs ({buttonLabel, url}: {buttonLabel?: string, url
     resolver: yupResolver(schema),
   })
   
-  const {entity, isLoading, saveMutation, selected, setSelected} = useEntity<Turn, TurnRegister>({url})
-  
-  const onSubmit = async (data: TurnRegister) => saveMutation.mutate(data)
+  const {entity, isLoading, isHandlingMutation, onSubmit, selected, setSelected} = useEntity<Turn, TurnRegister>({url: url || ""})
   
   return (
     <LoadingComponent isLoading={isLoading}>
@@ -51,7 +49,7 @@ export default function TurnTabs ({buttonLabel, url}: {buttonLabel?: string, url
           <Input type="number" {...register("startedKm")} defaultValue={preventNull(entity?.startedKm?.toString())} label="Km Inicio" isClearable isInvalid={!!errors.startedKm} color={getInputColor(errors.startedKm)} errorMessage={getInputErrorMessage(errors.startedKm)} />
           <Input type="date" {...register("endedAt")} defaultValue={preventNull(formatDate(entity?.endedAt))} label="Data e hora Fim" isClearable />
           <Input type="number" {...register("endedKm")} defaultValue={preventNull(entity?.endedKm?.toString())} label="Km Fim" isClearable />
-          <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
+          <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
         </form>
       </Tab>
     </Tabs>

@@ -49,13 +49,13 @@ export default function VehicleTabs ({buttonLabel, url}: {buttonLabel?: string, 
   const trucks: {label: string, value: Truck}[] = [{label: "Truc", value: Truck.TRUC}, {label: "Toco", value: Truck.TOCO}, {label: "Cavalo 4x2", value: Truck.CAVALO_4X2}, {label: "Cavalo 6x2", value: Truck.CAVALO_6X2}, {label: "Cavalo 6x2", value: Truck.CAVALO_6X4}]
   const bodytrucks: {label: string, value: Bodytruck}[] = [{label: "Caçamba", value: Bodytruck.VIRINHA_CACAMBA}, {label: "Porta Container", value: Bodytruck.PORTA_CONTAINER}, {label: "Prancha", value: Bodytruck.PRANCHA}, {label: "Graneleiro", value: Bodytruck.GRANELEIRO}, {label: "Grade Baixa", value: Bodytruck.GRADE_BAIXA}, {label: "Sider", value: Bodytruck.SIDER}]
   
-  const {entity, isLoading, saveMutation, operation, selected, setSelected} = useEntity<Vehicle, VehicleRegister>({url})
-  const info = transformJsonValue(entity?.info)
+  const {entity, isLoading, isHandlingMutation, operation, selected, setSelected, onSubmit} = useEntity<Vehicle, VehicleRegister>({url})
+  const [info] = transformJsonValue([entity?.info])
   
   const handleUpdate = (data: VehicleRegister) => {
     if(!data.licence_plate_2) data.licence_plate_2 = entity?.licence_plate_2 || null
     if(!data.licence_plate_3) data.licence_plate_3 = entity?.licence_plate_3 || null
-    if(!data.info?.brand) data.info = info
+    if(!data.info) data.info = info || {}
     if(!data.capacity) data.capacity = entity?.capacity || null
     if((!data.truck || data.truck === Truck.TRUC) && entity?.truck) data.truck = entity.truck
     if((!data.bodytruck || data.bodytruck === Bodytruck.VIRINHA_CACAMBA) && entity?.bodytruck) data.bodytruck = entity.bodytruck
@@ -63,7 +63,8 @@ export default function VehicleTabs ({buttonLabel, url}: {buttonLabel?: string, 
     return data
   }
   
-  const onSubmit = async (data: VehicleRegister) => saveMutation.mutate(handleUpdate(data))
+  const handleData = async (data: VehicleRegister) => onSubmit(handleUpdate(data))
+  
   return (
     <LoadingComponent isLoading={isLoading}>
       <Tabs
@@ -74,7 +75,7 @@ export default function VehicleTabs ({buttonLabel, url}: {buttonLabel?: string, 
             onSelectionChange={setSelected}
           >
             <Tab title="Dados do Caminhão">
-              <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+              <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
                 <Input {...register("licence_plate_1")} defaultValue={preventNull(entity?.licence_plate_1)} label="Placa" placeholder="Digite a placa 1" isClearable isInvalid={!!errors.licence_plate_1} color={getInputColor(errors.licence_plate_1)} errorMessage={getInputErrorMessage(errors.licence_plate_1)} />
                 <Input {...register("licence_plate_2")} defaultValue={preventNull(entity?.licence_plate_2)} label="Placa 2" placeholder="Digite a placa 2" isClearable />
                 <Input {...register("licence_plate_3")} defaultValue={preventNull(entity?.licence_plate_3)} label="Placa 3" placeholder="Digite a placa 3" isClearable />
@@ -115,17 +116,17 @@ export default function VehicleTabs ({buttonLabel, url}: {buttonLabel?: string, 
                     </Select>
                   )}
                 />
-                <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
+                <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
               </form>
             </Tab>
             {operation === 'update' && (
             <Tab title="Características">
-              <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+              <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
                 <Input {...register("info.brand")} defaultValue={preventNull(info?.brand)} label="Marca" isClearable />
                 <Input {...register("info.model")} defaultValue={preventNull(info?.model)} label="Modelo" isClearable />
                 <Input {...register("info.year")} type="number" defaultValue={preventNull(info?.year?.toString())} label="Ano" isClearable />
                 <Input {...register("info.color")} defaultValue={preventNull(info?.color)} label="Cor" isClearable />
-                <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
+                <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
               </form>
             </Tab>
             )}

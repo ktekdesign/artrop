@@ -48,13 +48,13 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
     resolver: yupResolver(schema),
   })
 
-  const {entity, isLoading, saveMutation, operation, selected, setSelected} = useEntity<Customer, CustomerRegister>({url})
-  const info = transformJsonValue(entity?.info)
-  const address = transformJsonValue(entity?.address)
+  const {entity, isLoading, isHandlingMutation, onSubmit, operation, selected, setSelected} = useEntity<Customer, CustomerRegister>({url})
+  const [info, address] = transformJsonValue([entity?.info, entity?.address])
   
   const handleUpdate = (data: CustomerRegister) => {
-    if(!transformJsonValue(data.address).code && address.code) data.address = address
-    if(!transformJsonValue(data.info).name && info.name) data.info = info
+    const [dataInfo, dataAddress] = transformJsonValue([data.info, data.address])
+    if(!dataAddress?.code && address?.code) data.address = address
+    if(!dataInfo?.name && info?.name) data.info = info
     if(!data.operation.length && entity?.operation.length) data.operation = entity.operation
     return data
   }
@@ -69,11 +69,11 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
       .catch (console.error)
   }
   
-  const onSubmit = async (data: CustomerRegister) => saveMutation.mutate(handleUpdate(data))
+  const handleData = (data: CustomerRegister) => onSubmit(handleUpdate(data))
   
   return (
     <LoadingComponent isLoading={isLoading}>
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(handleData)}>
       <Tabs
         fullWidth
         size="md"
@@ -100,7 +100,7 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
             )}
           </CheckboxGroup>
         </div>
-        <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
+        <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
       </Tab>
     {operation === 'update' && (
       <Tab title="Endereço">
@@ -112,7 +112,7 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
           {...register("address.district")},
           {...register("address.city")},
           {...register("address.state")}]} />
-        <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
+        <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
       </Tab>
       )}
       {operation === 'update' && (
@@ -122,7 +122,7 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
             <Input {...register("info.name_in_charge")} defaultValue={preventNull(info?.name_in_charge)} label="Nome do Responsável" placeholder="Digite o nome do responsável" isClearable />
             <Input {...register("info.phone")} type="tel"  defaultValue={preventNull(info?.phone)} label="Contato do Responsável" placeholder="Digite o celular do responsável" isClearable />
           </div>
-          <ModalFormFooter isLoading={saveMutation.isLoading} buttonLabel={buttonLabel} />
+          <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
         </Tab>
       )}
     </Tabs>

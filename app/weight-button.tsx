@@ -3,21 +3,23 @@ import WeightForm from "../forms/weight";
 import { MegaphoneIcon } from "@heroicons/react/24/solid";
 import useOperation from "../hooks/useOperation";
 import useModal from "../hooks/useModal";
+import { getVars } from "../utils/getVars";
 
 export default function WeightButton ({condition}: {condition: boolean}) {
   
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-  const {operation} = useOperation() || {}
+  const {operation} = useOperation()
+  const {operationId, id, weight} = getVars(operation)
   const {handleAction} = useModal()
   
-  if(!operation?.length || !operation[0].travel?.length ) return
+  if(!operationId || !id ) return
   
   const onPress = () => {
-    handleAction({id: operation[0].travel[0].id, operation: 'update'});
+    handleAction({id, operation: 'update'});
     onOpen();
   }
   
-  if(!condition || operation[0].travel[0].weight) return
+  if(!condition || weight) return
 
   return (
     <div className="text-center">
