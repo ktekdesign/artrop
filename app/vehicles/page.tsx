@@ -8,10 +8,12 @@ import EntityTable from '../entity-table';
 import EntityModal from '../entity-modal';
 import VehicleTabs from '../../forms/vehicle-tabs';
 import AddButton from '../add-button';
+import { useState } from 'react';
 
 export default function IndexPage() {
   const url = API_VEHICLE_URL
   const {entities: vehicles} = useEntities<Vehicle>(url)
+  const [entities, setEntities] = useState<Vehicle[]>(vehicles || [])
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <div className='flex justify-between items-center'>
@@ -21,7 +23,7 @@ export default function IndexPage() {
         </div>
         <AddButton />
       </div>
-      <Search />
+      <Search entities={entities} setEntities={setEntities} />
       <EntityTable entities={vehicles} titles={['Placa', 'Capacidade', 'Caminhão', 'Carroceria']} fields={['licence_plate_1', 'capacity', 'truck', 'bodytruck']} />
       <EntityModal url={url} label='caminhão'>
         <VehicleTabs />

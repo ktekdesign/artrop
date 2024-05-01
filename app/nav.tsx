@@ -1,11 +1,14 @@
 'use client';
 
-import { Fragment } from 'react';
+import { Fragment, Suspense } from 'react';
 import { usePathname } from 'next/navigation';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { signOut } from 'next-auth/react';
 import TurnButton from './turn-button';
+import useOperation from "../hooks/useOperation"
+import { getVars } from "../utils/getVars"
+import useTurn from '../hooks/useTurn';
 
 const navigation = [
   { name: 'Usuários', href: '/users' },
@@ -22,7 +25,9 @@ function classNames(...classes: string[]) {
 
 export default function Nav() {
   const pathname = usePathname()
-
+  const {id, operation} = useTurn()
+  const operationData = getVars(operation)
+  const Turn = () => <Suspense><TurnButton id={id} operation={operationData} /></Suspense>
   return (
     <Disclosure as="nav" className="bg-white shadow-sm">
       {({ open }) => (
@@ -71,8 +76,8 @@ export default function Nav() {
                   ))}
                 </div>
               </div>
-              <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                <TurnButton />
+              <div className="hidden sm:ml-6 md:flex md:items-center">
+                <Turn />
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
@@ -107,8 +112,8 @@ export default function Nav() {
                   </Transition>
                 </Menu>
               </div>
-              <div className="-mr-2 flex items-center sm:hidden">
-                <TurnButton />
+              <div className="-mr-2 flex items-center md:hidden">
+                <Turn />
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
@@ -121,7 +126,7 @@ export default function Nav() {
             </div>
           </div>
 
-          <Disclosure.Panel className="sm:hidden">
+          <Disclosure.Panel className="md:hidden">
             <div className="space-y-1 pt-2 pb-3">
               {navigation.map((item) => (
                 <Disclosure.Button

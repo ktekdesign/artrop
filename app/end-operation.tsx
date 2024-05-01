@@ -8,26 +8,21 @@ import { minutesDiff } from "../utils/transform";
 import { getVars } from "../utils/getVars";
 import useSaveMutation from "../hooks/useSaveMutation";
 
-interface OperationClose extends Pick<Operation, 'id' | 'status' | 'turnId' | 'endedAt' | 'duration'> {}
+interface OperationClose extends Pick<Operation, 'id' | 'status' | 'endedAt' | 'duration'> {}
 
-export default function EndOperation () {
+export default function EndOperation ({id, startedAt}: {id?: string, startedAt?: Date}) {
   
-  const {id: turnId, operation} = useOperation()
-  const {operationId, operationStartedAt} = getVars(operation)
-  const url = API_OPERATION_URL
-  
-  const {isHandlingMutation, onSubmit} = useSaveMutation({url})
+  const {isHandlingMutation, onSubmit} = useSaveMutation(API_OPERATION_URL)
 
-  if (!operationId) return
+  if (!id) return
 
-  const close = async () => {
+  const close = () => {
     const endedAt = new Date()
     const data: OperationClose = {
       status: true,
-      turnId,
-      id: operationId,
+      id,
       endedAt,
-      duration: minutesDiff(endedAt, operationStartedAt)
+      duration: minutesDiff(endedAt, startedAt)
     }
     onSubmit(data)
 }

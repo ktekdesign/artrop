@@ -3,7 +3,7 @@ import { ArrowsRightLeftIcon } from "@heroicons/react/24/solid";
 import ChangeVehicleForm from "../forms/change-vehicle";
 import useModal from "../hooks/useModal";
 
-export default function VehicleButton () {
+export default function VehicleButton ({id}: {id: string}) {
   
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
   const action = {operation: "insert"}
@@ -21,7 +21,7 @@ export default function VehicleButton () {
           Trocar Vehiculo
         </Button>
       </div>
-      <ChangeVehicleForm {...{isOpen, onOpen, onOpenChange, onClose}} />
+      <ChangeVehicleForm {...{isOpen, onOpen, onOpenChange, onClose, turnId: id}} />
     </>
   )
 }

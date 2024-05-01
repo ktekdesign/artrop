@@ -31,7 +31,7 @@ export default function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: b
   })
   
   const url = API_TURN_URL
-  const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, TurnEnd>({url, onClose})
+  const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, TurnEnd>(url, onClose)
   const {startedAt} = useOperation()
 
   const handleData = (data: TurnEnd) => {

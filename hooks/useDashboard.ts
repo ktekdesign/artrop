@@ -1,5 +1,5 @@
 import { getRecords } from '../utils/api';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { PieData } from '../app/pie-chart-dashboard';
 import { API_DASHBOARD_URL } from '../utils/constants';
 interface DashboardData {
@@ -14,7 +14,10 @@ export default function useDashboard() {
   const url = API_DASHBOARD_URL;
   const fetchData = () => getRecords<DashboardData>({ url });
 
-  const { data, error, isLoading } = useQuery([url], fetchData);
+  const { data, error, isLoading } = useQuery({
+    queryKey: [url],
+    queryFn: fetchData
+  });
   const turns: PieData[] = [];
   const operations: PieData[] = [];
   const travels: PieData[] = [];

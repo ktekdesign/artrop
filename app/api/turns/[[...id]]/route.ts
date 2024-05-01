@@ -18,23 +18,21 @@ export async function GET(
       where,
       include: {
         operation: {
-          where,
-          take: 1,
+          where: { status: false },
           include: {
             travel: {
               where: {
                 status: {
                   not: Status.FIM_VIAGEM
                 }
-              },
-              take: 1
+              }
             }
           }
         }
       }
     });
 
-    return NextResponse.json(turn || {});
+    return NextResponse.json(turn);
   } else if (params?.id) {
     return NextResponse.json(
       await prisma.turn.findUnique({

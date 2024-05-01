@@ -5,7 +5,10 @@ import {NextUIProvider} from "@nextui-org/react";
 import ModalContextProvider from "../context/modalContextProvider";
 import ToastContextProvider from "../context/toastContextProvider";
 import OperationContextProvider from "../context/operationContextProvider";
-import { QueryClient, QueryClientProvider } from "react-query";
+import {
+  QueryClient,
+  QueryClientProvider
+} from '@tanstack/react-query'
 
 const queryClient = new QueryClient();
 

@@ -33,8 +33,6 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json(travel);
   }
-
-  return NextResponse.json(null);
 }
 
 export async function PUT(
@@ -51,7 +49,6 @@ export async function PUT(
       select: {
         id: true,
         status: true,
-        weight: true,
         endedAt: true,
         startedAt: true,
         duration: true

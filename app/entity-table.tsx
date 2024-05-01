@@ -18,7 +18,7 @@ const EntityTable = <T extends pk, K extends keyof T>({ entities, titles, fields
       <TableBody items={rows}>
         {(item) => (
           <TableRow key={item.id}>
-            {(columnKey) => <TableCell>{columnKey !== "actions" ? getKeyValue(item, columnKey) : <ActionsButton id={item.id} />}</TableCell>}
+            {(columnKey) => <TableCell>{columnKey !== "actions" ? ["landingAt", "departAt"].includes(columnKey.toString()) ? new Intl.DateTimeFormat('pt-BR').format(new Date(getKeyValue(item, columnKey))) : getKeyValue(item, columnKey) : <ActionsButton id={item.id} />}</TableCell>}
           </TableRow>
         )}
       </TableBody>

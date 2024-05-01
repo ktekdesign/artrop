@@ -32,7 +32,7 @@ export default function StartOperationForm ({isOpen, onOpenChange, onClose}: {is
   })
   
   const url = API_OPERATION_URL
-  const {isHandlingMutation, onSubmit} = useSaveMutation<Operation, OperationInit>({url, onClose})
+  const {isHandlingMutation, onSubmit} = useSaveMutation<Operation, OperationInit>(url, onClose)
   const {id: turnId} = useOperation()
   const {entities: ships} = useEntities<Ship>(API_SHIP_URL)
   const operations = [{key: 'VIRINHA_CACAMBA', value: 'Caçamba'}, {key: 'VIRINHA_PRANCHA', value: 'Prancha'}, {key: 'VIRINHA_CONTAINER', value: 'Container'}, {key: 'ENTRE_ARMAZENS', value: 'Entre Armazéns'}];

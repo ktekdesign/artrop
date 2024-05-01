@@ -45,7 +45,7 @@ export default function TurnTabs ({buttonLabel, url}: {buttonLabel?: string, url
     >
       <Tab title="Detalhes do turno">
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
-          <Input type="date" {...register("startedAt")} defaultValue={preventNull(formatDate(entity?.startedAt))} label="Data e hora inicio" isClearable isInvalid={!!errors.startedAt} color={getInputColor(errors.startedAt)} errorMessage={getInputErrorMessage(errors.startedAt)} />
+          <Input type="date" {...register("startedAt")} defaultValue={preventNull(formatDate(entity?.startedAt))} label="Data e hora inicio" isInvalid={!!errors.startedAt} color={getInputColor(errors.startedAt)} errorMessage={getInputErrorMessage(errors.startedAt)} />
           <Input type="number" {...register("startedKm")} defaultValue={preventNull(entity?.startedKm?.toString())} label="Km Inicio" isClearable isInvalid={!!errors.startedKm} color={getInputColor(errors.startedKm)} errorMessage={getInputErrorMessage(errors.startedKm)} />
           <Input type="date" {...register("endedAt")} defaultValue={preventNull(formatDate(entity?.endedAt))} label="Data e hora Fim" isClearable />
           <Input type="number" {...register("endedKm")} defaultValue={preventNull(entity?.endedKm?.toString())} label="Km Fim" isClearable />

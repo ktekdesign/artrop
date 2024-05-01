@@ -31,8 +31,7 @@ export default function StartTurnForm ({isOpen, onOpenChange, onClose}: {isOpen:
     resolver: yupResolver(schema),
   })
   
-  const url = API_TURN_URL
-  const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, TurnInit>({url, onClose})
+  const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, TurnInit>(API_TURN_URL, onClose)
   
   const {entities: customers} = useEntities<Customer>(API_CUSTOMER_URL)
   const {entities: vehicles} = useEntities<Vehicle>(API_VEHICLE_URL)

@@ -1,89 +1,31 @@
 "use client"
 import { Button } from "@nextui-org/react";
-import { Status, Operation, OperationType } from "@prisma/client";
-import useOperation from "../hooks/useOperation";
-import { upsertRecord } from "../utils/api";
-import { API_TRAVEL_URL, API_TURN_URL } from "../utils/constants";
+import { Status, Operation } from "@prisma/client";
 import StartOperation from "./start-operation";
-import useToast from "../hooks/useToast";
-import { minutesDiff } from "../utils/transform";
 import WeightButton from "./weight-button";
 import EndOperation from "./end-operation";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
-import { useMutation, useQueryClient } from "react-query";
-import { useState } from "react";
-import { getVars } from "../utils/getVars";
+import { OperationData } from "../interfaces";
+import useTravel from "../hooks/useTravel";
 
-export default function Operation () {
+export default function Operation ({operation}: {operation: OperationData}) {
   
-  const url = API_TRAVEL_URL
+  const {statusesFiltered, nextStatus, isHandlingMutation, updateStatus, operationId, handleWeight, operationStartedAt} = useTravel(operation)
   
-  const queryClient = useQueryClient();
-  const {id: turnId, operation} = useOperation()
-  const {type, operationId, id, status, weight} = getVars(operation)
-  
-  const {handleToast} = useToast()
-  const saveMutation = useMutation({
-    mutationFn: async (data) => await upsertRecord({endpoint: [url, id || ''], data}),
-    onSuccess: (data: Operation) => {
-      queryClient.invalidateQueries({
-        queryKey: [API_TURN_URL, 'open']
-      });
-      setNextStatus((prev) => statusesFiltered.length - 1 <= prev ? 0 : prev + 1)
-      if(data.duration) handleToast(`Viagem encerrada em ${data.duration} minutos`)
-    }
-    
-    });
-    
-  const statuses = [
-    {status: Status.INICIO_VIAGEM, label: "Iniciar Viagem", field: "startedAt"},
-    {status: Status.INICIO_CARREGAMENTO, label: "Iniciar Carregamento", field: "start_load"},
-    {status: Status.FIM_CARREGAMENTO, label: "Encerrar Carregamento", field: "end_load"},
-    {status: Status.CHEGADA_BALANCA_CARREGADO, label: "Informar Chegada Balança", field: "start_balance_loaded"},
-    {status: Status.SAIDA_BALANCA_CARREGADO, label: "Informar Saída Balança", field: "end_balance_loaded"},
-    {status: Status.INICIO_DESCARREGAMENTO, label: "Iniciar Descarregamento", field: "start_unload"},
-    {status: Status.FIM_DESCARREGAMENTO, label: "Encerrar Descarregamento", field: "end_unload"},
-    {status: Status.CHEGADA_BALANCA_VAZIO, label: "Informar Retorno Balança", field: "start_balance_unloaded"},
-    {status: Status.SAIDA_BALANCA_VAZIO, label: "Informar Saída Balança", field: "end_balance_unloaded"},
-    {status: Status.INICIO_TRAVA_CONTAINER, label: "Iniciar Trava Container", field: "start_block_container"},
-    {status: Status.FIM_TRAVA_CONTAINER, label: "Encerrar Trava Container", field: "end_block_container"},
-    {status: Status.FIM_VIAGEM, label: "Encerrar viagem", field: "endedAt"},
-  ]
-  const statusesFiltered = type !== OperationType.VIRINHA_CONTAINER ? statuses.filter(data => data.status !== Status.INICIO_TRAVA_CONTAINER && data.status !== Status.FIM_TRAVA_CONTAINER) : statuses
-  const currentStatus = statusesFiltered.findIndex(index => index.status === status)
-  const [nextStatus, setNextStatus] = useState(currentStatus + 1)
-  
-  const updateStatus = async () => {
-    const statusToUpdate = statusesFiltered[nextStatus].status
-    if(statusToUpdate === Status.FIM_VIAGEM && !weight) return handleToast("É preciso informar o peso antes de encerrar a viagem");
-    const statusTime = new Date()
-    const duration = statusToUpdate === Status.FIM_VIAGEM ? minutesDiff(statusTime, operation[0].travel[0].startedAt) : 0
-    const data = id ? {
-      id,
-      status: statusesFiltered[nextStatus].status,
-      duration,
-      ...JSON.parse(`{"${statusesFiltered[nextStatus].field}": "${statusTime.toISOString()}"}`)
-    } : {
-      status: Status.INICIO_VIAGEM,
-      operationId
-    }
-    
-    saveMutation.mutate(data)
-
-  }
-
-  if(!turnId) return
   return (
-    <div className="fixed w-full bottom-10 flex gap-x-8 justify-center items-center z-10">
+    <div className="fixed w-full bottom-10 flex gap-x-8 justify-center items-center z-10 left-0">
       {!operationId ?
         <StartOperation />
         :
         <div className="flex flex-col gap-4 sm:flex-row sm:gap-8">
-          <Button size="lg" color={nextStatus % 2 ? "success" : "warning"} isLoading={saveMutation.isLoading} onClick={() => updateStatus()} endContent={<ArrowRightIcon />}>
-            {statusesFiltered[nextStatus].label}
-          </Button>
-          <WeightButton condition={!weight && nextStatus >= 3} />
-          <EndOperation />
+          {statusesFiltered[nextStatus].status !== Status.PESO_CARREGADO && statusesFiltered[nextStatus].status !== Status.PESO_DESCARREGADO ? 
+            <Button size="lg" color={nextStatus % 2 ? "success" : "warning"} isLoading={isHandlingMutation} onClick={() => updateStatus()} endContent={<ArrowRightIcon />}>
+              {statusesFiltered[nextStatus].label}
+            </Button>
+          :
+            <WeightButton field={statusesFiltered[nextStatus].field} isHandlingMutation={isHandlingMutation} handleWeight={handleWeight} />
+          }
+          <EndOperation id={operationId} startedAt={operationStartedAt} />
         </div>
       }
     </div>

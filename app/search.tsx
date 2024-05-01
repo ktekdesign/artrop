@@ -2,33 +2,23 @@
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { Input } from '@nextui-org/react';
-import { usePathname, useRouter } from 'next/navigation';
-import { useTransition } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
-export default function Search({ disabled }: { disabled?: boolean }) {
-  const { replace } = useRouter();
-  const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
-
-  function handleSearch(term: string) {
-    const params = new URLSearchParams(window.location.search);
-    if (term) {
-      params.set('q', term);
-    } else {
-      params.delete('q');
-    }
-
-    startTransition(() => {
-      replace(`${pathname}?${params.toString()}`);
-    });
+const Search = <T, K extends keyof T>({ entities, setEntities }: { entities?: T[], setEntities?: Dispatch<SetStateAction<T[]>> }) => {
+  const [search, setSearch] = useState("")
+  
+  function handleSearch(e) {
+    setSearch(e.target.value)
   }
 
+  //useEffect(() => setEntities(entities?.filter(entity => typeof entity === "object" ? Object.values(entity).some(value => value.includes(search)) : false) || []), [search])
   return (
     <div className="my-8 rounded-2xl flex justify-center items-center shadow-lg">
       <Input
         label="Search"
         isClearable
         radius="lg"
+        onChange={handleSearch}
         classNames={{
           label: "text-black/50 dark:text-white/90",
           input: [
@@ -58,3 +48,5 @@ export default function Search({ disabled }: { disabled?: boolean }) {
     </div>
   );
 }
+
+export default Search

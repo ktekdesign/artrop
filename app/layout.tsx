@@ -6,7 +6,6 @@ import Nav from './nav';
 import { Suspense } from 'react';
 import AppProvider from './providers';
 import { ToastContainer } from 'react-toastify';
-import OperationButton from './operation';
 
 export const metadata = {
   title: 'Artrop Sistema',
@@ -27,7 +26,6 @@ export default async function RootLayout({
             <Nav />
           </Suspense>
           {children}
-          <OperationButton />
           <ToastContainer />
         </AppProvider>
         <Analytics />

@@ -1,3 +1,5 @@
+import { data } from 'autoprefixer';
+
 const headers = {
   'Content-Type': 'application/json'
 };
@@ -6,12 +8,20 @@ export const options = {
 };
 
 export async function getRecords<T>({ url }: { url: string }) {
-  return fetch(url, options).then(async (res) => (await res.json()) as T[]);
+  return fetch(url, options)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      return data as T[];
+    });
 }
-export async function getRecord<T>(endpoint: string[]) {
-  return fetch(endpoint.join(''), options).then(
-    async (res) => (await res.json()) as T
-  );
+export async function getRecord<T>(endpoint: string) {
+  return fetch(endpoint, options)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      return data as T;
+    });
 }
 export async function updateRecord<T>({
   endpoint,

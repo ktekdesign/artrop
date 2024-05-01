@@ -33,7 +33,7 @@ export default function PlaygroundPage() {
         <CardBody>
         <LoadingComponent isLoading={isLoading}>
           <Chart data={travels} />
-          </LoadingComponent>
+        </LoadingComponent>
         </CardBody>
       </Card>
       <Card>
@@ -41,7 +41,7 @@ export default function PlaygroundPage() {
         <CardBody>
         <LoadingComponent isLoading={isLoadingType}>
           <Chart data={types} />
-          </LoadingComponent>
+        </LoadingComponent>
         </CardBody>
       </Card>
     </main>

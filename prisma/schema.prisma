@@ -192,7 +192,8 @@ model Travel {
   end_balance_unloaded   DateTime?
   start_block_container  DateTime?
   end_block_container    DateTime?
-  weight                 Float?
+  weight_load            Float?
+  weight_unload          Float?
   status                 Status    @default(INICIO_VIAGEM)
   operation              Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
   operationId            String
@@ -236,10 +237,12 @@ enum Status {
   FIM_CARREGAMENTO
   CHEGADA_BALANCA_CARREGADO
   SAIDA_BALANCA_CARREGADO
+  PESO_CARREGADO
   INICIO_DESCARREGAMENTO
   FIM_DESCARREGAMENTO
   CHEGADA_BALANCA_VAZIO
   SAIDA_BALANCA_VAZIO
+  PESO_DESCARREGADO
   INICIO_TRAVA_CONTAINER
   FIM_TRAVA_CONTAINER
   FIM_VIAGEM
