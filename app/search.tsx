@@ -2,16 +2,16 @@
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { Input } from '@nextui-org/react';
-import { Dispatch, SetStateAction, useRef } from 'react';
+import { Dispatch, SetStateAction, useCallback, useRef } from 'react';
 import { pk } from '../interfaces';
 
 const Search = <T extends pk,>({ entities, setEntities }: { entities?: T[], setEntities: Dispatch<SetStateAction<T[] | undefined>> }) => {
   const ref = useRef<HTMLInputElement | null>(null)
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     const search = ref?.current?.value
     const results = entities?.filter(entity => Object.values(entity).some(value => value?.toString().toLowerCase().includes(search)))
     setEntities(results || entities)
-  }
+  }, [entities, setEntities])
 
   return (
     <div className="my-8 rounded-2xl flex justify-center items-center shadow-lg">

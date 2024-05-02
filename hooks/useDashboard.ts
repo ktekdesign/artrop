@@ -2,6 +2,7 @@ import { getRecords } from '../utils/api';
 import { useQuery } from '@tanstack/react-query';
 import { PieData } from '../app/pie-chart-dashboard';
 import { API_DASHBOARD_URL } from '../utils/constants';
+import { useMemo } from 'react';
 interface DashboardData {
   name: string;
   _count: {
@@ -18,15 +19,28 @@ export default function useDashboard() {
     queryKey: [url],
     queryFn: fetchData
   });
-  const turns: PieData[] = [];
-  const operations: PieData[] = [];
-  const travels: PieData[] = [];
 
-  data?.map(({ name, _count }) => {
-    turns.push({ name, value: _count.turn });
-    operations.push({ name, value: _count.operation });
-    travels.push({ name, value: _count.travel });
-  });
+  const [turns, operations, travels] =
+    useMemo(() => {
+      return data?.reduce(
+        (accumulator: PieData[][], currentValue: DashboardData) => {
+          accumulator[0].push({
+            name: currentValue.name,
+            value: currentValue._count.turn
+          });
+          accumulator[1].push({
+            name: currentValue.name,
+            value: currentValue._count.operation
+          });
+          accumulator[2].push({
+            name: currentValue.name,
+            value: currentValue._count.travel
+          });
+          return accumulator;
+        },
+        [[], [], []]
+      );
+    }, [data]) || [];
 
   return {
     error,

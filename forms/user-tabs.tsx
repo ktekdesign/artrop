@@ -13,6 +13,7 @@ import useEntity from "../hooks/useEntity";
 import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import { memo } from "react";
+import useCep from "../hooks/useCep";
 
 const schema = yup
   .object({
@@ -52,7 +53,8 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
   
   const {entity, isLoading, isHandlingMutation, operation, selected, setSelected, onSubmit} = useEntity<User, UserRegister>({url})
   const [cnh, address] = transformJsonValue([entity?.cnh, entity?.address])
-  
+  const {cep, handleCepChange} = useCep()
+
   const handleInsert = (data: UserRegister) => {
     if(!data.password) throw new Error("Escolha uma senha para continuar")
     if(data.password !== data.password2) throw new Error("As senhas digitadas não são as mesmas")
@@ -131,7 +133,7 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
         {operation === 'update' && (
           <Tab title="Endereço">
             <form onSubmit={handleSubmit(handleData)}>
-              <AddressForm {...{address: entity?.address, props: [
+              <AddressForm {...{address: entity?.address, cep, handleCepChange, props: [
                 {...register("address.code")},
                 {...register("address.address")},
                 {...register("address.number")},

@@ -122,7 +122,6 @@ const useTravel = (operation: OperationData) => {
             status: Status.INICIO_VIAGEM,
             operationId
           };
-    console.log(data);
     onSubmit(data);
   }, [id, nextStatus, operationId, onSubmit, statusesFiltered, startedAt]);
 

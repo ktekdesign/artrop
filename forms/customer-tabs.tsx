@@ -15,6 +15,7 @@ import AddressForm, { schemaAddress } from "./address";
 import useEntity from "../hooks/useEntity";
 import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
+import useCep from "../hooks/useCep";
 
 const schema = yup
   .object({
@@ -46,23 +47,13 @@ export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: st
 
   const {entity, isLoading, isHandlingMutation, onSubmit, operation, selected, setSelected} = useEntity<Customer, CustomerRegister>({url})
   const [info, address] = transformJsonValue([entity?.info, entity?.address])
-  
+  const {cep, handleCepChange} = useCep()
   const handleUpdate = (data: CustomerRegister) => {
     const [dataInfo, dataAddress] = transformJsonValue([data.info, data.address])
     if(!dataAddress?.code && address?.code) data.address = address
     if(!dataInfo?.name && info?.name) data.info = info
     if(!data.operation.length && entity?.operation.length) data.operation = entity.operation
     return data
-  }
-
-  const handleBlur = (code: string) => {
-    if(code.length !== 9) return
-      fetch(`https://cdn.apicep.com/file/apicep/${code}.json`, {
-        mode: 'no-cors',
-        })
-      .then(data => data.json())
-      .then(console.log)
-      .catch (console.error)
   }
   
   const handleData = (data: CustomerRegister) => onSubmit(handleUpdate(data))
@@ -100,14 +91,14 @@ export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: st
       </Tab>
     {operation === 'update' && (
       <Tab title="Endereço">
-        <AddressForm address={entity?.address} props={[
+        <AddressForm {...{address: entity?.address, cep, handleCepChange, props: [
           {...register("address.code")},
           {...register("address.address")},
           {...register("address.number")},
           {...register("address.complement")},
           {...register("address.district")},
           {...register("address.city")},
-          {...register("address.state")}]} />
+          {...register("address.state")}]}} />
         <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
       </Tab>
       )}

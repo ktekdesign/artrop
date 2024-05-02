@@ -8,26 +8,18 @@ import { signOut, useSession } from 'next-auth/react';
 import TurnButton from './turn-button';
 import useTurn from '../hooks/useTurn';
 import Operation from './operation';
-
-const urls = [
-  { name: 'Usuários', href: '/users' },
-  { name: 'Clientes', href: '/customers' },
-  { name: 'Navios', href: '/ships' },
-  { name: 'Caminhões', href: '/vehicles' },
-  { name: 'Dashboard', href: '/dashboard' }
-  //{ name: 'Turnos', href: '/turns' }
-];
+import Link from 'next/link';
+import { Button } from '@nextui-org/react';
+import useNav from '../hooks/useNav';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
 export default memo(function Nav() {
-  const { data: session, status } = useSession({ required: true })
-  const pathname = usePathname()
+  const { navigation, pathname } = useNav()
   const {id, operation} = useTurn()
   const Turn = () => <TurnButton id={id} operationId={operation?.operationId} />
-  const navigation = session?.user?.type === 'ADMIN' ? urls : status === "authenticated" ? [{ name: 'Meu Turno', href: '/' }] : []
   return (
     <>
     {operation && <Operation operation={operation} turnId={id} />}
@@ -62,7 +54,7 @@ export default memo(function Nav() {
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {navigation.map((item) => (
-                    <a
+                    <Link
                       key={item.name}
                       href={item.href}
                       className={classNames(
@@ -74,7 +66,7 @@ export default memo(function Nav() {
                       aria-current={pathname === item.href ? 'page' : undefined}
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -96,18 +88,18 @@ export default memo(function Nav() {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <Menu.Item>
                           {({ active }) => (
-                            <button
+                            <Button
                               className={classNames(
-                                active ? 'bg-gray-100' : '',
+                                active ? 'bg-gray-100' : 'bg-transparent',
                                 'flex w-full px-4 py-2 text-sm text-gray-700'
                               )}
                               onClick={() => signOut()}
                             >
                               Sair
-                            </button>
+                            </Button>
                           )}
                         </Menu.Item>
                     </Menu.Items>

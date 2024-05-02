@@ -8,7 +8,7 @@ import { API_TURN_URL } from "../utils/constants";
 import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import { minutesDiff } from "../utils/transform";
 import useSaveMutation from "../hooks/useSaveMutation";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 
 const schema = yup
   .object({
@@ -33,21 +33,20 @@ export default memo(function EndTurnForm ({isOpen, onOpenChange, onClose, starte
   const url = API_TURN_URL
   const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, TurnEnd>(url, onClose)
   
-  const handleData = (data: TurnEnd) => {
+  const handleData = useCallback((data: TurnEnd) => {
     data.endedAt = new Date()
     data.status = true
     data.duration = minutesDiff(data.endedAt, startedAt)
     return data
-  }
+  }, [startedAt])
 
   const handleTurn = (data: TurnEnd) => onSubmit(handleData(data))
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
-        {() => (
+        <ModalHeader className="flex flex-col gap-1">Encerrar turno</ModalHeader>
           <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleTurn)}>
-            <ModalHeader className="flex flex-col gap-1">Encerrar turno</ModalHeader>
             <ModalBody>
               <Input type="number" {...register("endedKm")} label="Kilometragem do vehiculo" placeholder="Insira a kilometragem para finalisar o turno" isClearable isInvalid={!!errors.endedKm} color={getInputColor(errors.endedKm)} errorMessage={getInputErrorMessage(errors.endedKm)} />
             </ModalBody>
@@ -60,7 +59,6 @@ export default memo(function EndTurnForm ({isOpen, onOpenChange, onClose, starte
               </Button>
             </ModalFooter>
           </form>
-        )}
       </ModalContent>
     </Modal>
   )
