@@ -1,4 +1,5 @@
 import { data } from 'autoprefixer';
+import { pk } from '../interfaces';
 
 const headers = {
   'Content-Type': 'application/json'
@@ -11,17 +12,11 @@ export async function getRecords<T>({ url }: { url: string }) {
   return fetch(url, options)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       return data as T[];
     });
 }
 export async function getRecord<T>(endpoint: string) {
-  return fetch(endpoint, options)
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      return data as T;
-    });
+  return fetch(endpoint, options).then((res) => res.json() as T);
 }
 export async function updateRecord<T>({
   endpoint,
@@ -73,14 +68,18 @@ export async function insertRecord<T>({
     }));
 }
 
-export async function upsertRecord<T>({
+export async function upsertRecord<T extends pk>({
   data,
   endpoint
 }: {
   data: T;
   endpoint: string[];
 }) {
-  return await (endpoint[1].length ? updateRecord : insertRecord)<T>({
+  return await (
+    !endpoint[1].length && (!data.id || data.id === undefined)
+      ? insertRecord
+      : updateRecord
+  )<T>({
     endpoint,
     data
   });

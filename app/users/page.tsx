@@ -12,7 +12,8 @@ import { User } from '@prisma/client';
 export default function IndexPage() {
   
   const url = API_USER_URL
-  const {entities: users} = useEntities<User>(url)
+  const {entities, isPending, init, setEntities} = useEntities<User>(url)
+
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <div className='flex justify-between items-center'>
@@ -22,8 +23,8 @@ export default function IndexPage() {
         </div>
         <AddButton />
       </div>
-      <Search />
-      <EntityTable entities={users} titles={['Nome', 'Email', 'CPF', "Função"]} fields={['name', 'email', 'govID', 'type']} />
+      <Search<User> entities={init} setEntities={setEntities} />
+      <EntityTable entities={entities} titles={['Nome', 'Email', 'CPF', "Função"]} fields={['name', 'email', 'govID', 'type']} isPending={isPending} />
       <EntityModal url={url} label='usuário'>
         <UserTabs />
       </EntityModal>

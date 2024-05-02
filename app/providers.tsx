@@ -3,8 +3,6 @@
 import { SessionProvider } from "next-auth/react";
 import {NextUIProvider} from "@nextui-org/react";
 import ModalContextProvider from "../context/modalContextProvider";
-import ToastContextProvider from "../context/toastContextProvider";
-import OperationContextProvider from "../context/operationContextProvider";
 import {
   QueryClient,
   QueryClientProvider
@@ -21,11 +19,7 @@ const AppProvider = ({ children }: Props) => (
     <NextUIProvider>
       <QueryClientProvider client={queryClient}>
         <ModalContextProvider>
-          <ToastContextProvider>
-            <OperationContextProvider>
-              {children}
-            </OperationContextProvider>
-          </ToastContextProvider>
+          {children}
         </ModalContextProvider>
       </QueryClientProvider>
     </NextUIProvider>

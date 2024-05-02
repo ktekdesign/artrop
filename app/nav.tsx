@@ -1,21 +1,20 @@
 'use client';
 
-import { Fragment, Suspense } from 'react';
+import { Fragment, memo } from 'react';
 import { usePathname } from 'next/navigation';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import TurnButton from './turn-button';
-import useOperation from "../hooks/useOperation"
-import { getVars } from "../utils/getVars"
 import useTurn from '../hooks/useTurn';
+import Operation from './operation';
 
-const navigation = [
+const urls = [
   { name: 'Usuários', href: '/users' },
   { name: 'Clientes', href: '/customers' },
   { name: 'Navios', href: '/ships' },
   { name: 'Caminhões', href: '/vehicles' },
-  { name: 'Dashboard', href: '/' }
+  { name: 'Dashboard', href: '/dashboard' }
   //{ name: 'Turnos', href: '/turns' }
 ];
 
@@ -23,12 +22,15 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function Nav() {
+export default memo(function Nav() {
+  const { data: session, status } = useSession({ required: true })
   const pathname = usePathname()
   const {id, operation} = useTurn()
-  const operationData = getVars(operation)
-  const Turn = () => <Suspense><TurnButton id={id} operation={operationData} /></Suspense>
+  const Turn = () => <TurnButton id={id} operationId={operation?.operationId} />
+  const navigation = session?.user?.type === 'ADMIN' ? urls : status === "authenticated" ? [{ name: 'Meu Turno', href: '/' }] : []
   return (
+    <>
+    {operation && <Operation operation={operation} turnId={id} />}
     <Disclosure as="nav" className="bg-white shadow-sm">
       {({ open }) => (
         <>
@@ -159,5 +161,6 @@ export default function Nav() {
         </>
       )}
     </Disclosure>
+    </>
   );
-}
+})

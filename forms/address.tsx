@@ -1,5 +1,5 @@
 import { Input, InputProps, forwardRef } from "@nextui-org/react"
-import { Ref } from "react"
+import { Ref, memo } from "react"
 import preventNull from "../utils/prevent-null"
 import { JsonValue } from "@prisma/client/runtime/library"
 import * as yup from "yup"
@@ -27,4 +27,4 @@ const AddressForm = forwardRef(({address, props}: {address?: JsonValue, props: I
   </div>
 )
 
-export default AddressForm
+export default memo(AddressForm)

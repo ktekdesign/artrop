@@ -1,13 +1,12 @@
 import { getRecord } from '../utils/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import submit from '../utils/submit';
-import useToast from './useToast';
 import useModal from './useModal';
 import { useState } from 'react';
 import { pk } from '../interfaces';
+import { toast } from 'react-toastify';
 
 export default function useEntity<T, K>({ url }: { url?: string }) {
-  const { handleToast } = useToast();
   const { action, handleClose } = useModal();
   const { id, operation } = action;
   const queryClient = useQueryClient();
@@ -15,7 +14,7 @@ export default function useEntity<T, K>({ url }: { url?: string }) {
   const [selected, setSelected] = useState<string | number>(0);
 
   const saveMutation = useMutation({
-    mutationFn: async (data: K) =>
+    mutationFn: async (data: K & pk) =>
       submit({
         url,
         data,
@@ -23,15 +22,15 @@ export default function useEntity<T, K>({ url }: { url?: string }) {
       }),
     onSuccess: ({ message, ...data }: T & pk) => {
       if (operation !== 'update') handleClose();
-      handleToast(message);
+      toast(message);
       queryClient.setQueryData([url, data.id], data);
     },
     onSettled: async () =>
       await queryClient.invalidateQueries({ queryKey: [url] }),
-    onError: (err: Error) => handleToast(err.message)
+    onError: (err: Error) => toast(err.message)
   });
 
-  const onSubmit = (data: K) => saveMutation.mutate(data);
+  const onSubmit = (data: K & pk) => saveMutation.mutate(data);
 
   const fetchData = () =>
     id && url ? getRecord<T>(endpoint.join('')) : undefined;

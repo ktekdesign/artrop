@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
 import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
+import { Status } from "@prisma/client";
+import { memo } from "react";
 
 const schema = yup
   .object({
@@ -15,9 +17,10 @@ export interface Weight {
   weight_load?: number,
   operationId?: string
   weight_unload?: number,
-  
+  status?: Status
 }
-export default function WeightForm ({isOpen, onOpenChange, onClose, field, handleWeight, isHandlingMutation}: {isOpen: boolean, onOpenChange(): void, onClose(): void, field: string, handleWeight: (data: Weight) => void, isHandlingMutation: boolean}) {
+
+export default memo(function WeightForm ({isOpen, onOpenChange, onClose, field, handleWeight, isHandlingMutation}: {isOpen: boolean, onOpenChange(): void, onClose(): void, field: string, handleWeight: (data: Weight) => void, isHandlingMutation: boolean}) {
   const {
     register,
     handleSubmit,
@@ -48,4 +51,4 @@ export default function WeightForm ({isOpen, onOpenChange, onClose, field, handl
         </ModalContent>
       </Modal>
   )
-}
+})

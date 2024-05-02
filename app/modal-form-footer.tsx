@@ -1,7 +1,8 @@
 import { Button, ModalFooter } from "@nextui-org/react";
 import useModal from "../hooks/useModal";
+import { memo } from "react";
 
-export default function ModalFormFooter ({isLoading, buttonLabel}: {isLoading: boolean, buttonLabel?: string}) {
+export default memo(function ModalFormFooter ({isLoading, buttonLabel}: {isLoading: boolean, buttonLabel?: string}) {
   const {handleClose} = useModal()
   return (
     <ModalFooter>
@@ -13,4 +14,4 @@ export default function ModalFormFooter ({isLoading, buttonLabel}: {isLoading: b
       </Button>
     </ModalFooter>
   )
-}
+})

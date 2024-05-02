@@ -1,7 +1,7 @@
 import { deleteRecord, upsertRecord } from './api';
-import { Action } from '../interfaces';
+import { Action, pk } from '../interfaces';
 
-export default async function submit<T>({
+export default async function submit<T extends pk>({
   data,
   action,
   url
@@ -11,9 +11,8 @@ export default async function submit<T>({
   url?: string;
 }) {
   if (!url) throw new Error('A URL não foi encontrada');
-
   const { id, operation } = action;
-  if (operation !== 'insert' && !id)
+  if (['update', 'delete'].includes(operation || '') && !data.id && !id)
     throw new Error(
       'O seu usuário não tem a permissão para realizar essa operação'
     );

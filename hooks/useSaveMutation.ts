@@ -1,36 +1,37 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import submit from '../utils/submit';
-import useToast from '../hooks/useToast';
 import { pk } from '../interfaces';
 import { API_TURN_URL } from '../utils/constants';
 import useModal from './useModal';
+import { toast } from 'react-toastify';
 
 export default function useSaveMutation<T, K>(
   url: string,
   callback?: (data?: Omit<T & pk, 'message'>) => void | string
 ) {
-  const { handleToast } = useToast();
   const queryClient = useQueryClient();
   const { action } = useModal();
   const saveMutation = useMutation({
-    mutationFn: async (data: K) =>
+    mutationFn: async (data: K & pk) =>
       submit({
         url,
         data,
-        action
+        action:
+          data.id && !action.operation
+            ? { id: data.id, operation: 'update' }
+            : action
       }),
     onSuccess: ({ message, ...data }: T & pk) => {
       if (callback) {
-        const toast = callback(data);
-        if (typeof toast === 'string') handleToast(toast);
+        const info = callback(data);
+        if (typeof info === 'string') toast(info);
       }
-      queryClient.invalidateQueries({
-        queryKey: [API_TURN_URL, 'open']
-      });
-      handleToast(message);
+      toast(message);
     },
-    onError: (err: Error) => handleToast(err.message)
+    onSettled: async () =>
+      await queryClient.invalidateQueries({ queryKey: [API_TURN_URL, 'open'] }),
+    onError: (err: Error) => toast(err.message)
   });
-  const onSubmit = (data: K) => saveMutation.mutate(data);
+  const onSubmit = (data: K & pk) => saveMutation.mutate(data);
   return { isHandlingMutation: saveMutation.isPending, onSubmit };
 }

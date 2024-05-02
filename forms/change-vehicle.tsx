@@ -7,6 +7,7 @@ import { Vehicle, VehiclesTurn } from "@prisma/client";
 import { API_VEHICLESTURN_URL, API_VEHICLE_URL } from "../utils/constants";
 import useEntities from "../hooks/useEntities";
 import useSaveMutation from "../hooks/useSaveMutation";
+import { Suspense, memo } from "react";
 
 const schema = yup
   .object({
@@ -18,7 +19,7 @@ interface VehiclesTurnInit extends Omit<VehiclesTurn, "id" | "turnId" | "created
   userId?: string;
   turnId?: string;
 }
-export default function ChangeVehicleForm ({isOpen, onOpenChange, onClose, turnId}: {isOpen: boolean, onOpenChange(): void, onClose(): void, turnId: string}) {
+export default memo(function ChangeVehicleForm ({isOpen, onOpenChange, onClose, turnId}: {isOpen: boolean, onOpenChange(): void, onClose(): void, turnId: string}) {
   const {
     handleSubmit,
     control
@@ -37,6 +38,7 @@ export default function ChangeVehicleForm ({isOpen, onOpenChange, onClose, turnI
             <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
               <ModalHeader className="flex flex-col gap-1">Trocar Caminhão</ModalHeader>
               <ModalBody>
+                <Suspense>
                   <Controller
                     name="vehicleId"
                     control={control}
@@ -59,9 +61,10 @@ export default function ChangeVehicleForm ({isOpen, onOpenChange, onClose, turnI
                       Trocar
                     </Button>
                   </ModalFooter>
+                </Suspense>
               </ModalBody>
             </form>
         </ModalContent>
       </Modal>
   )
-}
+})

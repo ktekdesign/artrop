@@ -6,10 +6,8 @@ import * as yup from "yup"
 import { Operation, OperationType, Ship } from "@prisma/client";
 import { API_OPERATION_URL, API_SHIP_URL } from "../utils/constants";
 import useEntities from "../hooks/useEntities";
-import useOperation from "../hooks/useOperation";
-import useEntity from "../hooks/useEntity";
-import ModalFormFooter from "../app/modal-form-footer";
 import useSaveMutation from "../hooks/useSaveMutation";
+import { memo } from "react";
 
 const schema = yup
   .object({
@@ -23,7 +21,7 @@ interface OperationInit extends Pick<Operation, "shipId" | "type"> {
   turnId?: string;
 }
 
-export default function StartOperationForm ({isOpen, onOpenChange, onClose}: {isOpen: boolean, onOpenChange(): void, onClose(): void}) {
+export default memo(function StartOperationForm ({isOpen, onOpenChange, onClose, turnId}: {isOpen: boolean, onOpenChange(): void, onClose(): void, turnId: string}) {
   const {
     handleSubmit,
     control,
@@ -33,12 +31,9 @@ export default function StartOperationForm ({isOpen, onOpenChange, onClose}: {is
   
   const url = API_OPERATION_URL
   const {isHandlingMutation, onSubmit} = useSaveMutation<Operation, OperationInit>(url, onClose)
-  const {id: turnId} = useOperation()
   const {entities: ships} = useEntities<Ship>(API_SHIP_URL)
   const operations = [{key: 'VIRINHA_CACAMBA', value: 'Caçamba'}, {key: 'VIRINHA_PRANCHA', value: 'Prancha'}, {key: 'VIRINHA_CONTAINER', value: 'Container'}, {key: 'ENTRE_ARMAZENS', value: 'Entre Armazéns'}];
   
-  if(!turnId) return
-
   const handleData = async (data: OperationInit) => onSubmit({...data, turnId})
   
   return (
@@ -88,4 +83,4 @@ export default function StartOperationForm ({isOpen, onOpenChange, onClose}: {is
         </ModalContent>
       </Modal>
   )
-}
+})

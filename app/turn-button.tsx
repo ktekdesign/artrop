@@ -4,11 +4,10 @@ import StartTurn from "./start-turn"
 import EndTurn from "./end-turn"
 
 import VehicleButton from "./vehicle-button"
-import Operation from "./operation"
-import { OperationData } from "../interfaces"
+import { memo } from "react"
 
-export default function TurnButton ({id, operation}: {id: string, operation: OperationData}) {
+export default memo(function TurnButton ({id, operationId}: {id: string, operationId?: string}) {
   return (
-    !id ? <StartTurn /> : <><div className="flex gap-4"><VehicleButton id={id} />{!operation.operationId && <EndTurn id={id} />}</div><Operation operation={operation} /></>
+    !id ? <StartTurn /> : <div className="flex gap-4"><VehicleButton id={id} />{!operationId && <EndTurn id={id} />}</div>
   )
-}
+})

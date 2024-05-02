@@ -3,8 +3,9 @@ import { RocketLaunchIcon } from "@heroicons/react/24/solid";
 import { Button, useDisclosure } from "@nextui-org/react";
 import StartTurnForm from "../forms/start-turn";
 import useModal from "../hooks/useModal";
+import { memo } from "react";
 
-export default function StartTurn () {
+export default memo(function StartTurn () {
   const {isOpen, onOpen, onClose, onOpenChange} = useDisclosure()
   const {handleAction} = useModal()
   
@@ -21,4 +22,4 @@ export default function StartTurn () {
       <StartTurnForm {...{isOpen, onClose, onOpenChange}} />
     </div>
   )
-}
+})

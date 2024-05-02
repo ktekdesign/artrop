@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, memo } from "react";
 import { ResponsiveContainer, Pie, PieChart, Cell, LabelList } from "recharts";
 
 const COLORS = [
@@ -69,7 +69,7 @@ export type PieData = {
   value: number;
 };
 
-export default function Chart({ data }: { data?: PieData[] }) {
+export default memo(function Chart({ data }: { data?: PieData[] }) {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <PieChart width={600} height={400}>
@@ -94,4 +94,4 @@ export default function Chart({ data }: { data?: PieData[] }) {
       </PieChart>
     </ResponsiveContainer>
   );
-}
+})

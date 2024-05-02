@@ -2,21 +2,23 @@
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { Input } from '@nextui-org/react';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useRef } from 'react';
+import { pk } from '../interfaces';
 
-const Search = <T, K extends keyof T>({ entities, setEntities }: { entities?: T[], setEntities?: Dispatch<SetStateAction<T[]>> }) => {
-  const [search, setSearch] = useState("")
-  
-  function handleSearch(e) {
-    setSearch(e.target.value)
+const Search = <T extends pk,>({ entities, setEntities }: { entities?: T[], setEntities: Dispatch<SetStateAction<T[] | undefined>> }) => {
+  const ref = useRef<HTMLInputElement | null>(null)
+  const handleSearch = () => {
+    const search = ref?.current?.value
+    const results = entities?.filter(entity => Object.values(entity).some(value => value?.toString().toLowerCase().includes(search)))
+    setEntities(results || entities)
   }
 
-  //useEffect(() => setEntities(entities?.filter(entity => typeof entity === "object" ? Object.values(entity).some(value => value.includes(search)) : false) || []), [search])
   return (
     <div className="my-8 rounded-2xl flex justify-center items-center shadow-lg">
       <Input
-        label="Search"
+        label="Busca"
         isClearable
+        ref={ref}
         radius="lg"
         onChange={handleSearch}
         classNames={{
@@ -40,7 +42,7 @@ const Search = <T, K extends keyof T>({ entities, setEntities }: { entities?: T[
             "!cursor-text",
           ],
         }}
-        placeholder="Type to search..."
+        placeholder="Digite aqui para fazer uma busca..."
         startContent={
           <MagnifyingGlassIcon className='w-4' />
         }

@@ -2,8 +2,9 @@ import { Button, useDisclosure } from "@nextui-org/react";
 import { ArrowsRightLeftIcon } from "@heroicons/react/24/solid";
 import ChangeVehicleForm from "../forms/change-vehicle";
 import useModal from "../hooks/useModal";
+import { memo } from "react";
 
-export default function VehicleButton ({id}: {id: string}) {
+export default memo(function VehicleButton ({id}: {id: string}) {
   
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
   const action = {operation: "insert"}
@@ -24,4 +25,4 @@ export default function VehicleButton ({id}: {id: string}) {
       <ChangeVehicleForm {...{isOpen, onOpen, onOpenChange, onClose, turnId: id}} />
     </>
   )
-}
+})

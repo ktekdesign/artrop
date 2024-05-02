@@ -35,24 +35,13 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string[] } }
-) {
-  const data = await req.json();
-  const id = params?.id[0];
+export async function PUT(req: NextRequest) {
+  const { id, ...data } = await req.json();
   const userId = await getUserId(req);
   return NextResponse.json(
     await prisma.travel.update({
       where: { id, userId },
-      data,
-      select: {
-        id: true,
-        status: true,
-        endedAt: true,
-        startedAt: true,
-        duration: true
-      }
+      data
     })
   );
 }

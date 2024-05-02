@@ -25,7 +25,7 @@ export interface OperationInterf extends Operation {
   travel?: Travel[] | undefined;
 }
 export interface TurnData extends Turn {
-  operation?: OperationInterf[] | undefined;
+  operation: OperationData;
 }
 export interface OperationData {
   type?: OperationType;

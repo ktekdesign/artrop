@@ -8,8 +8,9 @@ import formatDate from "../utils/formatDate";
 import preventNull from "../utils/prevent-null";
 import { transformDate, transformNumber } from "../utils/transform";
 import useEntity from "../hooks/useEntity";
-import LoadingComponent from "../app/loading-component";
+import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
+import { memo } from "react";
 
 const schema = yup
   .object({
@@ -23,7 +24,7 @@ const schema = yup
 interface TurnRegister extends Omit<Turn, "id" | "userId" | "customerId" | "endedAt" | "duration"> {
   endedAt?: string | null;
 }
-export default function TurnTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
+export default memo(function TurnTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
   const {
     register,
     handleSubmit,
@@ -35,7 +36,7 @@ export default function TurnTabs ({buttonLabel, url}: {buttonLabel?: string, url
   const {entity, isLoading, isHandlingMutation, onSubmit, selected, setSelected} = useEntity<Turn, TurnRegister>({url: url || ""})
   
   return (
-    <LoadingComponent isLoading={isLoading}>
+    <Loading isLoading={isLoading}>
     <Tabs
       fullWidth
       size="md"
@@ -53,6 +54,6 @@ export default function TurnTabs ({buttonLabel, url}: {buttonLabel?: string, url
         </form>
       </Tab>
     </Tabs>
-    </LoadingComponent>
+    </Loading>
   )
-}
+})

@@ -11,7 +11,6 @@ const useTravel = (operation: OperationData) => {
 
   const { type, operationId, id, status, startedAt, operationStartedAt } =
     operation;
-
   const [statusesFiltered, nextStatus] = useMemo(() => {
     const statuses = [
       {
@@ -98,33 +97,32 @@ const useTravel = (operation: OperationData) => {
   const { isHandlingMutation, onSubmit } = useSaveMutation<Travel, unknown>(
     `${url}${id}`,
     (data) => {
-      //setNextStatus((prev) => statusesFiltered.length - 1 > prev ? prev + 1 : 0)
       if (data?.duration) return `Viagem encerrada em ${data.duration} minutos`;
     }
   );
 
   const updateStatus = useCallback(() => {
     const statusToUpdate = statusesFiltered[nextStatus].status;
-    //if(statusToUpdate === Status.FIM_VIAGEM && !weight) return new Error("É preciso informar o peso antes de encerrar a viagem");
     const statusTime = new Date();
     const duration =
       statusToUpdate === Status.FIM_VIAGEM
         ? minutesDiff(statusTime, startedAt)
         : 0;
-    const data = id
-      ? {
-          id,
-          status: statusToUpdate,
-          duration,
-          ...JSON.parse(
-            `{"${statusesFiltered[nextStatus].field}": "${statusTime.toISOString()}"}`
-          )
-        }
-      : {
-          status: Status.INICIO_VIAGEM,
-          operationId
-        };
-
+    const data =
+      id && id !== undefined
+        ? {
+            id,
+            status: statusToUpdate,
+            duration,
+            ...JSON.parse(
+              `{"${statusesFiltered[nextStatus].field}": "${statusTime.toISOString()}"}`
+            )
+          }
+        : {
+            status: Status.INICIO_VIAGEM,
+            operationId
+          };
+    console.log(data);
     onSubmit(data);
   }, [id, nextStatus, operationId, onSubmit, statusesFiltered, startedAt]);
 
@@ -141,13 +139,16 @@ const useTravel = (operation: OperationData) => {
     [id, nextStatus, onSubmit, statusesFiltered]
   );
   return {
-    statusesFiltered,
-    nextStatus,
+    nextStatus: statusesFiltered[nextStatus],
     isHandlingMutation,
     updateStatus,
     operationId,
     handleWeight,
-    operationStartedAt
+    operationStartedAt,
+    toggleButton:
+      statusesFiltered[nextStatus].status !== Status.PESO_CARREGADO &&
+      statusesFiltered[nextStatus].status !== Status.PESO_DESCARREGADO,
+    toggleColor: Boolean(nextStatus % 2)
   };
 };
 

@@ -1,6 +1,6 @@
-import { OperationData, TurnData } from '../interfaces';
+import { OperationData, OperationInterf } from '../interfaces';
 
-export const getVars = (operations: TurnData['operation']): OperationData => {
+export const getVars = (operations: OperationInterf[]): OperationData => {
   const {
     type,
     travel,

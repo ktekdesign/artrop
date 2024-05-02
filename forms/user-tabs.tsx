@@ -10,8 +10,9 @@ import { cpfRegExp, phoneRegExp } from "../utils/regex";
 import { getOnlyDigit, sanitize, transformDate, transformJsonValue } from "../utils/transform";
 import AddressForm, {schemaAddress} from "./address";
 import useEntity from "../hooks/useEntity";
-import LoadingComponent from "../app/loading-component";
+import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
+import { memo } from "react";
 
 const schema = yup
   .object({
@@ -37,7 +38,7 @@ interface UserRegister extends Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'pa
   cnh_expires?: string | null;
 }
 
-export default function UserTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
+export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
   const {
     register,
     handleSubmit,
@@ -72,7 +73,7 @@ export default function UserTabs ({buttonLabel, url}: {buttonLabel?: string, url
   const handleData = (data: UserRegister) => onSubmit((operation === "insert" ? handleInsert : handleUpdate)(data))
   
   return (
-    <LoadingComponent isLoading={isLoading}>
+    <Loading isLoading={isLoading}>
       <Tabs
         fullWidth
         size="md"
@@ -144,6 +145,6 @@ export default function UserTabs ({buttonLabel, url}: {buttonLabel?: string, url
           </Tab>
         )}
       </Tabs>
-    </LoadingComponent>
+    </Loading>
   )
-}
+})

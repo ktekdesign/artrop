@@ -1,18 +1,20 @@
+import { useState } from 'react';
 import { getRecords } from '../utils/api';
-import { UseQueryOptions, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
-export default function useEntities<T>(
-  url: string,
-  options?:
-    | Omit<UseQueryOptions<T[], unknown, T[], string[]>, 'queryKey' | 'queryFn'>
-    | undefined
-) {
+export default function useEntities<T>(url: string) {
   const fetchData = () => getRecords<T>({ url });
-
-  const { data, isError, isLoading } = useQuery({
+  const { data, isPending, isSuccess } = useQuery({
     queryKey: [url],
     queryFn: fetchData
   });
+  const [entities, setEntities] = useState<T[] | undefined>();
 
-  return { entities: data, isError, isLoading };
+  return {
+    init: data,
+    isPending,
+    isSuccess,
+    entities: entities || data,
+    setEntities
+  };
 }

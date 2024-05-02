@@ -8,7 +8,7 @@ import { API_TURN_URL } from "../utils/constants";
 import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import { minutesDiff } from "../utils/transform";
 import useSaveMutation from "../hooks/useSaveMutation";
-import useOperation from "../hooks/useOperation";
+import { memo } from "react";
 
 const schema = yup
   .object({
@@ -21,7 +21,7 @@ interface TurnEnd extends Omit<Turn, "id" | "userId" | "startedAt" | "endedAt" |
   status?: boolean;
   duration?: number;
 }
-export default function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: boolean, onOpenChange(): void, onClose(): void}) {
+export default memo(function EndTurnForm ({isOpen, onOpenChange, onClose, startedAt}: {isOpen: boolean, onOpenChange(): void, onClose(): void, startedAt?: Date}) {
   const {
     register,
     handleSubmit,
@@ -32,8 +32,7 @@ export default function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: b
   
   const url = API_TURN_URL
   const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, TurnEnd>(url, onClose)
-  const {startedAt} = useOperation()
-
+  
   const handleData = (data: TurnEnd) => {
     data.endedAt = new Date()
     data.status = true
@@ -65,4 +64,4 @@ export default function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: b
       </ModalContent>
     </Modal>
   )
-}
+})

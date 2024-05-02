@@ -1,11 +1,8 @@
 import { Input, Tab, Tabs } from "@nextui-org/react";
-import { useState } from "react";
+import { memo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
-import submit from "../utils/submit";
-import useToast from "../hooks/useToast";
-import useModal from "../hooks/useModal";
 import {CheckboxGroup, Checkbox} from "@nextui-org/react";
 import ModalFormFooter from "../app/modal-form-footer";
 import { Customer, OperationType } from "@prisma/client";
@@ -16,9 +13,8 @@ import enumValue from "../utils/enumValue";
 import { operations } from "../utils/constants";
 import AddressForm, { schemaAddress } from "./address";
 import useEntity from "../hooks/useEntity";
-import LoadingComponent from "../app/loading-component";
+import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
-import { useMutation } from 'react-query';
 
 const schema = yup
   .object({
@@ -38,7 +34,7 @@ const schema = yup
 
 interface CustomerRegister extends Omit<Customer, "id" | 'createdAt' | 'updatedAt'> {}
 
-export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
+export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
   const {
     register,
     handleSubmit,
@@ -72,7 +68,7 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
   const handleData = (data: CustomerRegister) => onSubmit(handleUpdate(data))
   
   return (
-    <LoadingComponent isLoading={isLoading}>
+    <Loading isLoading={isLoading}>
     <form onSubmit={handleSubmit(handleData)}>
       <Tabs
         fullWidth
@@ -127,6 +123,6 @@ export default function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string,
       )}
     </Tabs>
   </form>
-  </LoadingComponent>
+  </Loading>
   )
-}
+})

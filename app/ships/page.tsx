@@ -11,7 +11,8 @@ import AddButton from '../add-button';
 
 export default function IndexPage() {
   const url = API_SHIP_URL
-  const {entities: ships} = useEntities<Ship>(url)
+  const {entities, isPending, init, setEntities} = useEntities<Ship>(url)
+  
   const titles = ['Nome', 'Produto', 'Data atracação', 'Data Desatracação']
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
@@ -22,8 +23,8 @@ export default function IndexPage() {
         </div>
         <AddButton />
       </div>
-      <Search />
-      <EntityTable entities={ships} titles={titles} fields={['name', 'product', 'landingAt', 'departAt']} />
+      <Search<Ship> entities={init} setEntities={setEntities} />
+      <EntityTable entities={entities} isPending={isPending} titles={titles} fields={['name', 'product', 'landingAt', 'departAt']} />
       <EntityModal url={url} label='navio'>
         <ShipTabs />
       </EntityModal>

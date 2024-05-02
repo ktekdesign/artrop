@@ -7,8 +7,9 @@ import ModalFormFooter from "../app/modal-form-footer";
 import preventNull from "../utils/prevent-null";
 import { sanitize, transformJsonValue, transformNumber } from "../utils/transform";
 import useEntity from "../hooks/useEntity";
-import LoadingComponent from "../app/loading-component";
+import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
+import { memo } from "react";
 
 const schema = yup
   .object({
@@ -36,7 +37,7 @@ interface VehicleRegister extends Omit<Vehicle, "id" | "createdAt" | "updatedAt"
   }
 }
 
-export default function VehicleTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
+export default memo(function VehicleTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
   const {
     register,
     handleSubmit,
@@ -66,7 +67,7 @@ export default function VehicleTabs ({buttonLabel, url}: {buttonLabel?: string, 
   const handleData = async (data: VehicleRegister) => onSubmit(handleUpdate(data))
   
   return (
-    <LoadingComponent isLoading={isLoading}>
+    <Loading isLoading={isLoading}>
       <Tabs
             fullWidth
             size="md"
@@ -131,6 +132,6 @@ export default function VehicleTabs ({buttonLabel, url}: {buttonLabel?: string, 
             </Tab>
             )}
         </Tabs>
-      </LoadingComponent>
+      </Loading>
   )
-}
+})

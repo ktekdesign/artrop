@@ -3,6 +3,7 @@ import { prisma } from '../../../../utils/client';
 import { getToken } from 'next-auth/jwt';
 import { getUserId } from '../../../../utils/api-action';
 import { Status } from '@prisma/client';
+import { getVars } from '../../../../utils/getVars';
 
 export async function GET(
   req: NextRequest,
@@ -32,7 +33,9 @@ export async function GET(
       }
     });
 
-    return NextResponse.json(turn);
+    return NextResponse.json(
+      turn ? { ...turn, operation: getVars(turn.operation) } : null
+    );
   } else if (params?.id) {
     return NextResponse.json(
       await prisma.turn.findUnique({

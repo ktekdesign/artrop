@@ -8,8 +8,9 @@ import formatDate from "../utils/formatDate";
 import preventNull from "../utils/prevent-null";
 import { sanitize, transformDate } from "../utils/transform";
 import useEntity from "../hooks/useEntity";
-import LoadingComponent from "../app/loading-component";
+import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
+import { memo } from "react";
 
 const schema = yup
   .object({
@@ -24,7 +25,8 @@ const schema = yup
 interface ShipRegister extends Omit<Ship, "id" | "createdAt" | "updatedAt" | "departAt"> {
   departAt?: string | null;
 }
-export default function ShipTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
+
+export default memo(function ShipTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
   const {
     register,
     handleSubmit,
@@ -42,7 +44,7 @@ export default function ShipTabs ({buttonLabel, url}: {buttonLabel?: string, url
   const handleShip = (data: ShipRegister) => onSubmit(handleData(data))
   
   return (
-    <LoadingComponent isLoading={isLoading}>
+    <Loading isLoading={isLoading}>
     <Tabs
       fullWidth
       size="md"
@@ -61,6 +63,6 @@ export default function ShipTabs ({buttonLabel, url}: {buttonLabel?: string, url
         </form>
       </Tab>
     </Tabs>
-    </LoadingComponent>
+    </Loading>
   )
-}
+})

@@ -8,6 +8,7 @@ import { API_CUSTOMER_URL, API_TURN_URL, API_VEHICLE_URL } from "../utils/consta
 import useEntities from "../hooks/useEntities";
 import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import useSaveMutation from "../hooks/useSaveMutation";
+import { memo } from "react";
 
 const schema = yup
   .object({
@@ -21,7 +22,7 @@ interface TurnInit extends Omit<Turn, "id" | "userId" | "startedAt" | "endedAt" 
   userId?: string
 }
 
-export default function StartTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: boolean, onOpenChange(): void, onClose(): void}) {
+export default memo(function StartTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: boolean, onOpenChange(): void, onClose(): void}) {
   const {
     register,
     handleSubmit,
@@ -84,4 +85,4 @@ export default function StartTurnForm ({isOpen, onOpenChange, onClose}: {isOpen:
         </ModalContent>
       </Modal>
   )
-}
+})

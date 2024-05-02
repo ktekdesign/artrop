@@ -38,15 +38,11 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(operation);
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string[] } }
-) {
-  const { turnId, ...data } = await req.json();
-  const id = params?.id[0];
+export async function PUT(req: NextRequest) {
+  const { id, ...data } = await req.json();
   const userId = await getUserId(req);
   const operation = await prisma.operation.update({
-    where: { id, userId, turnId },
+    where: { id, userId },
     data
   });
   return NextResponse.json(operation);

@@ -1,33 +1,24 @@
 "use client"
-import { Button } from "@nextui-org/react";
-import { Status, Operation } from "@prisma/client";
 import StartOperation from "./start-operation";
-import WeightButton from "./weight-button";
 import EndOperation from "./end-operation";
-import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { OperationData } from "../interfaces";
-import useTravel from "../hooks/useTravel";
+import { memo } from "react";
+import Travel from "./travel";
 
-export default function Operation ({operation}: {operation: OperationData}) {
+export default memo(function Operation ({operation, turnId}: {operation: OperationData, turnId: string}) {
   
-  const {statusesFiltered, nextStatus, isHandlingMutation, updateStatus, operationId, handleWeight, operationStartedAt} = useTravel(operation)
+  const {operationId, operationStartedAt, id} = operation
   
   return (
-    <div className="fixed w-full bottom-10 flex gap-x-8 justify-center items-center z-10 left-0">
+    <div className="fixed w-full bottom-10 flex flex-col gap-4 sm:flex-row sm:gap-8 justify-center items-center z-10 left-0">
       {!operationId ?
-        <StartOperation />
+        <StartOperation turnId={turnId} />
         :
-        <div className="flex flex-col gap-4 sm:flex-row sm:gap-8">
-          {statusesFiltered[nextStatus].status !== Status.PESO_CARREGADO && statusesFiltered[nextStatus].status !== Status.PESO_DESCARREGADO ? 
-            <Button size="lg" color={nextStatus % 2 ? "success" : "warning"} isLoading={isHandlingMutation} onClick={() => updateStatus()} endContent={<ArrowRightIcon />}>
-              {statusesFiltered[nextStatus].label}
-            </Button>
-          :
-            <WeightButton field={statusesFiltered[nextStatus].field} isHandlingMutation={isHandlingMutation} handleWeight={handleWeight} />
-          }
-          <EndOperation id={operationId} startedAt={operationStartedAt} />
-        </div>
+        <>
+          <Travel operation={operation} />
+          {!id && <EndOperation id={operationId} startedAt={operationStartedAt} />}
+        </>
       }
     </div>
   )
-}
+})
