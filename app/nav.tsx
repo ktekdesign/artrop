@@ -8,15 +8,17 @@ import TurnButton from './turn-button';
 import useTurn from '../hooks/useTurn';
 import Operation from './operation';
 import useNav from '../hooks/useNav';
-import Menu from './menu';
+import MapComponent from './map-component';
+import MenuItem from './menu-item';
+import { Navigation } from '../interfaces';
 
 export default memo(function Nav() {
-  const { navigation, pathname, isMenuOpen, setIsMenuOpen } = useNav()
+  const { navigation, pathname, isMenuOpen, toggleMenu } = useNav()
   const {id, operation, isSuccess} = useTurn()
   return (
     <>
     <Operation operation={operation} turnId={id} />
-    <Navbar isBordered onMenuOpenChange={setIsMenuOpen} maxWidth="full" className='header'>
+    <Navbar isBordered onMenuOpenChange={toggleMenu} maxWidth="full" className='header'>
       <NavbarBrand className="flex flex-grow-0 items-center">
         <svg
           width="32"
@@ -45,7 +47,9 @@ export default memo(function Nav() {
         />
       </NavbarBrand>
       <NavbarContent className="hidden md:-my-px md:ml-6 md:flex md:space-x-8" justify='start'>
-        <Menu navigation={navigation} pathname={pathname} />
+        <MapComponent<Navigation> items={navigation}>
+          <MenuItem pathname={pathname} />
+        </MapComponent>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem><TurnButton id={id} operationId={operation?.operationId} isSuccess={isSuccess} /></NavbarItem>
@@ -72,13 +76,13 @@ export default memo(function Nav() {
             >
               Sair
             </DropdownItem>
-            
           </DropdownMenu>
         </Dropdown>  
-        
       </NavbarContent>
       <NavbarMenu>
-        <Menu navigation={navigation} pathname={pathname} />
+        <MapComponent<Navigation> items={navigation}>
+          <MenuItem pathname={pathname} />
+        </MapComponent>
       </NavbarMenu>
     </Navbar>
     </>

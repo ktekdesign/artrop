@@ -1,5 +1,5 @@
 import { Input, Tab, Tabs } from "@nextui-org/react";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
@@ -16,6 +16,7 @@ import useEntity from "../hooks/useEntity";
 import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import useCep from "../hooks/useCep";
+import { CEP } from "cep-promise";
 
 const schema = yup
   .object({
@@ -40,6 +41,7 @@ export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: st
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -47,14 +49,22 @@ export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: st
 
   const {entity, isLoading, isHandlingMutation, onSubmit, operation, selected, setSelected} = useEntity<Customer, CustomerRegister>({url})
   const [info, address] = transformJsonValue([entity?.info, entity?.address])
-  const {cep, handleCepChange} = useCep()
-  const handleUpdate = (data: CustomerRegister) => {
+  
+  const setAddress = (cep: CEP) => {
+    if(cep?.state) setValue("address.state", cep.state)
+    if(cep?.city) setValue("address.city", cep.city)
+    if(cep?.neighborhood) setValue("address.neighborhood", cep.neighborhood)
+    if(cep?.street) setValue("address.street", cep.street)
+  }
+  const {cep, handleCepChange} = useCep(setAddress)
+  
+  const handleUpdate = useCallback((data: CustomerRegister) => {
     const [dataInfo, dataAddress] = transformJsonValue([data.info, data.address])
     if(!dataAddress?.code && address?.code) data.address = address
     if(!dataInfo?.name && info?.name) data.info = info
     if(!data.operation.length && entity?.operation.length) data.operation = entity.operation
     return data
-  }
+  }, [address, entity?.operation, info])
   
   const handleData = (data: CustomerRegister) => onSubmit(handleUpdate(data))
   
@@ -93,10 +103,10 @@ export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: st
       <Tab title="Endereço">
         <AddressForm {...{address: entity?.address, cep, handleCepChange, props: [
           {...register("address.code")},
-          {...register("address.address")},
+          {...register("address.street")},
           {...register("address.number")},
           {...register("address.complement")},
-          {...register("address.district")},
+          {...register("address.neighborhood")},
           {...register("address.city")},
           {...register("address.state")}]}} />
         <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />

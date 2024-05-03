@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { getRecords } from '../utils/api';
 import { useQuery } from '@tanstack/react-query';
 
@@ -9,12 +9,12 @@ export default function useEntities<T>(url: string) {
     queryFn: fetchData
   });
   const [entities, setEntities] = useState<T[] | undefined>();
-
+  const current = useMemo(() => entities || data, [data, entities]);
   return {
     init: data,
     isPending,
     isSuccess,
-    entities: entities || data,
+    entities: current,
     setEntities
   };
 }

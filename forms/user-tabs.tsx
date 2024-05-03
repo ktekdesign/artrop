@@ -12,8 +12,9 @@ import AddressForm, {schemaAddress} from "./address";
 import useEntity from "../hooks/useEntity";
 import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import useCep from "../hooks/useCep";
+import { CEP } from "cep-promise";
 
 const schema = yup
   .object({
@@ -44,6 +45,7 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -53,7 +55,14 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
   
   const {entity, isLoading, isHandlingMutation, operation, selected, setSelected, onSubmit} = useEntity<User, UserRegister>({url})
   const [cnh, address] = transformJsonValue([entity?.cnh, entity?.address])
-  const {cep, handleCepChange} = useCep()
+  
+  const setAddress = (cep: CEP) => {
+    if(cep?.state) setValue("address.state", cep.state)
+    if(cep?.city) setValue("address.city", cep.city)
+    if(cep?.neighborhood) setValue("address.neighborhood", cep.neighborhood)
+    if(cep?.street) setValue("address.street", cep.street)
+  }
+  const {cep, handleCepChange} = useCep(setAddress)
 
   const handleInsert = (data: UserRegister) => {
     if(!data.password) throw new Error("Escolha uma senha para continuar")
@@ -62,7 +71,7 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
     return data
   }
 
-  const handleUpdate = (data: UserRegister) => {
+  const handleUpdate = useCallback((data: UserRegister) => {
     const [cnhData, addressData] = transformJsonValue([data.cnh, data.address])
     const cnh_expires = preventNull(cnhData?.expires)
     if(!addressData?.code && address?.code) data.address = address
@@ -70,7 +79,7 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
     data.cnh_expires = transformDate(cnh_expires || cnh?.expires?.toString())?.toISOString()
     if((!data.type || data.type === Role.DRIVER) && entity?.type) data.type = entity.type
     return data
-  }
+  }, [address, cnh, entity?.type])
   
   const handleData = (data: UserRegister) => onSubmit((operation === "insert" ? handleInsert : handleUpdate)(data))
   
@@ -135,10 +144,10 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
             <form onSubmit={handleSubmit(handleData)}>
               <AddressForm {...{address: entity?.address, cep, handleCepChange, props: [
                 {...register("address.code")},
-                {...register("address.address")},
+                {...register("address.street")},
                 {...register("address.number")},
                 {...register("address.complement")},
-                {...register("address.district")},
+                {...register("address.neighborhood")},
                 {...register("address.city")},
                 {...register("address.state")}
               ]}} />

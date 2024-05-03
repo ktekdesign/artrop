@@ -3,6 +3,7 @@ import { Operation, OperationType, Status, Travel, Turn } from '@prisma/client';
 export interface pk {
   id?: string;
   message?: string;
+  name?: string;
 }
 
 export interface Action extends pk {
@@ -40,3 +41,8 @@ export interface success {
   isSuccess?: boolean;
 }
 export const initialOperationData = {} as TurnData;
+
+export interface Navigation {
+  name: string;
+  href: string;
+}

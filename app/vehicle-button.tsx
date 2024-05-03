@@ -2,18 +2,17 @@ import { Button, useDisclosure } from "@nextui-org/react";
 import { ArrowsRightLeftIcon } from "@heroicons/react/24/solid";
 import ChangeVehicleForm from "../forms/change-vehicle";
 import useModal from "../hooks/useModal";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 
 export default memo(function VehicleButton ({id}: {id: string}) {
   
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
-  const action = {operation: "insert"}
   const {handleAction} = useModal()
 
-  const onPress = () => {
-    handleAction(action)
+  const onPress = useCallback(() => {
+    handleAction({operation: "insert"})
     onOpen()
-  }
+  }, [handleAction, onOpen])
 
   return (
     <>

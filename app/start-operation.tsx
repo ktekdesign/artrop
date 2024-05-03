@@ -3,17 +3,17 @@ import { BoltIcon } from "@heroicons/react/24/solid";
 import { Button, useDisclosure } from "@nextui-org/react";
 import StartOperationForm from "../forms/start-operation";
 import useModal from "../hooks/useModal";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 
 export default memo(function StartOperation ({turnId}: {turnId: string}) {
   
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
   const {handleAction} = useModal()
 
-  const onPress = () => {
+  const onPress = useCallback(() => {
     handleAction({operation: "insert"});
     onOpen()
-  }
+  }, [handleAction, onOpen])  
 
   return (
       <div className="text-center">
