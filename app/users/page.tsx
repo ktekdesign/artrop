@@ -1,5 +1,4 @@
 'use client'
-import { Title, Text } from '@tremor/react';
 import Search from '../search';
 import { API_USER_URL } from '../../utils/constants';
 import useEntities from '../../hooks/useEntities';
@@ -18,8 +17,8 @@ export default function IndexPage() {
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <div className='flex justify-between items-center'>
         <div>
-          <Title>Usuários</Title>
-          <Text>A lista dos usuários.</Text>
+          <h1 className='title'>Usuários</h1>
+          <p className='paragraph'>A lista dos usuários.</p>
         </div>
         <AddButton />
       </div>

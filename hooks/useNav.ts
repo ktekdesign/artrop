@@ -1,10 +1,11 @@
 import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 const useNav = () => {
   const { data: session } = useSession({ required: true });
   const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigation = useMemo(() => {
     const urlsAdmin = [
       { name: 'Usuários', href: '/users' },
@@ -24,7 +25,7 @@ const useNav = () => {
     }
   }, [session?.user?.type]);
 
-  return { navigation, pathname };
+  return { navigation, pathname, isMenuOpen, setIsMenuOpen };
 };
 
 export default useNav;

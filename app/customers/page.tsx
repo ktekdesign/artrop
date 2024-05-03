@@ -1,5 +1,4 @@
 'use client';
-import { Title, Text } from '@tremor/react';
 import Search from '../search';
 import useEntities from '../../hooks/useEntities';
 import { API_CUSTOMER_URL } from '../../utils/constants';
@@ -8,7 +7,6 @@ import CustomerTabs from '../../forms/customer-tabs';
 import EntityModal from '../entity-modal';
 import AddButton from '../add-button';
 import { Customer } from '@prisma/client';
-import { useState } from 'react';
 
 export default function IndexPage() {
   const url = API_CUSTOMER_URL
@@ -18,8 +16,8 @@ export default function IndexPage() {
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <div className='flex justify-between items-center'>
         <div>
-          <Title>Clientes</Title>
-          <Text>A lista dos clientes.</Text>
+          <h1 className='title'>Clientes</h1>
+          <p className='paragraph'>A lista dos clientes.</p>
         </div>
         <AddButton />
       </div>

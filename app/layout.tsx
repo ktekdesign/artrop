@@ -3,7 +3,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Analytics } from '@vercel/analytics/react';
 import Nav from './nav';
-import { Suspense } from 'react';
 import AppProvider from './providers';
 import { ToastContainer } from 'react-toastify';
 
@@ -22,9 +21,7 @@ export default async function RootLayout({
     <html lang="en" className="h-full bg-gray-50">
       <body className="h-full">
         <AppProvider>
-          <Suspense>
-            <Nav />
-          </Suspense>
+          <Nav />
           {children}
           <ToastContainer />
         </AppProvider>

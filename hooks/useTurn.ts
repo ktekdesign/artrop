@@ -8,12 +8,12 @@ const useTurn = () => {
   const url = [API_TURN_URL, 'open'];
   const fetchData = () => getRecord<TurnData>(url.join(''));
 
-  const { data, isPending } = useQuery({
+  const { data, isSuccess } = useQuery({
     queryKey: url,
     queryFn: fetchData
   });
 
-  return { isPending, ...preventUndefined(initialOperationData, data) };
+  return { isSuccess, ...preventUndefined(initialOperationData, data) };
 };
 
 export default useTurn;

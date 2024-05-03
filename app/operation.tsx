@@ -5,8 +5,9 @@ import { OperationData } from "../interfaces";
 import { memo } from "react";
 import Travel from "./travel";
 
-export default memo(function Operation ({operation, turnId}: {operation: OperationData, turnId: string}) {
+export default memo(function Operation ({operation, turnId}: {operation?: OperationData, turnId: string}) {
   
+  if(!operation) return
   const {operationId, operationStartedAt, id} = operation
   
   return (

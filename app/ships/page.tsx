@@ -1,5 +1,4 @@
 'use client';
-import { Title, Text } from '@tremor/react';
 import Search from '../search';
 import useEntities from '../../hooks/useEntities';
 import { Ship } from "@prisma/client";
@@ -18,8 +17,8 @@ export default function IndexPage() {
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <div className='flex justify-between items-center'>
         <div>
-          <Title>Navios</Title>
-          <Text>A lista dos navios.</Text>
+          <h1 className='title'>Navios</h1>
+          <p className='paragraph'>A lista dos navios.</p>
         </div>
         <AddButton />
       </div>

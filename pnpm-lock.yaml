@@ -8,36 +8,21 @@ importers:
 
   .:
     dependencies:
-      '@auth/prisma-adapter':
-        specifier: ^1.6.0
-        version: 1.6.0(@prisma/client@5.13.0(prisma@5.13.0))
-      '@headlessui/react':
-        specifier: ^1.7.18
-        version: 1.7.18(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@heroicons/react':
         specifier: ^2.1.3
         version: 2.1.3(react@18.2.0)
       '@hookform/resolvers':
         specifier: ^3.3.4
         version: 3.3.4(react-hook-form@7.51.2(react@18.2.0))
-      '@neondatabase/serverless':
-        specifier: ^0.9.1
-        version: 0.9.1
       '@nextui-org/react':
         specifier: ^2.3.5
         version: 2.3.5(@types/react@18.2.33)(framer-motion@11.1.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwind-variants@0.2.1(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.8.9)(typescript@5.2.2))))(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.8.9)(typescript@5.2.2)))
-      '@prisma/adapter-neon':
-        specifier: ^5.13.0
-        version: 5.13.0(@neondatabase/serverless@0.9.1)
       '@prisma/client':
         specifier: 5.13.0
         version: 5.13.0(prisma@5.13.0)
       '@tanstack/react-query':
         specifier: ^5.32.1
         version: 5.32.1(react@18.2.0)
-      '@tremor/react':
-        specifier: ^3.15.0
-        version: 3.15.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.8.9)(typescript@5.2.2)))
       '@types/js-cookie':
         specifier: ^3.0.6
         version: 3.0.6
@@ -89,9 +74,6 @@ importers:
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
-      prop-types:
-        specifier: ^15.8.1
-        version: 15.8.1
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -155,25 +137,6 @@ packages:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
 
-  '@auth/core@0.29.0':
-    resolution: {integrity: sha512-MdfEjU6WRjUnPG1+XeBWrTIlAsLZU6V0imCIqVDDDPxLI6UZWldXVqAA2EsDazGofV78jqiCLHaN85mJITDqdg==}
-    peerDependencies:
-      '@simplewebauthn/browser': ^9.0.1
-      '@simplewebauthn/server': ^9.0.2
-      nodemailer: ^6.8.0
-    peerDependenciesMeta:
-      '@simplewebauthn/browser':
-        optional: true
-      '@simplewebauthn/server':
-        optional: true
-      nodemailer:
-        optional: true
-
-  '@auth/prisma-adapter@1.6.0':
-    resolution: {integrity: sha512-PQU8/Oi5gfjzb0MkhMGVX0Dg877phPzsQdK54+C7ubukCeZPjyvuSAx1vVtWEYVWp2oQvjgG/C6QiDoeC7S10A==}
-    peerDependencies:
-      '@prisma/client': '>=2.26.0 || >=3 || >=4 || >=5'
-
   '@babel/runtime-corejs3@7.24.4':
     resolution: {integrity: sha512-VOQOexSilscN24VEY810G/PqtpFvx/z6UqDIjIWbDe2368HhDLkYN5TYwaEz/+eRCUkhJ2WaNLLmQAlxzfWj4w==}
     engines: {node: '>=6.9.0'}
@@ -204,27 +167,6 @@ packages:
     resolution: {integrity: sha512-mjZVbpaeMZludF2fsWLD0Z9gCref1Tk4i9+wddjRvpUNqqcndPkBD09N/Mapey0b3jaXbLm2kICwFv2E64QinA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@floating-ui/core@1.6.0':
-    resolution: {integrity: sha512-PcF++MykgmTj3CIyOQbKA/hDzOAiqI3mhuoN44WRCopIs1sgoDoU4oty4Jtqaj/y3oDU6fnVSm4QG0a3t5i0+g==}
-
-  '@floating-ui/dom@1.6.3':
-    resolution: {integrity: sha512-RnDthu3mzPlQ31Ss/BTwQ1zjzIhr3lk1gZB1OC56h/1vEtaXkESrOqL5fQVMfXpwGtRwX+YsZBdyHtJMQnkArw==}
-
-  '@floating-ui/react-dom@1.3.0':
-    resolution: {integrity: sha512-htwHm67Ji5E/pROEAr7f8IKFShuiCKHwUC/UY4vC3I5jiSvGFAYnSYiZO5MlGmads+QqvUkR9ANHEguGrDv72g==}
-    peerDependencies:
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-
-  '@floating-ui/react@0.19.2':
-    resolution: {integrity: sha512-JyNk4A0Ezirq8FlXECvRtQOX/iBe5Ize0W/pLkrZjfHW9GUV7Xnq6zm6fyZuQzaHHqEnVizmvlA96e1/CkZv+w==}
-    peerDependencies:
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-
-  '@floating-ui/utils@0.2.1':
-    resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
-
   '@formatjs/ecma402-abstract@1.18.2':
     resolution: {integrity: sha512-+QoPW4csYALsQIl8GbN14igZzDbuwzcpWrku9nyMXlaqAlwRBgl5V+p0vWMGFqHOw37czNXaP/lEk4wbLgcmtA==}
 
@@ -239,19 +181,6 @@ packages:
 
   '@formatjs/intl-localematcher@0.5.4':
     resolution: {integrity: sha512-zTwEpWOzZ2CiKcB93BLngUX59hQkuZjT2+SAQEscSm52peDW/getsawMcWF1rGRpMCX6D7nSJA3CzJ8gn13N/g==}
-
-  '@headlessui/react@1.7.18':
-    resolution: {integrity: sha512-4i5DOrzwN4qSgNsL4Si61VMkUcWbcSKueUV7sFhpHzQcSShdlHENE5+QBntMSRvHt8NyoFO2AGG8si9lq+w4zQ==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: ^16 || ^17 || ^18
-      react-dom: ^16 || ^17 || ^18
-
-  '@headlessui/tailwindcss@0.2.0':
-    resolution: {integrity: sha512-fpL830Fln1SykOCboExsWr3JIVeQKieLJ3XytLe/tt1A0XzqUthOftDmjcCYLW62w7mQI7wXcoPXr3tZ9QfGxw==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      tailwindcss: ^3.0
 
   '@heroicons/react@2.1.3':
     resolution: {integrity: sha512-fEcPfo4oN345SoqdlCDdSa4ivjaKbk0jTd+oubcgNxnNgAfzysfwWfQUr+51wigiWHQQRiZNd1Ao0M5Y3M2EGg==}
@@ -317,9 +246,6 @@ packages:
 
   '@neondatabase/serverless@0.6.0':
     resolution: {integrity: sha512-qXxBRYN0m2v8kVQBfMxbzNGn2xFAhTXFibzQlE++NfJ56Shz3m7+MyBBtXDlEH+3Wfa6lToDXf1MElocY4sJ3w==}
-
-  '@neondatabase/serverless@0.9.1':
-    resolution: {integrity: sha512-Xi+tVIXuaeB24BHzhr0W/4vcbb9WwIaB6yK0RsMIteLtzNB86+am6EDFovd3rYCYM1ea7rWcwte2dLOrzW7eqA==}
 
   '@next/env@14.0.0':
     resolution: {integrity: sha512-cIKhxkfVELB6hFjYsbtEeTus2mwrTC+JissfZYM0n+8Fv+g8ucUfOlm3VEDtwtwydZ0Nuauv3bl0qF82nnCAqA==}
@@ -877,11 +803,6 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@prisma/adapter-neon@5.13.0':
-    resolution: {integrity: sha512-XIav2pP2lcyrvl0LHt8nvialytJPIW//hn1zTr426qMwnpag5avXnAx3/8ZMmYxGkZ4oKzizieu6mmh425RXcA==}
-    peerDependencies:
-      '@neondatabase/serverless': ^0.6.0 || ^0.7.0 || ^0.8.0 || ^0.9.0
-
   '@prisma/client@5.13.0':
     resolution: {integrity: sha512-uYdfpPncbZ/syJyiYBwGZS8Gt1PTNoErNYMuqHDa2r30rNSFtgTA/LXsSk55R7pdRTMi5pHkeP9B14K6nHmwkg==}
     engines: {node: '>=16.13'}
@@ -893,9 +814,6 @@ packages:
 
   '@prisma/debug@5.13.0':
     resolution: {integrity: sha512-699iqlEvzyCj9ETrXhs8o8wQc/eVW+FigSsHpiskSFydhjVuwTJEfj/nIYqTaWFYuxiWQRfm3r01meuW97SZaQ==}
-
-  '@prisma/driver-adapter-utils@5.13.0':
-    resolution: {integrity: sha512-SaimwvGuvXJTsWH+FOfl7PlkZZlPiRGeMEchC0kvB08Xw9B3CLYo/Q7zaY5Fp+u5D8asrpcFQmCjXEgDvOmPkg==}
 
   '@prisma/engines-version@5.13.0-23.b9a39a7ee606c28e3455d0fd60e78c3ba82b1a2b':
     resolution: {integrity: sha512-AyUuhahTINGn8auyqYdmxsN+qn0mw3eg+uhkp8zwknXYIqoT3bChG4RqNY/nfDkPvzWAPBa9mrDyBeOnWSgO6A==}
@@ -1336,21 +1254,6 @@ packages:
     peerDependencies:
       react: ^18.0.0
 
-  '@tanstack/react-virtual@3.2.0':
-    resolution: {integrity: sha512-OEdMByf2hEfDa6XDbGlZN8qO6bTjlNKqjM3im9JG+u3mCL8jALy0T/67oDI001raUUPh1Bdmfn4ZvPOV5knpcg==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-
-  '@tanstack/virtual-core@3.2.0':
-    resolution: {integrity: sha512-P5XgYoAw/vfW65byBbJQCw+cagdXDT/qH6wmABiLt4v4YBT2q2vqCOhihe+D1Nt325F/S/0Tkv6C5z0Lv+VBQQ==}
-
-  '@tremor/react@3.15.0':
-    resolution: {integrity: sha512-TNhLzlGV9ph0Bzd7uTFHaE7Je9diIDuqt7Khnm5XkqO7y0jTE+9aGT/gcV6qTZV/9dfkcv8Aw1J/NpxH+hynGQ==}
-    peerDependencies:
-      react: ^18.0.0
-      react-dom: '>=16.6.0'
-
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
 
@@ -1365,9 +1268,6 @@ packages:
 
   '@types/bcrypt@5.0.2':
     resolution: {integrity: sha512-6atioO8Y75fNcbmj0G7UjI9lXN2pQ/IGJ2FWT4a/btd0Lk9lQalHLKhkgKVZ3r+spnmWUKfbMi1GEe9wyHQfNQ==}
-
-  '@types/cookie@0.6.0':
-    resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
   '@types/d3-array@3.2.1':
     resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
@@ -1547,10 +1447,6 @@ packages:
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
 
-  aria-hidden@1.2.4:
-    resolution: {integrity: sha512-y+CcFFwelSXpLZk/7fMB2mUbGtX9lKycf1MWJ7CaTIERyitVlyQx6C+sxcROU2BAJ24OiZyK+8wj2i8AlBoS3A==}
-    engines: {node: '>=10'}
-
   aria-query@5.3.0:
     resolution: {integrity: sha512-b0P0sZPKtyu8HkeRAfCq0IfURZK+SuwMjY1UXGBU27wpAiTwQAIlq56IbIO+ytk/JjS1fMR14ee5WBBfKi5J6A==}
 
@@ -1726,10 +1622,6 @@ packages:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
 
-  cookie@0.6.0:
-    resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
-    engines: {node: '>= 0.6'}
-
   core-js-pure@3.37.0:
     resolution: {integrity: sha512-d3BrpyFr5eD4KcbRvQ3FTUx/KWmaDesr7+a3+1+P46IUnNoEt+oiLijPINZMEon7w9oGkIINWxrBAU9DEciwFQ==}
 
@@ -1806,10 +1698,6 @@ packages:
   data-view-byte-offset@1.0.0:
     resolution: {integrity: sha512-t/Ygsytq+R995EJ5PZlD4Cu56sWa8InXySaViRzw9apusqsOO2bQP+SbYzAhR0pFKoB+43lYy8rWban9JSuXnA==}
     engines: {node: '>= 0.4'}
-
-  date-fns@2.30.0:
-    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
-    engines: {node: '>=0.11'}
 
   debug@3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -2398,9 +2286,6 @@ packages:
   jose@4.15.5:
     resolution: {integrity: sha512-jc7BFxgKPKi94uOvEmzlSWFFe2+vASyXaKUpdQKatWAESU2MWjDfFf0fdfc83CDKcA5QecabZeNLyfhe3yKNkg==}
 
-  jose@5.2.4:
-    resolution: {integrity: sha512-6ScbIk2WWCeXkmzF6bRPmEuaqy1m8SbsRFMa/FLrSCkGIhj8OLVG/IH+XHVmNMx/KUo8cVWEE6oKR4dJ+S0Rkg==}
-
   js-cookie@3.0.5:
     resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
     engines: {node: '>=14'}
@@ -2631,9 +2516,6 @@ packages:
   npmlog@5.0.1:
     resolution: {integrity: sha512-AqZtDUWOMKs1G/8lwylVjrdYgqA4d9nu8hc+0gzRxlDb1I10+FHBGMXs6aiQHFdCUUlqH99MUMuLfzWDNDtfxw==}
 
-  oauth4webapi@2.10.4:
-    resolution: {integrity: sha512-DSoj8QoChzOCQlJkRmYxAJCIpnXFW32R0Uq7avyghIeB6iJq0XAblOD7pcq3mx4WEBDwMuKr0Y1qveCBleG2Xw==}
-
   oauth@0.9.15:
     resolution: {integrity: sha512-a5ERWK1kh38ExDEfoO6qUHJb32rd7aYmPHuyCu3Fta/cnICvYmgd2uhuKXvPD+PXB+gCEYYEaQdIRAjCOwAKNA==}
 
@@ -2808,10 +2690,6 @@ packages:
     resolution: {integrity: sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA==}
     engines: {node: '>=4'}
 
-  postgres-array@3.0.2:
-    resolution: {integrity: sha512-6faShkdFugNQCLwucjPcY5ARoW1SlbnrZjmGl0IrrqewpvxvhSLHimCVzqeuULCbG0fQv7Dtk1yDbG3xv7Veog==}
-    engines: {node: '>=12'}
-
   postgres-bytea@1.0.0:
     resolution: {integrity: sha512-xy3pmLuQqRBZBXDULy7KbaitYqLcmxigw14Q5sj8QBVLqEwXfeybIKVWiqAXTlcvdvb0+xkOtDbfQMOf4lST1w==}
     engines: {node: '>=0.10.0'}
@@ -2861,12 +2739,6 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
-
-  react-day-picker@8.10.0:
-    resolution: {integrity: sha512-mz+qeyrOM7++1NCb1ARXmkjMkzWVh2GL9YiPbRjKe0zHccvekk4HE+0MPOZOrosn8r8zTHIIeOUXTmXRqmkRmg==}
-    peerDependencies:
-      date-fns: ^2.28.0 || ^3.0.0
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   react-dom@18.2.0:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
@@ -2947,12 +2819,6 @@ packages:
     peerDependencies:
       react: '>=16.6.0'
       react-dom: '>=16.6.0'
-
-  react-transition-state@2.1.1:
-    resolution: {integrity: sha512-kQx5g1FVu9knoz1T1WkapjUgFz08qQ/g1OmuWGi3/AoEFfS0kStxrPlZx81urjCXdz2d+1DqLpU6TyLW/Ro04Q==}
-    peerDependencies:
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
 
   react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
@@ -3157,9 +3023,6 @@ packages:
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
-
-  tabbable@6.2.0:
-    resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
 
   tailwind-merge@1.14.0:
     resolution: {integrity: sha512-3mFKyCo/MBcgyOTlrY8T7odzZFx+w+qKSMAmdFzRvqBfLlSigU6TZnlFHK0lkMwj9Bj8OYU+9yW9lmGuS0QEnQ==}
@@ -3446,25 +3309,6 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@auth/core@0.29.0':
-    dependencies:
-      '@panva/hkdf': 1.1.1
-      '@types/cookie': 0.6.0
-      cookie: 0.6.0
-      jose: 5.2.4
-      oauth4webapi: 2.10.4
-      preact: 10.11.3
-      preact-render-to-string: 5.2.3(preact@10.11.3)
-
-  '@auth/prisma-adapter@1.6.0(@prisma/client@5.13.0(prisma@5.13.0))':
-    dependencies:
-      '@auth/core': 0.29.0
-      '@prisma/client': 5.13.0(prisma@5.13.0)
-    transitivePeerDependencies:
-      - '@simplewebauthn/browser'
-      - '@simplewebauthn/server'
-      - nodemailer
-
   '@babel/runtime-corejs3@7.24.4':
     dependencies:
       core-js-pure: 3.37.0
@@ -3501,31 +3345,6 @@ snapshots:
 
   '@eslint/js@8.52.0': {}
 
-  '@floating-ui/core@1.6.0':
-    dependencies:
-      '@floating-ui/utils': 0.2.1
-
-  '@floating-ui/dom@1.6.3':
-    dependencies:
-      '@floating-ui/core': 1.6.0
-      '@floating-ui/utils': 0.2.1
-
-  '@floating-ui/react-dom@1.3.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@floating-ui/dom': 1.6.3
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
-  '@floating-ui/react@0.19.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@floating-ui/react-dom': 1.3.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      aria-hidden: 1.2.4
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      tabbable: 6.2.0
-
-  '@floating-ui/utils@0.2.1': {}
-
   '@formatjs/ecma402-abstract@1.18.2':
     dependencies:
       '@formatjs/intl-localematcher': 0.5.4
@@ -3549,17 +3368,6 @@ snapshots:
   '@formatjs/intl-localematcher@0.5.4':
     dependencies:
       tslib: 2.6.2
-
-  '@headlessui/react@1.7.18(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/react-virtual': 3.2.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      client-only: 0.0.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
-  '@headlessui/tailwindcss@0.2.0(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.8.9)(typescript@5.2.2)))':
-    dependencies:
-      tailwindcss: 3.4.3(ts-node@10.9.2(@types/node@20.8.9)(typescript@5.2.2))
 
   '@heroicons/react@2.1.3(react@18.2.0)':
     dependencies:
@@ -3645,10 +3453,6 @@ snapshots:
       - supports-color
 
   '@neondatabase/serverless@0.6.0':
-    dependencies:
-      '@types/pg': 8.6.6
-
-  '@neondatabase/serverless@0.9.1':
     dependencies:
       '@types/pg': 8.6.6
 
@@ -4695,21 +4499,11 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@prisma/adapter-neon@5.13.0(@neondatabase/serverless@0.9.1)':
-    dependencies:
-      '@neondatabase/serverless': 0.9.1
-      '@prisma/driver-adapter-utils': 5.13.0
-      postgres-array: 3.0.2
-
   '@prisma/client@5.13.0(prisma@5.13.0)':
     optionalDependencies:
       prisma: 5.13.0
 
   '@prisma/debug@5.13.0': {}
-
-  '@prisma/driver-adapter-utils@5.13.0':
-    dependencies:
-      '@prisma/debug': 5.13.0
 
   '@prisma/engines-version@5.13.0-23.b9a39a7ee606c28e3455d0fd60e78c3ba82b1a2b': {}
 
@@ -5462,29 +5256,6 @@ snapshots:
       '@tanstack/query-core': 5.32.1
       react: 18.2.0
 
-  '@tanstack/react-virtual@3.2.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/virtual-core': 3.2.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
-  '@tanstack/virtual-core@3.2.0': {}
-
-  '@tremor/react@3.15.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.8.9)(typescript@5.2.2)))':
-    dependencies:
-      '@floating-ui/react': 0.19.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@headlessui/react': 1.7.18(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@headlessui/tailwindcss': 0.2.0(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.8.9)(typescript@5.2.2)))
-      date-fns: 2.30.0
-      react: 18.2.0
-      react-day-picker: 8.10.0(date-fns@2.30.0)(react@18.2.0)
-      react-dom: 18.2.0(react@18.2.0)
-      react-transition-state: 2.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      recharts: 2.12.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      tailwind-merge: 1.14.0
-    transitivePeerDependencies:
-      - tailwindcss
-
   '@tsconfig/node10@1.0.11': {}
 
   '@tsconfig/node12@1.0.11': {}
@@ -5496,8 +5267,6 @@ snapshots:
   '@types/bcrypt@5.0.2':
     dependencies:
       '@types/node': 20.8.9
-
-  '@types/cookie@0.6.0': {}
 
   '@types/d3-array@3.2.1': {}
 
@@ -5675,10 +5444,6 @@ snapshots:
   arg@5.0.2: {}
 
   argparse@2.0.1: {}
-
-  aria-hidden@1.2.4:
-    dependencies:
-      tslib: 2.6.2
 
   aria-query@5.3.0:
     dependencies:
@@ -5896,8 +5661,6 @@ snapshots:
 
   cookie@0.5.0: {}
 
-  cookie@0.6.0: {}
-
   core-js-pure@3.37.0: {}
 
   create-require@1.1.1: {}
@@ -5969,10 +5732,6 @@ snapshots:
       call-bind: 1.0.7
       es-errors: 1.3.0
       is-data-view: 1.0.1
-
-  date-fns@2.30.0:
-    dependencies:
-      '@babel/runtime': 7.24.4
 
   debug@3.2.7:
     dependencies:
@@ -6703,8 +6462,6 @@ snapshots:
 
   jose@4.15.5: {}
 
-  jose@5.2.4: {}
-
   js-cookie@3.0.5: {}
 
   js-tokens@4.0.0: {}
@@ -6906,8 +6663,6 @@ snapshots:
       gauge: 3.0.2
       set-blocking: 2.0.0
 
-  oauth4webapi@2.10.4: {}
-
   oauth@0.9.15: {}
 
   object-assign@4.1.1: {}
@@ -7075,8 +6830,6 @@ snapshots:
 
   postgres-array@2.0.0: {}
 
-  postgres-array@3.0.2: {}
-
   postgres-bytea@1.0.0: {}
 
   postgres-date@1.0.7: {}
@@ -7113,11 +6866,6 @@ snapshots:
   punycode@2.3.1: {}
 
   queue-microtask@1.2.3: {}
-
-  react-day-picker@8.10.0(date-fns@2.30.0)(react@18.2.0):
-    dependencies:
-      date-fns: 2.30.0
-      react: 18.2.0
 
   react-dom@18.2.0(react@18.2.0):
     dependencies:
@@ -7201,11 +6949,6 @@ snapshots:
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
-  react-transition-state@2.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
-    dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
@@ -7447,8 +7190,6 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
-
-  tabbable@6.2.0: {}
 
   tailwind-merge@1.14.0: {}
 
