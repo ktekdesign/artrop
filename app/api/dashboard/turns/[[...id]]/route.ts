@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../../utils/client';
-import { getUserId } from '../../../../../utils/api-action';
 
 export async function GET() {
   const drivers = await prisma.user.findMany({

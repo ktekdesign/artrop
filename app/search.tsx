@@ -7,7 +7,7 @@ import { pk } from '../interfaces';
 
 const Search = <T extends pk,>({ entities, setEntities }: { entities?: T[], setEntities: (data: T[] | undefined) => void }) => {
   const ref = useRef<HTMLInputElement | null>(null)
-  const [isPending, startTransition] = useTransition();
+  const [_, startTransition] = useTransition();
   
   const handleSearch = useCallback(() => {
     const search = ref?.current?.value?.toLowerCase()

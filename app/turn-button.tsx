@@ -9,6 +9,6 @@ import { memo } from "react"
 export default memo(function TurnButton ({id, operationId, isSuccess}: {id: string, operationId?: string, isSuccess: boolean}) {
   if (!isSuccess) return
   return (
-    !id ? <StartTurn /> : <div className="flex gap-4"><VehicleButton id={id} />{!operationId && <EndTurn id={id} />}</div>
+    !id ? <StartTurn /> : <div className="flex items-center gap-1 md:gap-2"><VehicleButton id={id} />{!operationId && <EndTurn id={id} />}</div>
   )
 })

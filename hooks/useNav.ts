@@ -1,10 +1,11 @@
 import { useSession } from 'next-auth/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useTransition } from 'react';
 
 const useNav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [_, startTransition] = useTransition();
   const toggleMenu = useCallback(
-    () => setIsMenuOpen(!isMenuOpen),
+    () => startTransition(() => setIsMenuOpen(!isMenuOpen)),
     [isMenuOpen]
   );
   const { data } = useSession();

@@ -12,6 +12,7 @@ import MapComponent from './map-component';
 import MenuItem from './menu-item';
 import { Navigation } from '../interfaces';
 import { usePathname } from 'next/navigation';
+import NavMenuItem from './nav-menu-item';
 
 export default memo(function Nav() {
   const pathname = usePathname();
@@ -45,15 +46,15 @@ export default memo(function Nav() {
           </svg>
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            className="md:hidden ml-4"
+            className="md:hidden ml-4 h-6"
           />
         </NavbarBrand>
-        <NavbarContent className="hidden md:-my-px md:ml-6 md:flex md:space-x-8" justify='start'>
+        <NavbarContent className="hidden md:-my-px md:ml-4 md:flex md:space-x-4" justify='start'>
           <MapComponent<Navigation> items={navigation}>
             <MenuItem pathname={pathname} />
           </MapComponent>
         </NavbarContent>
-        <NavbarContent justify="end">
+        <NavbarContent className='gap-1 md:gap-2' justify="end">
           <NavbarItem><TurnButton id={id} operationId={operation?.operationId} isSuccess={isSuccess} /></NavbarItem>
           <Dropdown>
             <NavbarItem>
@@ -83,7 +84,7 @@ export default memo(function Nav() {
         </NavbarContent>
         <NavbarMenu>
           <MapComponent<Navigation> items={navigation}>
-            <MenuItem pathname={pathname} />
+            <NavMenuItem pathname={pathname} />
           </MapComponent>
         </NavbarMenu>
       </Navbar>
