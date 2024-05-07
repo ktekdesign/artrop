@@ -21,9 +21,11 @@ const schema = yup
     status: yup.boolean().default(false)
   })
   .required()
-interface TurnRegister extends Omit<Turn, "id" | "userId" | "customerId" | "endedAt" | "duration"> {
+
+interface TurnRegister extends Pick<Turn, "startedAt" | "startedKm" | "endedKm" | "status"> {
   endedAt?: string | null;
 }
+
 export default memo(function TurnTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
   const {
     register,
@@ -33,27 +35,27 @@ export default memo(function TurnTabs ({buttonLabel, url}: {buttonLabel?: string
     resolver: yupResolver(schema),
   })
   
-  const {entity, isLoading, isHandlingMutation, onSubmit, selected, setSelected} = useEntity<Turn, TurnRegister>({url: url || ""})
+  const {entity, isLoading, isHandlingMutation, onSubmit, selected, setSelected, handleClose} = useEntity<Turn, TurnRegister>({url: url || ""})
   
   return (
     <Loading isLoading={isLoading}>
-    <Tabs
-      fullWidth
-      size="md"
-      aria-label="Tabs form"
-      selectedKey={selected}
-      onSelectionChange={setSelected}
-    >
-      <Tab title="Detalhes do turno">
-        <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
-          <Input type="date" {...register("startedAt")} defaultValue={preventNull(formatDate(entity?.startedAt))} label="Data e hora inicio" isInvalid={!!errors.startedAt} color={getInputColor(errors.startedAt)} errorMessage={getInputErrorMessage(errors.startedAt)} />
-          <Input type="number" {...register("startedKm")} defaultValue={preventNull(entity?.startedKm?.toString())} label="Km Inicio" isClearable isInvalid={!!errors.startedKm} color={getInputColor(errors.startedKm)} errorMessage={getInputErrorMessage(errors.startedKm)} />
-          <Input type="date" {...register("endedAt")} defaultValue={preventNull(formatDate(entity?.endedAt))} label="Data e hora Fim" isClearable />
-          <Input type="number" {...register("endedKm")} defaultValue={preventNull(entity?.endedKm?.toString())} label="Km Fim" isClearable />
-          <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
-        </form>
-      </Tab>
-    </Tabs>
+      <Tabs
+        fullWidth
+        size="md"
+        aria-label="Tabs form"
+        selectedKey={selected}
+        onSelectionChange={setSelected}
+      >
+        <Tab title="Detalhes do turno">
+          <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+            <Input type="date" {...register("startedAt")} defaultValue={preventNull(formatDate(entity?.startedAt))} label="Data e hora inicio" isInvalid={!!errors.startedAt} color={getInputColor(errors.startedAt)} errorMessage={getInputErrorMessage(errors.startedAt)} />
+            <Input type="number" {...register("startedKm")} defaultValue={preventNull(entity?.startedKm?.toString())} label="Km Inicio" isClearable isInvalid={!!errors.startedKm} color={getInputColor(errors.startedKm)} errorMessage={getInputErrorMessage(errors.startedKm)} />
+            <Input type="date" {...register("endedAt")} defaultValue={preventNull(formatDate(entity?.endedAt))} label="Data e hora Fim" isClearable />
+            <Input type="number" {...register("endedKm")} defaultValue={preventNull(entity?.endedKm?.toString())} label="Km Fim" isClearable />
+            <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
+          </form>
+        </Tab>
+      </Tabs>
     </Loading>
   )
 })

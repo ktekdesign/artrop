@@ -1,5 +1,5 @@
 "use client"
-import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, Select, SelectItem } from "@nextui-org/react";
+import { Input, Modal, ModalBody, ModalContent, ModalHeader, Select, SelectItem } from "@nextui-org/react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
@@ -9,6 +9,7 @@ import useEntities from "../hooks/useEntities";
 import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import useSaveMutation from "../hooks/useSaveMutation";
 import { memo } from "react";
+import ModalFormFooter from "../app/modal-form-footer";
 
 const schema = yup
   .object({
@@ -18,8 +19,9 @@ const schema = yup
   })
   .required()
 
-interface TurnInit extends Omit<Turn, "id" | "userId" | "startedAt" | "endedAt" | "endedKm" | "status" | "duration"> {
-  userId?: string
+interface TurnInit extends Pick<Turn, "startedKm" | "customerId"> {
+  userId?: string;
+  vehicleId?: string;
 }
 
 export default memo(function StartTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: boolean, onOpenChange(): void, onClose(): void}) {
@@ -72,14 +74,7 @@ export default memo(function StartTurnForm ({isOpen, onOpenChange, onClose}: {is
                     )}
                   />
                   <Input type="number" {...register("startedKm")} label="Kilometragem do vehiculo" placeholder="Insira a kilometragem para iniciar o turno" isClearable isInvalid={!!errors.startedKm} color={getInputColor(errors.startedKm)} errorMessage={getInputErrorMessage(errors.startedKm)} />
-                  <ModalFooter>
-                    <Button color="danger" variant="light" onPress={onClose}>
-                      Fechar
-                    </Button>
-                    <Button type="submit" color="primary" isLoading={isHandlingMutation}>
-                      Iniciar
-                    </Button>
-                  </ModalFooter>
+                  <ModalFormFooter isLoading={isHandlingMutation} buttonLabel="Iniciar" handleClose={onClose} />
               </ModalBody>
             </form>
         </ModalContent>

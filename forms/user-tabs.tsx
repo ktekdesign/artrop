@@ -12,7 +12,7 @@ import AddressForm, {schemaAddress} from "./address";
 import useEntity from "../hooks/useEntity";
 import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
 import useCep from "../hooks/useCep";
 import { CEP } from "cep-promise";
 
@@ -51,25 +51,30 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
     resolver: yupResolver(schema),
   })
   
-  const roles: {label: string, value: Role}[] = [{label: "Admin", value: Role.ADMIN}, {label: "Staff", value: Role.STAFF}, {label: "Motorista", value: Role.DRIVER}]
   
-  const {entity, isLoading, isHandlingMutation, operation, selected, setSelected, onSubmit} = useEntity<User, UserRegister>({url})
-  const [cnh, address] = transformJsonValue([entity?.cnh, entity?.address])
+  const {entity, isLoading, isHandlingMutation, operation, selected, setSelected, onSubmit, handleClose} = useEntity<User, UserRegister>({url})
   
-  const setAddress = (cep: CEP) => {
+  const {cnh, address, roles} = useMemo(() => {
+    const [cnh, address] = transformJsonValue([entity?.cnh, entity?.address])
+    const roles: {label: string, value: Role}[] = [{label: "Admin", value: Role.ADMIN}, {label: "Staff", value: Role.STAFF}, {label: "Motorista", value: Role.DRIVER}]
+    return {cnh, address, roles}
+  }, [entity?.cnh, entity?.address])
+  
+  const setAddress = useCallback((cep: CEP) => {
     if(cep?.state) setValue("address.state", cep.state)
     if(cep?.city) setValue("address.city", cep.city)
     if(cep?.neighborhood) setValue("address.neighborhood", cep.neighborhood)
     if(cep?.street) setValue("address.street", cep.street)
-  }
+  }, [])
+
   const {cep, handleCepChange} = useCep(setAddress)
 
-  const handleInsert = (data: UserRegister) => {
+  const handleInsert = useCallback((data: UserRegister) => {
     if(!data.password) throw new Error("Escolha uma senha para continuar")
     if(data.password !== data.password2) throw new Error("As senhas digitadas não são as mesmas")
     delete data.password2
     return data
-  }
+  }, [])
 
   const handleUpdate = useCallback((data: UserRegister) => {
     const [cnhData, addressData] = transformJsonValue([data.cnh, data.address])
@@ -85,6 +90,7 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
   
   return (
     <Loading isLoading={isLoading}>
+      <form onSubmit={handleSubmit(handleData)}>
       <Tabs
         fullWidth
         size="md"
@@ -93,7 +99,6 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
         onSelectionChange={setSelected}
       >
         <Tab title="Dados pessoais">
-        <form onSubmit={handleSubmit(handleData)}>
           <div className="form-row">
             <Input {...register("name")} defaultValue={preventNull(entity?.name)} label="Nome" placeholder="Digite o nome" isClearable isInvalid={!!errors.name} color={getInputColor(errors.name)} errorMessage={getInputErrorMessage(errors.name)} />
             <Input {...register("govID")} defaultValue={preventNull(entity?.govID)} label="CPF" placeholder="Digite o CPF" isClearable isInvalid={!!errors.govID} color={getInputColor(errors.govID)} errorMessage={getInputErrorMessage(errors.govID)} />
@@ -123,25 +128,21 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
                 <Input type="password" {...register("password2")} label="Confirmação Senha" placeholder="Digite novamente a mesma senha" />
               </>
             }
-            <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
+            <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
           </div>
-          </form>
         </Tab>
         {operation === 'update' && (
           <Tab title="CNH">
-            <form onSubmit={handleSubmit(handleData)}>
             <div className="form-row">
               <Input isClearable {...register("cnh.id")} defaultValue={preventNull(cnh?.id)} label="CNH" placeholder="Digite o registro da CNH" />
               <Input type="date" {...register("cnh.expires")} defaultValue={preventNull(formatDate(cnh?.expires))} label="Expiração" placeholder="Qual é a data de expiração" />
               <Input isClearable {...register("cnh.category")} defaultValue={preventNull(cnh?.category)} label="Categoria" placeholder="Digite a categoria da CNH" />
-              <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
+              <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
             </div>
-            </form>
           </Tab>
         )}
         {operation === 'update' && (
           <Tab title="Endereço">
-            <form onSubmit={handleSubmit(handleData)}>
               <AddressForm {...{address: entity?.address, cep, handleCepChange, props: [
                 {...register("address.code")},
                 {...register("address.street")},
@@ -151,11 +152,11 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
                 {...register("address.city")},
                 {...register("address.state")}
               ]}} />
-              <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
-            </form>
+              <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
           </Tab>
         )}
       </Tabs>
+      </form>
     </Loading>
   )
 })

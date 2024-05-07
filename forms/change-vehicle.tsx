@@ -1,5 +1,5 @@
 "use client"
-import { Button, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, Select, SelectItem } from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, ModalHeader, Select, SelectItem } from "@nextui-org/react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
@@ -7,7 +7,8 @@ import { Vehicle, VehiclesTurn } from "@prisma/client";
 import { API_VEHICLESTURN_URL, API_VEHICLE_URL } from "../utils/constants";
 import useEntities from "../hooks/useEntities";
 import useSaveMutation from "../hooks/useSaveMutation";
-import { Suspense, memo } from "react";
+import { memo } from "react";
+import ModalFormFooter from "../app/modal-form-footer";
 
 const schema = yup
   .object({
@@ -15,7 +16,7 @@ const schema = yup
   })
   .required()
 
-interface VehiclesTurnInit extends Omit<VehiclesTurn, "id" | "turnId" | "createdAt" | "updatedAt" | "userId"> {
+interface VehiclesTurnInit extends Pick<VehiclesTurn, "vehicleId"> {
   userId?: string;
   turnId?: string;
 }
@@ -33,38 +34,29 @@ export default memo(function ChangeVehicleForm ({isOpen, onOpenChange, onClose, 
   const handleData = (data: VehiclesTurnInit) => onSubmit({...data, turnId})
   
   return (
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-            <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
-              <ModalHeader className="flex flex-col gap-1">Trocar Caminhão</ModalHeader>
-              <ModalBody>
-                <Suspense>
-                  <Controller
-                    name="vehicleId"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        items={vehicles}
-                        label="Vehiculo"
-                        placeholder="Escolha o Vehiculo"
-                      >
-                        {(vehicle: Vehicle) => <SelectItem key={vehicle.id}>{vehicle.licence_plate_1}</SelectItem>}
-                      </Select>
-                    )}
-                  />
-                  <ModalFooter>
-                    <Button color="danger" variant="light" onPress={onClose}>
-                      Fechar
-                    </Button>
-                    <Button type="submit" color="primary" isLoading={isHandlingMutation}>
-                      Trocar
-                    </Button>
-                  </ModalFooter>
-                </Suspense>
-              </ModalBody>
-            </form>
-        </ModalContent>
-      </Modal>
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <ModalContent>
+        <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
+          <ModalHeader className="flex flex-col gap-1">Trocar Caminhão</ModalHeader>
+          <ModalBody>
+              <Controller
+                name="vehicleId"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    items={vehicles}
+                    label="Vehiculo"
+                    placeholder="Escolha o Vehiculo"
+                  >
+                    {(vehicle: Vehicle) => <SelectItem key={vehicle.id}>{vehicle.licence_plate_1}</SelectItem>}
+                  </Select>
+                )}
+              />
+              <ModalFormFooter isLoading={isHandlingMutation} buttonLabel="Trocar" handleClose={onClose} />
+          </ModalBody>
+        </form>
+      </ModalContent>
+    </Modal>
   )
 })

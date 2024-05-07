@@ -4,6 +4,7 @@ import { getToken } from 'next-auth/jwt';
 import { getUserId } from '../../../../utils/api-action';
 import { Status } from '@prisma/client';
 import { getVars } from '../../../../utils/getVars';
+import { minutesDiff } from '../../../../utils/transform';
 
 export async function GET(
   req: NextRequest,
@@ -82,6 +83,11 @@ export async function PUT(
   { params }: { params: { id: string[] } }
 ) {
   const data = await req.json();
+  if (data.endedKm) {
+    data.duration = minutesDiff(data.endedAt, data.startedAt);
+    data.status = true;
+    data.endedAt = new Date();
+  }
   const id = params?.id[0];
   return NextResponse.json(
     await prisma.turn.update({

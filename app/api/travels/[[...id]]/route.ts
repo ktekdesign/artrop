@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../utils/client';
 import { getUserId } from '../../../../utils/api-action';
+import { minutesDiff } from '../../../../utils/transform';
 
 export async function GET(
   req: NextRequest,
@@ -37,6 +38,8 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   const { id, ...data } = await req.json();
+  if (data.endedAt) data.duration = minutesDiff(data.endedAt, data.startedAt);
+
   const userId = await getUserId(req);
   return NextResponse.json(
     await prisma.travel.update({

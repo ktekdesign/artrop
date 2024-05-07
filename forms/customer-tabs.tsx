@@ -1,5 +1,5 @@
 import { Input, Tab, Tabs } from "@nextui-org/react";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
@@ -34,7 +34,7 @@ const schema = yup
   })
   .required()
 
-interface CustomerRegister extends Omit<Customer, "id" | 'createdAt' | 'updatedAt'> {}
+type CustomerRegister = Omit<Customer, "id" | 'createdAt' | 'updatedAt'>
 
 export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
   const {
@@ -47,26 +47,24 @@ export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: st
     resolver: yupResolver(schema),
   })
 
-  const {entity, isLoading, isHandlingMutation, onSubmit, operation, selected, setSelected} = useEntity<Customer, CustomerRegister>({url})
-  const [info, address] = transformJsonValue([entity?.info, entity?.address])
+  const {entity, isLoading, isHandlingMutation, onSubmit, operation, selected, setSelected, handleClose} = useEntity<Customer, CustomerRegister>({url})
+  const [info, address] = useMemo(() => transformJsonValue([entity?.info, entity?.address]), [entity?.info, entity?.address])
   
-  const setAddress = (cep: CEP) => {
+  const setAddress = useCallback((cep: CEP) => {
     if(cep?.state) setValue("address.state", cep.state)
     if(cep?.city) setValue("address.city", cep.city)
     if(cep?.neighborhood) setValue("address.neighborhood", cep.neighborhood)
     if(cep?.street) setValue("address.street", cep.street)
-  }
+  }, [])
+
   const {cep, handleCepChange} = useCep(setAddress)
   
-  const handleUpdate = useCallback((data: CustomerRegister) => {
-    const [dataInfo, dataAddress] = transformJsonValue([data.info, data.address])
-    if(!dataAddress?.code && address?.code) data.address = address
-    if(!dataInfo?.name && info?.name) data.info = info
-    if(!data.operation.length && entity?.operation.length) data.operation = entity.operation
-    return data
-  }, [address, entity?.operation, info])
-  
-  const handleData = (data: CustomerRegister) => onSubmit(handleUpdate(data))
+  const handleData = (data: CustomerRegister) => onSubmit({
+    ...data,
+    address: data.address ?? address,
+    info: data.info ?? info,
+    operation: data.operation ?? entity?.operation
+  })
   
   return (
     <Loading isLoading={isLoading}>
@@ -97,7 +95,7 @@ export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: st
             )}
           </CheckboxGroup>
         </div>
-        <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
+        <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
       </Tab>
     {operation === 'update' && (
       <Tab title="Endereço">
@@ -109,7 +107,7 @@ export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: st
           {...register("address.neighborhood")},
           {...register("address.city")},
           {...register("address.state")}]}} />
-        <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
+        <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
       </Tab>
       )}
       {operation === 'update' && (
@@ -119,7 +117,7 @@ export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: st
             <Input {...register("info.name_in_charge")} defaultValue={preventNull(info?.name_in_charge)} label="Nome do Responsável" placeholder="Digite o nome do responsável" isClearable />
             <Input {...register("info.phone")} type="tel"  defaultValue={preventNull(info?.phone)} label="Contato do Responsável" placeholder="Digite o celular do responsável" isClearable />
           </div>
-          <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
+          <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
         </Tab>
       )}
     </Tabs>

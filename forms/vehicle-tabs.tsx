@@ -9,7 +9,7 @@ import { sanitize, transformJsonValue, transformNumber } from "../utils/transfor
 import useEntity from "../hooks/useEntity";
 import Loading from "../app/loading";
 import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/input-errors";
-import { memo } from "react";
+import { memo, useCallback, useMemo } from "react";
 
 const schema = yup
   .object({
@@ -47,36 +47,35 @@ export default memo(function VehicleTabs ({buttonLabel, url}: {buttonLabel?: str
     resolver: yupResolver(schema),
   })
   
-  const trucks: {label: string, value: Truck}[] = [{label: "Truc", value: Truck.TRUC}, {label: "Toco", value: Truck.TOCO}, {label: "Cavalo 4x2", value: Truck.CAVALO_4X2}, {label: "Cavalo 6x2", value: Truck.CAVALO_6X2}, {label: "Cavalo 6x2", value: Truck.CAVALO_6X4}]
-  const bodytrucks: {label: string, value: Bodytruck}[] = [{label: "Caçamba", value: Bodytruck.VIRINHA_CACAMBA}, {label: "Porta Container", value: Bodytruck.PORTA_CONTAINER}, {label: "Prancha", value: Bodytruck.PRANCHA}, {label: "Graneleiro", value: Bodytruck.GRANELEIRO}, {label: "Grade Baixa", value: Bodytruck.GRADE_BAIXA}, {label: "Sider", value: Bodytruck.SIDER}]
+  const {entity, isLoading, isHandlingMutation, operation, selected, setSelected, onSubmit, handleClose} = useEntity<Vehicle, VehicleRegister>({url})
+  const {trucks, bodytrucks, info} = useMemo(() => {
+    const trucks: {label: string, value: Truck}[] = [{label: "Truc", value: Truck.TRUC}, {label: "Toco", value: Truck.TOCO}, {label: "Cavalo 4x2", value: Truck.CAVALO_4X2}, {label: "Cavalo 6x2", value: Truck.CAVALO_6X2}, {label: "Cavalo 6x2", value: Truck.CAVALO_6X4}]
+    const bodytrucks: {label: string, value: Bodytruck}[] = [{label: "Caçamba", value: Bodytruck.VIRINHA_CACAMBA}, {label: "Porta Container", value: Bodytruck.PORTA_CONTAINER}, {label: "Prancha", value: Bodytruck.PRANCHA}, {label: "Graneleiro", value: Bodytruck.GRANELEIRO}, {label: "Grade Baixa", value: Bodytruck.GRADE_BAIXA}, {label: "Sider", value: Bodytruck.SIDER}]
+    const [info] = transformJsonValue([entity?.info])
+    return {trucks, bodytrucks, info}
+  }, [entity?.info])
   
-  const {entity, isLoading, isHandlingMutation, operation, selected, setSelected, onSubmit} = useEntity<Vehicle, VehicleRegister>({url})
-  const [info] = transformJsonValue([entity?.info])
-  
-  const handleUpdate = (data: VehicleRegister) => {
-    if(!data.licence_plate_2) data.licence_plate_2 = entity?.licence_plate_2 || null
-    if(!data.licence_plate_3) data.licence_plate_3 = entity?.licence_plate_3 || null
-    if(!data.info) data.info = info || {}
-    if(!data.capacity) data.capacity = entity?.capacity || null
-    if((!data.truck || data.truck === Truck.TRUC) && entity?.truck) data.truck = entity.truck
-    if((!data.bodytruck || data.bodytruck === Bodytruck.VIRINHA_CACAMBA) && entity?.bodytruck) data.bodytruck = entity.bodytruck
-    
-    return data
-  }
-  
-  const handleData = async (data: VehicleRegister) => onSubmit(handleUpdate(data))
+  const handleData = async (data: VehicleRegister) => onSubmit({
+    ...data,
+    licence_plate_2: data.licence_plate_2 ?? preventNull(entity?.licence_plate_2),
+    licence_plate_3: data.licence_plate_3 ?? preventNull(entity?.licence_plate_3),
+    info: data.info ?? info ?? undefined,
+    capacity: data.capacity ?? entity?.capacity ?? null,
+    truck: data.truck ?? entity?.truck ?? null,
+    bodytruck: data.bodytruck ?? entity?.bodytruck ?? null
+  })
   
   return (
     <Loading isLoading={isLoading}>
-      <Tabs
+      <form onSubmit={handleSubmit(handleData)}>
+        <Tabs
             fullWidth
             size="md"
             aria-label="Tabs form"
             selectedKey={selected}
             onSelectionChange={setSelected}
           >
-            <Tab title="Dados do Caminhão">
-              <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
+            <Tab className="flex flex-col gap-2" title="Dados do Caminhão">
                 <Input {...register("licence_plate_1")} defaultValue={preventNull(entity?.licence_plate_1)} label="Placa" placeholder="Digite a placa 1" isClearable isInvalid={!!errors.licence_plate_1} color={getInputColor(errors.licence_plate_1)} errorMessage={getInputErrorMessage(errors.licence_plate_1)} />
                 <Input {...register("licence_plate_2")} defaultValue={preventNull(entity?.licence_plate_2)} label="Placa 2" placeholder="Digite a placa 2" isClearable />
                 <Input {...register("licence_plate_3")} defaultValue={preventNull(entity?.licence_plate_3)} label="Placa 3" placeholder="Digite a placa 3" isClearable />
@@ -117,21 +116,19 @@ export default memo(function VehicleTabs ({buttonLabel, url}: {buttonLabel?: str
                     </Select>
                   )}
                 />
-                <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
-              </form>
+                <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
             </Tab>
             {operation === 'update' && (
-            <Tab title="Características">
-              <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
+              <Tab title="Características">
                 <Input {...register("info.brand")} defaultValue={preventNull(info?.brand)} label="Marca" isClearable />
                 <Input {...register("info.model")} defaultValue={preventNull(info?.model)} label="Modelo" isClearable />
                 <Input {...register("info.year")} type="number" defaultValue={preventNull(info?.year?.toString())} label="Ano" isClearable />
                 <Input {...register("info.color")} defaultValue={preventNull(info?.color)} label="Cor" isClearable />
-                <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
-              </form>
-            </Tab>
+                <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
+              </Tab>
             )}
         </Tabs>
-      </Loading>
+      </form>
+    </Loading>
   )
 })

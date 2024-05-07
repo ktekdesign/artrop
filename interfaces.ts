@@ -4,6 +4,7 @@ export interface pk {
   id?: string;
   message?: string;
   name?: string;
+  actions?: string;
 }
 
 export interface Action extends pk {

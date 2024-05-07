@@ -35,34 +35,30 @@ export default memo(function ShipTabs ({buttonLabel, url}: {buttonLabel?: string
     resolver: yupResolver(schema),
   })
    
-  const {entity, isLoading, isHandlingMutation, onSubmit, selected, setSelected} = useEntity<Ship, ShipRegister>({url})
-  const handleData = (data: ShipRegister) => {
-    data.departAt = transformDate(data?.departAt || entity?.departAt?.toString())?.toISOString()
-    return data
-  }
+  const {entity, isLoading, isHandlingMutation, onSubmit, selected, setSelected, handleClose} = useEntity<Ship, ShipRegister>({url})
   
-  const handleShip = (data: ShipRegister) => onSubmit(handleData(data))
+  const handleShip = (data: ShipRegister) => onSubmit({...data, departAt: transformDate(data?.departAt || entity?.departAt?.toString())?.toISOString()})
   
   return (
     <Loading isLoading={isLoading}>
-    <Tabs
-      fullWidth
-      size="md"
-      aria-label="Tabs form"
-      selectedKey={selected}
-      onSelectionChange={setSelected}
-    >
-      <Tab title="Dados do navio">
-        <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleShip)}>
-          <Input {...register("name")} defaultValue={preventNull(entity?.name)} label="Nome" placeholder="Digite o nome" isClearable isInvalid={!!errors.name} color={getInputColor(errors.name)} errorMessage={getInputErrorMessage(errors.name)} />
-          <Input {...register("line_up")} defaultValue={preventNull(entity?.line_up)} label="Line Up" placeholder="Digite o Line Up" isClearable isInvalid={!!errors.line_up} color={getInputColor(errors.line_up)} errorMessage={getInputErrorMessage(errors.line_up)} />
-          <Input {...register("product")} defaultValue={preventNull(entity?.product)} label="Produto" placeholder="Digite o produto" isClearable isInvalid={!!errors.product} color={getInputColor(errors.product)} errorMessage={getInputErrorMessage(errors.product)} />
-          <Input type="date" {...register("landingAt")} defaultValue={preventNull(formatDate(entity?.landingAt))} label="Data atracação" isInvalid={!!errors.landingAt} color={getInputColor(errors.landingAt)} errorMessage={getInputErrorMessage(errors.landingAt)} />
-          <Input type="date" {...register("departAt")} defaultValue={preventNull(formatDate(entity?.departAt))} label="Data Desatracação" />
-          <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} />
-        </form>
-      </Tab>
-    </Tabs>
+      <Tabs
+        fullWidth
+        size="md"
+        aria-label="Tabs form"
+        selectedKey={selected}
+        onSelectionChange={setSelected}
+      >
+        <Tab title="Dados do navio">
+          <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleShip)}>
+            <Input {...register("name")} defaultValue={preventNull(entity?.name)} label="Nome" placeholder="Digite o nome" isClearable isInvalid={!!errors.name} color={getInputColor(errors.name)} errorMessage={getInputErrorMessage(errors.name)} />
+            <Input {...register("line_up")} defaultValue={preventNull(entity?.line_up)} label="Line Up" placeholder="Digite o Line Up" isClearable isInvalid={!!errors.line_up} color={getInputColor(errors.line_up)} errorMessage={getInputErrorMessage(errors.line_up)} />
+            <Input {...register("product")} defaultValue={preventNull(entity?.product)} label="Produto" placeholder="Digite o produto" isClearable isInvalid={!!errors.product} color={getInputColor(errors.product)} errorMessage={getInputErrorMessage(errors.product)} />
+            <Input type="date" {...register("landingAt")} defaultValue={preventNull(formatDate(entity?.landingAt))} label="Data atracação" isInvalid={!!errors.landingAt} color={getInputColor(errors.landingAt)} errorMessage={getInputErrorMessage(errors.landingAt)} />
+            <Input type="date" {...register("departAt")} defaultValue={preventNull(formatDate(entity?.departAt))} label="Data Desatracação" />
+            <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
+          </form>
+        </Tab>
+      </Tabs>
     </Loading>
   )
 })

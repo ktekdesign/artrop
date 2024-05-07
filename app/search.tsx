@@ -2,15 +2,19 @@
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { Input } from '@nextui-org/react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useTransition } from 'react';
 import { pk } from '../interfaces';
 
 const Search = <T extends pk,>({ entities, setEntities }: { entities?: T[], setEntities: (data: T[] | undefined) => void }) => {
   const ref = useRef<HTMLInputElement | null>(null)
+  const [isPending, startTransition] = useTransition();
+  
   const handleSearch = useCallback(() => {
-    const search = ref?.current?.value
+    const search = ref?.current?.value?.toLowerCase()
     const results = entities?.filter(entity => Object.values(entity).some(value => value?.toString().toLowerCase().includes(search)))
-    setEntities(results || entities)
+    startTransition(() => {
+      setEntities(results || entities)
+    })
   }, [entities, setEntities])
 
   return (

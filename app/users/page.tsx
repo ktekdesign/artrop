@@ -7,11 +7,16 @@ import UserTabs from '../../forms/user-tabs';
 import EntityModal from '../entity-modal';
 import AddButton from '../add-button';
 import { User } from '@prisma/client';
+import { useMemo } from 'react';
 
 export default function IndexPage() {
+  const [url, titles, fields] = useMemo(() => ([
+    API_USER_URL,
+    ['Nome', 'Email', 'CPF', "Função"],
+    ['name', 'email', 'govID', 'type']
+  ]), [])
   
-  const url = API_USER_URL
-  const {entities, isPending, init, setEntities} = useEntities<User>(url)
+  const {entities, setEntities, columns, rows} = useEntities<User>(url, titles, fields as (keyof User)[])
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
@@ -22,8 +27,8 @@ export default function IndexPage() {
         </div>
         <AddButton />
       </div>
-      <Search<User> entities={init} setEntities={setEntities} />
-      <EntityTable entities={entities} titles={['Nome', 'Email', 'CPF', "Função"]} fields={['name', 'email', 'govID', 'type']} isPending={isPending} />
+      <Search<User> entities={entities} setEntities={setEntities} />
+      <EntityTable columns={columns} rows={rows} />
       <EntityModal url={url} label='usuário'>
         <UserTabs />
       </EntityModal>

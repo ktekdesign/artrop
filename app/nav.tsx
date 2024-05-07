@@ -11,9 +11,10 @@ import useNav from '../hooks/useNav';
 import MapComponent from './map-component';
 import MenuItem from './menu-item';
 import { Navigation } from '../interfaces';
+import { User } from 'next-auth';
 
-export default memo(function Nav() {
-  const { navigation, pathname, isMenuOpen, toggleMenu } = useNav()
+export default memo(function Nav({user}: {user?: User}) {
+  const { navigation, pathname, isMenuOpen, toggleMenu } = useNav({user})
   const {id, operation, isSuccess} = useTurn()
   return (
     <>

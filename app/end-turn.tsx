@@ -12,8 +12,8 @@ export default memo(function EndTurn ({id}: {id: string}) {
 
   return (
     <div className="text-center">
-      <Button color="danger" onPress={onPress} endContent={<LockClosedIcon />}>
-        Finalizar Turno
+      <Button color="danger" onPress={onPress} startContent={<LockClosedIcon />}>
+        Turno
       </Button>
       <EndTurnForm {...{isOpen, onClose, onOpenChange}} />
     </div>

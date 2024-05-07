@@ -7,11 +7,17 @@ import { OperationData } from '../interfaces';
 import { Weight } from '../forms/weight';
 
 const useTravel = (operation: OperationData) => {
-  const url = API_TRAVEL_URL;
+  const {
+    statuses,
+    nextStatus,
+    id,
+    operationId,
+    startedAt,
+    operationStartedAt
+  } = useMemo(() => {
+    const { type, operationId, id, status, startedAt, operationStartedAt } =
+      operation;
 
-  const { type, operationId, id, status, startedAt, operationStartedAt } =
-    operation;
-  const [statusesFiltered, nextStatus] = useMemo(() => {
     const statuses = [
       {
         status: Status.INICIO_VIAGEM,
@@ -91,31 +97,34 @@ const useTravel = (operation: OperationData) => {
     const currentStatus = statusesFiltered.findIndex(
       (index) => index.status === status
     );
-    return [statusesFiltered, currentStatus + 1];
-  }, [status, type]);
+    return {
+      statuses: statusesFiltered,
+      nextStatus: currentStatus + 1,
+      id,
+      operationId,
+      startedAt,
+      operationStartedAt
+    };
+  }, [operation]);
 
   const { isHandlingMutation, onSubmit } = useSaveMutation<Travel, unknown>(
-    `${url}${id}`,
+    `${API_TRAVEL_URL}${id}`,
     (data) => {
       if (data?.duration) return `Viagem encerrada em ${data.duration} minutos`;
     }
   );
 
   const updateStatus = useCallback(() => {
-    const statusToUpdate = statusesFiltered[nextStatus].status;
+    const statusToUpdate = statuses[nextStatus].status;
     const statusTime = new Date();
-    const duration =
-      statusToUpdate === Status.FIM_VIAGEM
-        ? minutesDiff(statusTime, startedAt)
-        : 0;
+
     const data =
       id && id !== undefined
         ? {
             id,
             status: statusToUpdate,
-            duration,
             ...JSON.parse(
-              `{"${statusesFiltered[nextStatus].field}": "${statusTime.toISOString()}"}`
+              `{"${statuses[nextStatus].field}": "${statusTime.toISOString()}"}`
             )
           }
         : {
@@ -123,11 +132,11 @@ const useTravel = (operation: OperationData) => {
             operationId
           };
     onSubmit(data);
-  }, [id, nextStatus, operationId, onSubmit, statusesFiltered, startedAt]);
+  }, [id, nextStatus, operationId, onSubmit, statuses, startedAt]);
 
   const handleWeight = useCallback(
     (data: Weight) => {
-      const statusToUpdate = statusesFiltered[nextStatus].status;
+      const statusToUpdate = statuses[nextStatus].status;
 
       onSubmit({
         id,
@@ -135,18 +144,18 @@ const useTravel = (operation: OperationData) => {
         ...data
       });
     },
-    [id, nextStatus, onSubmit, statusesFiltered]
+    [id, nextStatus, onSubmit, statuses]
   );
   return {
-    nextStatus: statusesFiltered[nextStatus],
+    nextStatus: statuses[nextStatus],
     isHandlingMutation,
     updateStatus,
     operationId,
     handleWeight,
     operationStartedAt,
     toggleButton:
-      statusesFiltered[nextStatus].status !== Status.PESO_CARREGADO &&
-      statusesFiltered[nextStatus].status !== Status.PESO_DESCARREGADO,
+      statuses[nextStatus].status !== Status.PESO_CARREGADO &&
+      statuses[nextStatus].status !== Status.PESO_DESCARREGADO,
     toggleColor: Boolean(nextStatus % 2)
   };
 };

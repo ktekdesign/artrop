@@ -1,11 +1,11 @@
-import { Children, ReactNode, cloneElement, isValidElement, memo } from 'react'
+import { Children, ReactNode, cloneElement, isValidElement, memo, useMemo } from 'react'
 import {Modal, ModalContent, ModalHeader, ModalBody} from "@nextui-org/react";
 import { renderButtonLabel } from "../utils/constants";
 import useModal from '../hooks/useModal';
 
 export default memo(function EntityModal ({label, title, url, children}: {label?: string, title?: string, url: string, children: ReactNode}) {
   const {action: {operation}, isOpen, onOpenChange, handleClose} = useModal()
-  const buttonLabel = renderButtonLabel(operation)
+  const buttonLabel = useMemo(() => renderButtonLabel(operation), [operation])
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} onClose={handleClose}>

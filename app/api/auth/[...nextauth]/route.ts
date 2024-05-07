@@ -1,8 +1,8 @@
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '../../../../utils/client';
 
-const handlers = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Login',
@@ -51,6 +51,6 @@ const handlers = NextAuth({
       return Promise.resolve(session);
     }
   }
-});
-
+};
+const handlers = NextAuth(authOptions);
 export { handlers as GET, handlers as POST };

@@ -5,6 +5,8 @@ import { Analytics } from '@vercel/analytics/react';
 import Nav from './nav';
 import AppProvider from './providers';
 import { ToastContainer } from 'react-toastify';
+import { getServerSession } from "next-auth/next"
+import {authOptions} from "./api/auth/[...nextauth]/route"
 
 export const metadata = {
   title: 'Artrop Sistema',
@@ -17,11 +19,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession(authOptions)
   return (
     <html lang="en" className="h-full bg-gray-50">
       <body className="h-full">
         <AppProvider>
-          <Nav />
+          <Nav user={session?.user} />
           {children}
           <ToastContainer />
         </AppProvider>

@@ -1,4 +1,3 @@
-import { data } from 'autoprefixer';
 import cep, { CEP } from 'cep-promise';
 import { ChangeEvent, useCallback, useState } from 'react';
 

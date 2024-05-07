@@ -7,10 +7,15 @@ import EntityTable from '../entity-table';
 import EntityModal from '../entity-modal';
 import VehicleTabs from '../../forms/vehicle-tabs';
 import AddButton from '../add-button';
+import { useMemo } from 'react';
 
 export default function IndexPage() {
-  const url = API_VEHICLE_URL
-  const {entities, isPending, init, setEntities} = useEntities<Vehicle>(url)
+  const [url, titles, fields] = useMemo(() => ([
+    API_VEHICLE_URL,
+    ['Placa', 'Capacidade', 'Caminhão', 'Carroceria'],
+    ['licence_plate_1', 'capacity', 'truck', 'bodytruck']
+  ]), [])
+  const {entities, setEntities, columns, rows} = useEntities<Vehicle>(url, titles, fields as (keyof Vehicle)[])
   
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
@@ -21,8 +26,8 @@ export default function IndexPage() {
         </div>
         <AddButton />
       </div>
-      <Search<Vehicle> entities={init} setEntities={setEntities} />
-      <EntityTable entities={entities} isPending={isPending} titles={['Placa', 'Capacidade', 'Caminhão', 'Carroceria']} fields={['licence_plate_1', 'capacity', 'truck', 'bodytruck']} />
+      <Search<Vehicle> entities={entities} setEntities={setEntities} />
+      <EntityTable columns={columns} rows={rows} />
       <EntityModal url={url} label='caminhão'>
         <VehicleTabs />
       </EntityModal>

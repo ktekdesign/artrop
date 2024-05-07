@@ -49,6 +49,7 @@ export default function useEntity<T, K>({ url }: { url?: string }) {
     operation,
     selected,
     setSelected,
-    onSubmit
+    onSubmit,
+    handleClose
   };
 }

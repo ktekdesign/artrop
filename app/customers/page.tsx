@@ -7,10 +7,15 @@ import CustomerTabs from '../../forms/customer-tabs';
 import EntityModal from '../entity-modal';
 import AddButton from '../add-button';
 import { Customer } from '@prisma/client';
+import { useMemo } from 'react';
 
 export default function IndexPage() {
-  const url = API_CUSTOMER_URL
-  const {entities, isPending, init, setEntities} = useEntities<Customer>(url)
+  const [url, titles, fields] = useMemo(() => ([
+    API_CUSTOMER_URL,
+    ['Nome', 'Email', 'CNPJ'],
+    ['name', 'email', 'govID']
+  ]), [])
+  const {entities, setEntities, columns, rows} = useEntities<Customer>(url, titles, fields as (keyof Customer)[])
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
@@ -21,8 +26,8 @@ export default function IndexPage() {
         </div>
         <AddButton />
       </div>
-      <Search<Customer> entities={init} setEntities={setEntities} />
-      <EntityTable entities={entities} isPending={isPending} titles={['Nome', 'Email', 'CNPJ']} fields={['name', 'email', 'govID']} />
+      <Search<Customer> entities={entities} setEntities={setEntities} />
+      <EntityTable columns={columns} rows={rows} />
       <EntityModal url={url} label='cliente'>
         <CustomerTabs />
       </EntityModal>

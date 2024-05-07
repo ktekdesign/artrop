@@ -1,16 +1,11 @@
 import { PairKeyLabel, pk } from '../interfaces';
-import pickObjectKeys from '../utils/pickKeys';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, getKeyValue } from '@nextui-org/react';
 import ActionsButton from './actions-button';
 import LoadingData from './loading-data';
 
-export default function EntityTable<T extends pk, K extends keyof T>({ entities, titles, fields, isPending }: { entities?: T[], titles: string[], fields: K[], isPending: boolean }) {
-  const columns: PairKeyLabel[]= titles.map((title, key) => ({id: fields[key].toString(), label: title}))
-  columns.push({id: "actions", label: "Ações"})
-  const rows = entities?.map(entity => pickObjectKeys(entity, fields)).map(row => ({...row, actions: ""}))
-  
+export default function EntityTable<T extends pk, K extends keyof T>({ columns, rows }: { columns?: PairKeyLabel[], rows?: Pick<T, "id" | "actions" | K>[] }) {
   return (
-    <LoadingData data={entities}>
+    <LoadingData data={rows}>
       <Table aria-label='Lista das entidades' className='mt-8'>
         <TableHeader columns={columns}>
           {(column) => <TableColumn key={column.id}>{column.label}</TableColumn>}
@@ -24,5 +19,5 @@ export default function EntityTable<T extends pk, K extends keyof T>({ entities,
         </TableBody>
       </Table>
     </LoadingData>
-)
-  }
+  )
+}
