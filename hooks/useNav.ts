@@ -1,16 +1,15 @@
-import { User } from 'next-auth';
-import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { useCallback, useMemo, useState } from 'react';
 
-const useNav = ({ user }: { user?: User }) => {
-  const pathname = usePathname();
+const useNav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = useCallback(
     () => setIsMenuOpen(!isMenuOpen),
     [isMenuOpen]
   );
+  const { data } = useSession();
 
-  const { navigation } = useMemo(() => {
+  const navigation = useMemo(() => {
     const urlsAdmin = [
       { name: 'Usuários', href: '/users' },
       { name: 'Clientes', href: '/customers' },
@@ -20,15 +19,15 @@ const useNav = ({ user }: { user?: User }) => {
     ];
     const urlsDriver = [{ name: 'Meu Turno', href: '/' }];
     const navigation =
-      user?.type === 'ADMIN'
+      data?.user?.type === 'ADMIN'
         ? urlsAdmin
-        : user?.type === 'DRIVER'
+        : data?.user?.type === 'DRIVER'
           ? urlsDriver
           : [];
-    return { navigation };
-  }, [user?.type]);
+    return navigation;
+  }, [data?.user?.type]);
 
-  return { navigation, pathname, isMenuOpen, toggleMenu };
+  return { navigation, isMenuOpen, toggleMenu };
 };
 
 export default useNav;
