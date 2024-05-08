@@ -33,7 +33,7 @@ export default memo(function WeightForm ({isOpen, onOpenChange, onClose, field, 
   if(field !== "weight_load" && field !== "weight_unload") return
   
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal placement='center' isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleWeight)}>
           <ModalHeader className="flex flex-col gap-1">Informe o Peso</ModalHeader>

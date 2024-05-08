@@ -16,7 +16,14 @@ const useNav = () => {
       { name: 'Clientes', href: '/customers' },
       { name: 'Navios', href: '/ships' },
       { name: 'Caminhões', href: '/vehicles' },
-      { name: 'Dashboard', href: '/dashboard' }
+      {
+        name: 'Dashboard',
+        href: '/dashboard',
+        items: [
+          { name: 'Grafícos', href: '/dashboard' },
+          { name: 'Relatórios', href: '/dashboard/reports' }
+        ]
+      }
     ];
     const urlsDriver = [{ name: 'Meu Turno', href: '/' }];
     const navigation =

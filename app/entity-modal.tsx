@@ -8,7 +8,7 @@ export default memo(function EntityModal ({label, title, url, children}: {label?
   const buttonLabel = useMemo(() => renderButtonLabel(operation), [operation])
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} onClose={handleClose}>
+    <Modal placement='center' isOpen={isOpen} onOpenChange={onOpenChange} onClose={handleClose}>
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">{title || `${buttonLabel} um ${label}`}</ModalHeader>
         <ModalBody>

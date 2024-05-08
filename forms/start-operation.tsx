@@ -37,7 +37,7 @@ export default memo(function StartOperationForm ({isOpen, onOpenChange, onClose,
   const handleData = async (data: OperationInit) => onSubmit({...data, turnId})
   
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal placement='center' isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
           <ModalHeader className="flex flex-col gap-1">Iniciar operação</ModalHeader>

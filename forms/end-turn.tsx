@@ -29,7 +29,7 @@ export default memo(function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOp
   const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, Pick<Turn, "endedKm">>(API_TURN_URL, onClose)
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal placement='center' isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader className="flex flex-col gap-1">Encerrar turno</ModalHeader>

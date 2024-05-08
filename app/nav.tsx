@@ -55,7 +55,9 @@ export default memo(function Nav() {
           </MapComponent>
         </NavbarContent>
         <NavbarContent className='gap-1 md:gap-2' justify="end">
-          <NavbarItem><TurnButton id={id} operationId={operation?.operationId} isSuccess={isSuccess} /></NavbarItem>
+          <NavbarItem>
+            <TurnButton id={id} operationId={operation?.operationId} isSuccess={isSuccess} />
+          </NavbarItem>
           <Dropdown>
             <NavbarItem>
               <DropdownTrigger className='h-10 w-10'>
@@ -67,7 +69,7 @@ export default memo(function Nav() {
             </NavbarItem>
             <DropdownMenu
               aria-label="Authentication"
-              className="absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              className="absolute left-0 z-30 mt-2 w-48 origin-top-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               itemClasses={{
                 base: "gap-4",
               }}

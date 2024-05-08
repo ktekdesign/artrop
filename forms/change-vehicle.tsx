@@ -34,7 +34,7 @@ export default memo(function ChangeVehicleForm ({isOpen, onOpenChange, onClose, 
   const handleData = (data: VehiclesTurnInit) => onSubmit({...data, turnId})
   
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal placement='center' isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
           <ModalHeader className="flex flex-col gap-1">Trocar Caminhão</ModalHeader>

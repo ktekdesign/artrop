@@ -40,7 +40,7 @@ export default memo(function StartTurnForm ({isOpen, onOpenChange, onClose}: {is
   const {entities: vehicles} = useEntities<Vehicle>(API_VEHICLE_URL)
 
   return (
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal placement='center' isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
             <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
               <ModalHeader className="flex flex-col gap-1">Iniciar turno</ModalHeader>

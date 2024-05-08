@@ -43,7 +43,10 @@ export interface success {
 }
 export const initialOperationData = {} as TurnData;
 
-export interface Navigation {
-  name: string;
-  href: string;
+export interface NavigationBase {
+  name?: string;
+  href?: string;
+}
+export interface Navigation extends NavigationBase {
+  items?: NavigationBase[];
 }
