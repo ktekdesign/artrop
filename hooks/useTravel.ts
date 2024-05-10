@@ -6,30 +6,24 @@ import { OperationData } from '../interfaces';
 import { Weight } from '../forms/weight';
 
 const useTravel = (operation: OperationData) => {
-  const { statusesFiltered, nextStatus, id, operationId, operationStartedAt } =
-    useMemo(() => {
-      const { type, operationId, id, status, startedAt, operationStartedAt } =
-        operation;
-      const statusesFiltered =
-        type !== OperationType.VIRINHA_CONTAINER
-          ? statuses.filter(
-              (data) =>
-                data.status !== Status.INICIO_TRAVA_CONTAINER &&
-                data.status !== Status.FIM_TRAVA_CONTAINER
-            )
-          : statuses;
-      const currentStatus = statusesFiltered.findIndex(
-        (index) => index.status === status
-      );
-      return {
-        statusesFiltered,
-        nextStatus: currentStatus + 1,
-        id,
-        operationId,
-        startedAt,
-        operationStartedAt
-      };
-    }, [operation]);
+  const { type, operationId, id, status, operationStartedAt } = operation;
+  const { statusesFiltered, nextStatus } = useMemo(() => {
+    const statusesFiltered =
+      type !== OperationType.VIRINHA_CONTAINER
+        ? statuses.filter(
+            (data) =>
+              data.status !== Status.INICIO_TRAVA_CONTAINER &&
+              data.status !== Status.FIM_TRAVA_CONTAINER
+          )
+        : statuses;
+    const currentStatus = statusesFiltered.findIndex(
+      (index) => index.status === status
+    );
+    return {
+      statusesFiltered,
+      nextStatus: currentStatus + 1
+    };
+  }, [status, type]);
 
   const { isHandlingMutation, onSubmit } = useSaveMutation<Travel, unknown>(
     `${API_TRAVEL_URL}${id}`,
@@ -39,7 +33,7 @@ const useTravel = (operation: OperationData) => {
   );
 
   const updateStatus = useCallback(() => {
-    const statusToUpdate = statuses[nextStatus].status;
+    const statusToUpdate = statusesFiltered[nextStatus].status;
     const statusTime = new Date();
 
     const data =
@@ -56,7 +50,7 @@ const useTravel = (operation: OperationData) => {
             operationId
           };
     onSubmit(data);
-  }, [id, nextStatus, operationId, onSubmit]);
+  }, [statusesFiltered, nextStatus, id, operationId, onSubmit]);
 
   const handleWeight = useCallback(
     (data: Weight) => {
@@ -72,7 +66,7 @@ const useTravel = (operation: OperationData) => {
   );
   return {
     statuses: statusesFiltered,
-    nextStatus: statuses[nextStatus],
+    nextStatus: statusesFiltered[nextStatus],
     isHandlingMutation,
     updateStatus,
     operationId,
