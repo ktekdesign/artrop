@@ -1,14 +1,23 @@
 import { Link, NavbarMenuItem } from "@nextui-org/react"
-import { ReactNode, memo } from "react"
+import { memo } from "react"
+import { Navigation } from "../interfaces"
+import DropdownMenu from "./dropdown-menu"
 
-const NavMenuItem = ({name, href, pathname}: {name?: string, href?: string, pathname?: string}): ReactNode => (
-  <NavbarMenuItem isActive={href === pathname}>
-    <Link color="foreground"
-      href={href === pathname ? "#" : href}
-    >
-      {name}
-    </Link>
-  </NavbarMenuItem>
+interface Props extends Navigation {
+  pathname?: string
+}
+
+const NavMenuItem = ({name, href, pathname, items}: Props) => (
+  items ?
+    <DropdownMenu {...{name, href, items}} />
+  :
+    <NavbarMenuItem isActive={href === pathname}>
+      <Link color="foreground"
+        href={href === pathname ? "#" : href}
+      >
+        {name}
+      </Link>
+    </NavbarMenuItem>
 )
 
 export default memo(NavMenuItem)
