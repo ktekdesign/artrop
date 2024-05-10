@@ -8,7 +8,7 @@ import { memo } from "react";
 
 export default memo(function Travel ({operation}: {operation: OperationData}) {
   
-  const {toggleButton, toggleColor, nextStatus: {label, field}, isHandlingMutation, updateStatus, handleWeight} = useTravel(operation)
+  const {toggleButton, toggleColor, nextStatus: {label, id}, isHandlingMutation, updateStatus, handleWeight} = useTravel(operation)
   return (
     <>
       { toggleButton ? 
@@ -16,7 +16,7 @@ export default memo(function Travel ({operation}: {operation: OperationData}) {
           {label}
         </Button>
       :
-        <WeightButton field={field} isHandlingMutation={isHandlingMutation} handleWeight={handleWeight} />
+        <WeightButton field={id} isHandlingMutation={isHandlingMutation} handleWeight={handleWeight} />
       }
     </>
   )

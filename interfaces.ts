@@ -1,4 +1,11 @@
-import { Operation, OperationType, Status, Travel, Turn } from '@prisma/client';
+import {
+  Operation,
+  OperationType,
+  Status,
+  Travel,
+  Turn,
+  User
+} from '@prisma/client';
 
 export interface pk {
   id?: string;
@@ -49,4 +56,7 @@ export interface NavigationBase {
 }
 export interface Navigation extends NavigationBase {
   items?: NavigationBase[];
+}
+export interface Reports extends User {
+  turn: (Turn & { operation: (Operation & { travel: Travel[] })[] })[];
 }

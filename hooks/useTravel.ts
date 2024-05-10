@@ -1,111 +1,35 @@
 import { OperationType, Status, Travel } from '@prisma/client';
-import { minutesDiff } from '../utils/transform';
 import { useCallback, useMemo } from 'react';
 import useSaveMutation from './useSaveMutation';
-import { API_TRAVEL_URL } from '../utils/constants';
+import { API_TRAVEL_URL, statuses } from '../utils/constants';
 import { OperationData } from '../interfaces';
 import { Weight } from '../forms/weight';
 
 const useTravel = (operation: OperationData) => {
-  const {
-    statuses,
-    nextStatus,
-    id,
-    operationId,
-    startedAt,
-    operationStartedAt
-  } = useMemo(() => {
-    const { type, operationId, id, status, startedAt, operationStartedAt } =
-      operation;
-
-    const statuses = [
-      {
-        status: Status.INICIO_VIAGEM,
-        label: 'Iniciar Viagem',
-        field: 'startedAt'
-      },
-      {
-        status: Status.INICIO_CARREGAMENTO,
-        label: 'Iniciar Carregamento',
-        field: 'start_load'
-      },
-      {
-        status: Status.FIM_CARREGAMENTO,
-        label: 'Encerrar Carregamento',
-        field: 'end_load'
-      },
-      {
-        status: Status.CHEGADA_BALANCA_CARREGADO,
-        label: 'Informar Chegada Balança',
-        field: 'start_balance_loaded'
-      },
-      {
-        status: Status.SAIDA_BALANCA_CARREGADO,
-        label: 'Informar Saída Balança',
-        field: 'end_balance_loaded'
-      },
-      {
-        status: Status.PESO_CARREGADO,
-        label: 'Informar Peso',
-        field: 'weight_load'
-      },
-      {
-        status: Status.INICIO_DESCARREGAMENTO,
-        label: 'Iniciar Descarregamento',
-        field: 'start_unload'
-      },
-      {
-        status: Status.FIM_DESCARREGAMENTO,
-        label: 'Encerrar Descarregamento',
-        field: 'end_unload'
-      },
-      {
-        status: Status.CHEGADA_BALANCA_VAZIO,
-        label: 'Informar Retorno Balança',
-        field: 'start_balance_unloaded'
-      },
-      {
-        status: Status.SAIDA_BALANCA_VAZIO,
-        label: 'Informar Saída Balança',
-        field: 'end_balance_unloaded'
-      },
-      {
-        status: Status.PESO_DESCARREGADO,
-        label: 'Informar Peso',
-        field: 'weight_unload'
-      },
-      {
-        status: Status.INICIO_TRAVA_CONTAINER,
-        label: 'Iniciar Trava Container',
-        field: 'start_block_container'
-      },
-      {
-        status: Status.FIM_TRAVA_CONTAINER,
-        label: 'Encerrar Trava Container',
-        field: 'end_block_container'
-      },
-      { status: Status.FIM_VIAGEM, label: 'Encerrar viagem', field: 'endedAt' }
-    ];
-    const statusesFiltered =
-      type !== OperationType.VIRINHA_CONTAINER
-        ? statuses.filter(
-            (data) =>
-              data.status !== Status.INICIO_TRAVA_CONTAINER &&
-              data.status !== Status.FIM_TRAVA_CONTAINER
-          )
-        : statuses;
-    const currentStatus = statusesFiltered.findIndex(
-      (index) => index.status === status
-    );
-    return {
-      statuses: statusesFiltered,
-      nextStatus: currentStatus + 1,
-      id,
-      operationId,
-      startedAt,
-      operationStartedAt
-    };
-  }, [operation]);
+  const { statusesFiltered, nextStatus, id, operationId, operationStartedAt } =
+    useMemo(() => {
+      const { type, operationId, id, status, startedAt, operationStartedAt } =
+        operation;
+      const statusesFiltered =
+        type !== OperationType.VIRINHA_CONTAINER
+          ? statuses.filter(
+              (data) =>
+                data.status !== Status.INICIO_TRAVA_CONTAINER &&
+                data.status !== Status.FIM_TRAVA_CONTAINER
+            )
+          : statuses;
+      const currentStatus = statusesFiltered.findIndex(
+        (index) => index.status === status
+      );
+      return {
+        statusesFiltered,
+        nextStatus: currentStatus + 1,
+        id,
+        operationId,
+        startedAt,
+        operationStartedAt
+      };
+    }, [operation]);
 
   const { isHandlingMutation, onSubmit } = useSaveMutation<Travel, unknown>(
     `${API_TRAVEL_URL}${id}`,
@@ -124,7 +48,7 @@ const useTravel = (operation: OperationData) => {
             id,
             status: statusToUpdate,
             ...JSON.parse(
-              `{"${statuses[nextStatus].field}": "${statusTime.toISOString()}"}`
+              `{"${statuses[nextStatus].id}": "${statusTime.toISOString()}"}`
             )
           }
         : {
@@ -132,7 +56,7 @@ const useTravel = (operation: OperationData) => {
             operationId
           };
     onSubmit(data);
-  }, [id, nextStatus, operationId, onSubmit, statuses, startedAt]);
+  }, [id, nextStatus, operationId, onSubmit]);
 
   const handleWeight = useCallback(
     (data: Weight) => {
@@ -144,9 +68,10 @@ const useTravel = (operation: OperationData) => {
         ...data
       });
     },
-    [id, nextStatus, onSubmit, statuses]
+    [id, nextStatus, onSubmit]
   );
   return {
+    statuses: statusesFiltered,
     nextStatus: statuses[nextStatus],
     isHandlingMutation,
     updateStatus,

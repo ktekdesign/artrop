@@ -20,28 +20,29 @@ export async function GET() {
   });
   return NextResponse.json(operations);
 }
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string[] } }
-) {
-  const { start, end } = await req.json();
+
+export async function POST(req: NextRequest) {
+  const { interval } = await req.json();
+  const end = new Date();
+  const start = new Date(new Date().setDate(end.getDate() - interval));
+
   const whereClause =
     start && end
       ? {
           startedAt: {
-            lte: start
+            gte: start
           },
           endedAt: {
-            gte: end
+            lte: end
           }
         }
       : undefined;
-  const drivers = await prisma.travel.groupBy({
-    by: 'userId',
-    _avg: {
-      duration: true
+  const operations = await prisma.operation.groupBy({
+    by: 'type',
+    _count: {
+      type: true
     },
     where: whereClause
   });
-  return NextResponse.json(drivers);
+  return NextResponse.json(operations);
 }

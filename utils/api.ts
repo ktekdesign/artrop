@@ -1,4 +1,3 @@
-import { data } from 'autoprefixer';
 import { pk } from '../interfaces';
 
 const headers = {
@@ -8,6 +7,21 @@ export const options = {
   headers
 };
 
+export async function getDashboard<T>({
+  url,
+  body
+}: {
+  url: string;
+  body: unknown;
+}) {
+  return fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body)
+  })
+    .then((res) => res.json())
+    .then((data) => data as T[]);
+}
 export async function getRecords<T>({ url }: { url: string }) {
   return fetch(url, options)
     .then((res) => res.json())

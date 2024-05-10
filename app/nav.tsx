@@ -17,7 +17,7 @@ import NavMenuItem from './nav-menu-item';
 export default memo(function Nav() {
   const pathname = usePathname();
   const { navigation, isMenuOpen, toggleMenu } = useNav()
-  const {id, operation, isSuccess} = useTurn()
+  const { id, operation, isSuccess } = useTurn()
   return (
     <>
       <Operation operation={operation} turnId={id} />

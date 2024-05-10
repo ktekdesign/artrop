@@ -1,3 +1,5 @@
+import { Status } from '@prisma/client';
+
 export const API_USER_URL = '/api/users/';
 export const API_CUSTOMER_URL = '/api/customers/';
 export const API_SHIP_URL = '/api/ships/';
@@ -8,6 +10,7 @@ export const API_TRAVEL_URL = '/api/travels/';
 export const API_VEHICLESTURN_URL = '/api/vehiclesturn/';
 export const API_DASHBOARD_URL = '/api/dashboard/turns/';
 export const API_DASHBOARD_OPERATION_URL = '/api/dashboard/operations/';
+export const API_REPORTS_URL = '/api/dashboard/users/';
 export const renderButtonLabel = (operation?: string) =>
   operation === 'update'
     ? 'Atualize'
@@ -15,3 +18,89 @@ export const renderButtonLabel = (operation?: string) =>
       ? 'Remove'
       : 'Cadastre';
 export const operations = ['Caçamba', 'Prancha', 'Container', 'Entre Armazéns'];
+export const statuses = [
+  {
+    status: Status.INICIO_VIAGEM,
+    label: 'Iniciar Viagem',
+    id: 'startedAt',
+    report: 'Inicio'
+  },
+  {
+    status: Status.INICIO_CARREGAMENTO,
+    label: 'Iniciar Carregamento',
+    id: 'start_load',
+    report: 'Ini. Carr'
+  },
+  {
+    status: Status.FIM_CARREGAMENTO,
+    label: 'Encerrar Carregamento',
+    id: 'end_load',
+    report: 'Fim. Carr'
+  },
+  {
+    status: Status.CHEGADA_BALANCA_CARREGADO,
+    label: 'Informar Chegada Balança',
+    id: 'start_balance_loaded',
+    report: 'Ini. Bal'
+  },
+  {
+    status: Status.SAIDA_BALANCA_CARREGADO,
+    label: 'Informar Saída Balança',
+    id: 'end_balance_loaded',
+    report: 'Fim. Bal'
+  },
+  {
+    status: Status.PESO_CARREGADO,
+    label: 'Informar Peso',
+    id: 'weight_load',
+    report: 'Peso'
+  },
+  {
+    status: Status.INICIO_DESCARREGAMENTO,
+    label: 'Iniciar Descarregamento',
+    id: 'start_unload',
+    report: 'Ini. Desc'
+  },
+  {
+    status: Status.FIM_DESCARREGAMENTO,
+    label: 'Encerrar Descarregamento',
+    id: 'end_unload',
+    report: 'Fim. Desc'
+  },
+  {
+    status: Status.CHEGADA_BALANCA_VAZIO,
+    label: 'Informar Retorno Balança',
+    id: 'start_balance_unloaded',
+    report: 'Retorno'
+  },
+  {
+    status: Status.SAIDA_BALANCA_VAZIO,
+    label: 'Informar Saída Balança',
+    id: 'end_balance_unloaded',
+    report: 'Saída'
+  },
+  {
+    status: Status.PESO_DESCARREGADO,
+    label: 'Informar Peso',
+    id: 'weight_unload',
+    report: 'Peso'
+  },
+  {
+    status: Status.INICIO_TRAVA_CONTAINER,
+    label: 'Iniciar Trava Container',
+    id: 'start_block_container',
+    report: 'Ini. Trava'
+  },
+  {
+    status: Status.FIM_TRAVA_CONTAINER,
+    label: 'Encerrar Trava Container',
+    id: 'end_block_container',
+    report: 'Fim. Trava'
+  },
+  {
+    status: Status.FIM_VIAGEM,
+    label: 'Encerrar viagem',
+    id: 'endedAt',
+    report: 'Fim'
+  }
+];

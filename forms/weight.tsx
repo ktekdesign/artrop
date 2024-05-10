@@ -9,8 +9,8 @@ import ModalFormFooter from "../app/modal-form-footer";
 
 const schema = yup
   .object({
-    weight_load: yup.number(),
-    weight_unload: yup.number()
+    weight_load: yup.number().max(99999, 'O peso ultrapassou o maximo permitido'),
+    weight_unload: yup.number().max(99999, 'O peso ultrapassou o maximo permitido')
   })
   .required()
 

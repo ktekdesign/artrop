@@ -1,21 +1,16 @@
-import { getDashboard } from '../utils/api';
 import { useQuery } from '@tanstack/react-query';
-import { API_DASHBOARD_OPERATION_URL } from '../utils/constants';
-import { useMemo, useState } from 'react';
+import { getDashboard } from '../utils/api';
+import { API_REPORTS_URL, statuses } from '../utils/constants';
+import { Reports } from '../interfaces';
 import { DateValue, RangeValue } from '@nextui-org/react';
-interface DashboardData {
-  type: string;
-  _count: {
-    type: number;
-  };
-}
-export default function useDashboardOperation(
+
+const useReports = (
   interval: string | number,
   custom: RangeValue<DateValue>
-) {
-  const url = API_DASHBOARD_OPERATION_URL;
+) => {
+  const url = API_REPORTS_URL;
   const fetchData = () =>
-    getDashboard<DashboardData>({
+    getDashboard<Reports>({
       url,
       body: {
         interval,
@@ -28,18 +23,19 @@ export default function useDashboardOperation(
     queryKey: [url, interval, custom.end.toString(), custom.start.toString()],
     queryFn: fetchData
   });
-  const types = useMemo(
-    () =>
-      data?.map(({ type, _count }) => ({
-        name: type,
-        value: _count.type
-      })),
-    [data]
-  );
 
   return {
+    data,
+    travelColumns: [
+      ...statuses,
+      {
+        id: 'duration',
+        report: 'Duração'
+      }
+    ],
     error,
-    isLoading,
-    types
+    isLoading
   };
-}
+};
+
+export default useReports;
