@@ -23,7 +23,7 @@ export default function IndexPage() {
       <p className='paragraph'>A lista dos turnos.</p>
       <Search<Turn> entities={entities} setEntities={setEntities} />
       <EntityTable columns={columns} rows={rows} />
-      <EntityModal url={url} label='turno'>
+      <EntityModal url={url} label='um turno'>
         <TurnTabs />
       </EntityModal>
     </main>

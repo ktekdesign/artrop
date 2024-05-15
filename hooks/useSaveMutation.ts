@@ -28,8 +28,10 @@ export default function useSaveMutation<T, K>(
       }
       toast(message);
     },
-    onSettled: async () =>
-      await queryClient.invalidateQueries({ queryKey: [API_TURN_URL, 'open'] }),
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: [API_TURN_URL, 'open'] });
+      await queryClient.invalidateQueries({ queryKey: ['current-turn'] });
+    },
     onError: (err: Error) => toast(err.message)
   });
   const onSubmit = (data: K & pk) => saveMutation.mutate(data);

@@ -12,8 +12,8 @@ import { useMemo } from 'react';
 export default function IndexPage() {
   const [url, titles, fields] = useMemo(() => ([
     API_USER_URL,
-    ['Nome', 'Email', 'CPF', "Função"],
-    ['name', 'email', 'govID', 'type']
+    ['Nome', 'Email', 'CPF', 'Contato', 'Função'],
+    ['name', 'email', 'govID', 'phone', 'type']
   ]), [])
   
   const {entities, setEntities, columns, rows} = useEntities<User>(url, titles, fields as (keyof User)[])
@@ -29,7 +29,7 @@ export default function IndexPage() {
       </div>
       <Search<User> entities={entities} setEntities={setEntities} />
       <EntityTable columns={columns} rows={rows} />
-      <EntityModal url={url} label='usuário'>
+      <EntityModal url={url} label='um usuário'>
         <UserTabs />
       </EntityModal>
     </main>

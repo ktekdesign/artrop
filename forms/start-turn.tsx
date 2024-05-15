@@ -66,14 +66,14 @@ export default memo(function StartTurnForm ({isOpen, onOpenChange, onClose}: {is
                       <Select
                         {...field}
                         items={vehicles}
-                        label="Vehiculo"
-                        placeholder="Escolha o Vehiculo"
+                        label="Veículo"
+                        placeholder="Escolha o Veículo"
                       >
                         {(vehicle: Vehicle) => <SelectItem key={vehicle.id}>{vehicle.licence_plate_1}</SelectItem>}
                       </Select>
                     )}
                   />
-                  <Input type="number" {...register("startedKm")} label="Kilometragem do vehiculo" placeholder="Insira a kilometragem para iniciar o turno" isClearable isInvalid={!!errors.startedKm} color={getInputColor(errors.startedKm)} errorMessage={getInputErrorMessage(errors.startedKm)} />
+                  <Input type="number" {...register("startedKm")} label="Kilometragem do Veículo" placeholder="Insira a kilometragem para iniciar o turno" isClearable isInvalid={!!errors.startedKm} color={getInputColor(errors.startedKm)} errorMessage={getInputErrorMessage(errors.startedKm)} />
                   <ModalFormFooter isLoading={isHandlingMutation} buttonLabel="Iniciar" handleClose={onClose} />
               </ModalBody>
             </form>

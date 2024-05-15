@@ -1,7 +1,7 @@
 'use client';
 
-import { memo } from 'react';
-import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, NavbarMenuToggle, NavbarMenu} from "@nextui-org/react";
+import { memo, useCallback } from 'react';
+import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, NavbarMenuToggle, NavbarMenu, Link} from "@nextui-org/react";
 
 import { signOut } from 'next-auth/react';
 import TurnButton from './turn-button';
@@ -13,37 +13,30 @@ import MenuItem from './menu-item';
 import { Navigation } from '../interfaces';
 import { usePathname } from 'next/navigation';
 import NavMenuItem from './nav-menu-item';
+import useModal from '../hooks/useModal';
 
 export default memo(function Nav() {
   const pathname = usePathname();
-  const { navigation, isMenuOpen, toggleMenu } = useNav()
-  const { id, operation, isSuccess } = useTurn()
+  const { navigation, isMenuOpen, toggleMenu, userId } = useNav()
+  const { id, operation, isSuccess, startedKm } = useTurn()
+  const {onOpen, handleAction} = useModal()
+  const handleUser = useCallback(() => {
+    handleAction({id: userId, operation: 'update'})
+    onOpen()
+  }, [handleAction, onOpen, userId])
+
+  const handleSignOut = () => {
+    signOut()
+  }
+
   return (
     <>
       <Operation operation={operation} turnId={id} />
       <Navbar isBordered onMenuOpenChange={toggleMenu} maxWidth="full" className='header'>
         <NavbarBrand className="flex flex-grow-0 items-center">
-          <svg
-            width="32"
-            height="32"
-            viewBox="0 0 32 32"
-            fill="none"
-            className="text-gray-100"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect
-              width="100%"
-              height="100%"
-              rx="16"
-              fill="currentColor"
-            />
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M17.6482 10.1305L15.8785 7.02583L7.02979 22.5499H10.5278L17.6482 10.1305ZM19.8798 14.0457L18.11 17.1983L19.394 19.4511H16.8453L15.1056 22.5499H24.7272L19.8798 14.0457Z"
-              fill="black"
-            />
-          </svg>
+          <Link href='/' className='text-xl font-bold text-black'>
+          ARTROP
+          </Link>
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             className="md:hidden ml-4 h-6"
@@ -56,7 +49,7 @@ export default memo(function Nav() {
         </NavbarContent>
         <NavbarContent className='gap-1 md:gap-2' justify="end">
           <NavbarItem>
-            <TurnButton id={id} operationId={operation?.operationId} isSuccess={isSuccess} />
+            <TurnButton id={id} operationId={operation?.operationId} isSuccess={isSuccess} startedKm={startedKm} />
           </NavbarItem>
           <Dropdown>
             <NavbarItem>
@@ -75,9 +68,16 @@ export default memo(function Nav() {
               }}
             >
               <DropdownItem
+                key="update"
+                className={'flex w-full px-4 py-2 text-sm text-gray-700'}
+                onClick={handleUser}
+              >
+                Editar meu perfil
+              </DropdownItem>
+              <DropdownItem
                 key="logout"
                 className={'flex w-full px-4 py-2 text-sm text-gray-700'}
-                onClick={() => signOut()}
+                onClick={handleSignOut}
               >
                 Sair
               </DropdownItem>

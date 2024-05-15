@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { API_DASHBOARD_OPERATION_URL } from '../utils/constants';
 import { useMemo, useState } from 'react';
 import { DateValue, RangeValue } from '@nextui-org/react';
+import { getLocalTimeZone } from '@internationalized/date';
 interface DashboardData {
   type: string;
   _count: {
@@ -19,8 +20,8 @@ export default function useDashboardOperation(
       url,
       body: {
         interval,
-        end: custom.end.toDate('America/Sao_Paulo'),
-        start: custom.start.toDate('America/Sao_Paulo')
+        end: custom.end.toDate(getLocalTimeZone()),
+        start: custom.start.toDate(getLocalTimeZone())
       }
     });
 

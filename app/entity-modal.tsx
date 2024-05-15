@@ -1,3 +1,4 @@
+"use client"
 import { Children, ReactNode, cloneElement, isValidElement, memo, useMemo } from 'react'
 import {Modal, ModalContent, ModalHeader, ModalBody} from "@nextui-org/react";
 import { renderButtonLabel } from "../utils/constants";
@@ -10,7 +11,7 @@ export default memo(function EntityModal ({label, title, url, children}: {label?
   return (
     <Modal placement='center' isOpen={isOpen} onOpenChange={onOpenChange} onClose={handleClose}>
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">{title || `${buttonLabel} um ${label}`}</ModalHeader>
+        <ModalHeader className="flex flex-col gap-1">{title || `${buttonLabel} ${label}`}</ModalHeader>
         <ModalBody>
           {Children.map(children, (child) => <>{isValidElement(child) ? cloneElement(child, { ...{buttonLabel, url } }) : child}</>)}
         </ModalBody>

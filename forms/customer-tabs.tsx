@@ -50,12 +50,12 @@ export default memo(function CustomerTabs ({buttonLabel, url}: {buttonLabel?: st
   const {entity, isLoading, isHandlingMutation, onSubmit, operation, selected, setSelected, handleClose} = useEntity<Customer, CustomerRegister>({url})
   const [info, address] = useMemo(() => transformJsonValue([entity?.info, entity?.address]), [entity?.info, entity?.address])
   
-  const setAddress = useCallback((cep: CEP) => {
+  const setAddress = (cep: CEP) => {
     if(cep?.state) setValue("address.state", cep.state)
     if(cep?.city) setValue("address.city", cep.city)
     if(cep?.neighborhood) setValue("address.neighborhood", cep.neighborhood)
     if(cep?.street) setValue("address.street", cep.street)
-  }, [])
+  }
 
   const {cep, handleCepChange} = useCep(setAddress)
   

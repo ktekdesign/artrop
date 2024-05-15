@@ -11,6 +11,7 @@ export const API_VEHICLESTURN_URL = '/api/vehiclesturn/';
 export const API_DASHBOARD_URL = '/api/dashboard/turns/';
 export const API_DASHBOARD_OPERATION_URL = '/api/dashboard/operations/';
 export const API_REPORTS_URL = '/api/dashboard/users/';
+export const timeZone = 'America/Sao_Paulo';
 export const renderButtonLabel = (operation?: string) =>
   operation === 'update'
     ? 'Atualize'
@@ -26,6 +27,24 @@ export const statuses = [
     report: 'Inicio'
   },
   {
+    status: Status.CHEGADA_BALANCA_VAZIO,
+    label: 'Informar Chegada Balança Vazio',
+    id: 'start_balance_unloaded',
+    report: 'Ini. Bal. Vazio'
+  },
+  {
+    status: Status.SAIDA_BALANCA_VAZIO,
+    label: 'Informar Saída Balança Vazio',
+    id: 'end_balance_unloaded',
+    report: 'Fim Bal. Vazio'
+  },
+  {
+    status: Status.PESO_DESCARREGADO,
+    label: 'Informar Peso',
+    id: 'weight_unload',
+    report: 'Peso Vazio'
+  },
+  {
     status: Status.INICIO_CARREGAMENTO,
     label: 'Iniciar Carregamento',
     id: 'start_load',
@@ -35,25 +54,25 @@ export const statuses = [
     status: Status.FIM_CARREGAMENTO,
     label: 'Encerrar Carregamento',
     id: 'end_load',
-    report: 'Fim. Carr'
+    report: 'Fim Carr'
   },
   {
     status: Status.CHEGADA_BALANCA_CARREGADO,
-    label: 'Informar Chegada Balança',
+    label: 'Informar Chegada Balança Carregado',
     id: 'start_balance_loaded',
-    report: 'Ini. Bal'
+    report: 'Ini. Bal. Carr'
   },
   {
     status: Status.SAIDA_BALANCA_CARREGADO,
-    label: 'Informar Saída Balança',
+    label: 'Informar Saída Balança Carregado',
     id: 'end_balance_loaded',
-    report: 'Fim. Bal'
+    report: 'Fim Bal. Carr'
   },
   {
     status: Status.PESO_CARREGADO,
     label: 'Informar Peso',
     id: 'weight_load',
-    report: 'Peso'
+    report: 'Peso Carr'
   },
   {
     status: Status.INICIO_DESCARREGAMENTO,
@@ -66,24 +85,6 @@ export const statuses = [
     label: 'Encerrar Descarregamento',
     id: 'end_unload',
     report: 'Fim. Desc'
-  },
-  {
-    status: Status.CHEGADA_BALANCA_VAZIO,
-    label: 'Informar Retorno Balança',
-    id: 'start_balance_unloaded',
-    report: 'Retorno'
-  },
-  {
-    status: Status.SAIDA_BALANCA_VAZIO,
-    label: 'Informar Saída Balança',
-    id: 'end_balance_unloaded',
-    report: 'Saída'
-  },
-  {
-    status: Status.PESO_DESCARREGADO,
-    label: 'Informar Peso',
-    id: 'weight_unload',
-    report: 'Peso'
   },
   {
     status: Status.INICIO_TRAVA_CONTAINER,

@@ -1,9 +1,10 @@
-import { getDashboard, getRecords } from '../utils/api';
+import { getDashboard } from '../utils/api';
 import { useQuery } from '@tanstack/react-query';
 import { PieData } from '../app/pie-chart-dashboard';
 import { API_DASHBOARD_URL } from '../utils/constants';
 import { useMemo } from 'react';
 import { DateValue, RangeValue } from '@nextui-org/react';
+import { getLocalTimeZone } from '@internationalized/date';
 interface DashboardData {
   name: string;
   _count: {
@@ -22,8 +23,8 @@ export default function useDashboard(
       url,
       body: {
         interval,
-        end: custom.end.toDate('America/Sao_Paulo'),
-        start: custom.start.toDate('America/Sao_Paulo')
+        end: custom.end.toDate(getLocalTimeZone()),
+        start: custom.start.toDate(getLocalTimeZone())
       }
     });
 

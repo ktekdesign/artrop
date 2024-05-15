@@ -6,8 +6,17 @@ import { OperationData } from '../interfaces';
 import { Weight } from '../forms/weight';
 
 const useTravel = (operation: OperationData) => {
-  const { type, operationId, id, status, operationStartedAt } = operation;
-  const { statusesFiltered, nextStatus } = useMemo(() => {
+  const {
+    statusesFiltered,
+    nextStatus,
+    id,
+    startedAt,
+    operationId,
+    operationStartedAt
+  } = useMemo(() => {
+    const { type, operationId, id, status, operationStartedAt, startedAt } =
+      operation;
+
     const statusesFiltered =
       type !== OperationType.VIRINHA_CONTAINER
         ? statuses.filter(
@@ -21,9 +30,13 @@ const useTravel = (operation: OperationData) => {
     );
     return {
       statusesFiltered,
-      nextStatus: currentStatus + 1
+      nextStatus: currentStatus + 1,
+      id,
+      startedAt,
+      operationId,
+      operationStartedAt
     };
-  }, [status, type]);
+  }, [operation]);
 
   const { isHandlingMutation, onSubmit } = useSaveMutation<Travel, unknown>(
     `${API_TRAVEL_URL}${id}`,
@@ -33,16 +46,17 @@ const useTravel = (operation: OperationData) => {
   );
 
   const updateStatus = useCallback(() => {
-    const statusToUpdate = statusesFiltered[nextStatus].status;
+    const status = statusesFiltered[nextStatus].status;
     const statusTime = new Date();
 
     const data =
       id && id !== undefined
         ? {
             id,
-            status: statusToUpdate,
+            status,
+            startedAt,
             ...JSON.parse(
-              `{"${statuses[nextStatus].id}": "${statusTime.toISOString()}"}`
+              `{"${statusesFiltered[nextStatus].id}": "${statusTime.toISOString()}"}`
             )
           }
         : {
@@ -50,11 +64,11 @@ const useTravel = (operation: OperationData) => {
             operationId
           };
     onSubmit(data);
-  }, [statusesFiltered, nextStatus, id, operationId, onSubmit]);
+  }, [statusesFiltered, nextStatus, id, startedAt, operationId, onSubmit]);
 
   const handleWeight = useCallback(
     (data: Weight) => {
-      const statusToUpdate = statuses[nextStatus].status;
+      const statusToUpdate = statusesFiltered[nextStatus].status;
 
       onSubmit({
         id,
@@ -62,7 +76,7 @@ const useTravel = (operation: OperationData) => {
         ...data
       });
     },
-    [id, nextStatus, onSubmit]
+    [id, nextStatus, onSubmit, statusesFiltered]
   );
   return {
     statuses: statusesFiltered,
@@ -73,8 +87,8 @@ const useTravel = (operation: OperationData) => {
     handleWeight,
     operationStartedAt,
     toggleButton:
-      statuses[nextStatus].status !== Status.PESO_CARREGADO &&
-      statuses[nextStatus].status !== Status.PESO_DESCARREGADO,
+      statusesFiltered[nextStatus].status !== Status.PESO_CARREGADO &&
+      statusesFiltered[nextStatus].status !== Status.PESO_DESCARREGADO,
     toggleColor: Boolean(nextStatus % 2)
   };
 };

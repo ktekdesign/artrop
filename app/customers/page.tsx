@@ -28,7 +28,7 @@ export default function IndexPage() {
       </div>
       <Search<Customer> entities={entities} setEntities={setEntities} />
       <EntityTable columns={columns} rows={rows} />
-      <EntityModal url={url} label='cliente'>
+      <EntityModal url={url} label='um cliente'>
         <CustomerTabs />
       </EntityModal>
     </main>

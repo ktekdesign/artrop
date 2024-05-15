@@ -8,9 +8,9 @@ const useNav = () => {
     () => startTransition(() => setIsMenuOpen(!isMenuOpen)),
     [isMenuOpen]
   );
-  const { data } = useSession();
+  const session = useSession();
 
-  const navigation = useMemo(() => {
+  const { navigation, userId } = useMemo(() => {
     const urlsAdmin = [
       { name: 'Usuários', href: '/users' },
       { name: 'Clientes', href: '/customers' },
@@ -27,15 +27,20 @@ const useNav = () => {
     ];
     const urlsDriver = [{ name: 'Meu Turno', href: '/' }];
     const navigation =
-      data?.user?.type === 'ADMIN'
+      session?.data?.user?.type === 'ADMIN'
         ? urlsAdmin
-        : data?.user?.type === 'DRIVER'
+        : session?.data?.user?.type === 'DRIVER'
           ? urlsDriver
           : [];
-    return navigation;
-  }, [data?.user?.type]);
+    return { navigation, userId: session?.data?.user?.id };
+  }, [session]);
 
-  return { navigation, isMenuOpen, toggleMenu };
+  return {
+    navigation,
+    isMenuOpen,
+    toggleMenu,
+    userId
+  };
 };
 
 export default useNav;

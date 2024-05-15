@@ -1,3 +1,4 @@
+"use client"
 import { Input, Select, SelectItem, Tab, Tabs } from "@nextui-org/react";
 import { Role, User } from "@prisma/client";
 import { Controller, useForm } from "react-hook-form";
@@ -15,6 +16,7 @@ import { errorMessage, getInputColor, getInputErrorMessage } from "../utils/inpu
 import { memo, useCallback, useMemo } from "react";
 import useCep from "../hooks/useCep";
 import { CEP } from "cep-promise";
+import { useSession } from "next-auth/react";
 
 const schema = yup
   .object({
@@ -51,21 +53,21 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
     resolver: yupResolver(schema),
   })
   
-  
+  const session = useSession()
   const {entity, isLoading, isHandlingMutation, operation, selected, setSelected, onSubmit, handleClose} = useEntity<User, UserRegister>({url})
-  
+
   const {cnh, address, roles} = useMemo(() => {
     const [cnh, address] = transformJsonValue([entity?.cnh, entity?.address])
     const roles: {label: string, value: Role}[] = [{label: "Admin", value: Role.ADMIN}, {label: "Staff", value: Role.STAFF}, {label: "Motorista", value: Role.DRIVER}]
     return {cnh, address, roles}
   }, [entity?.cnh, entity?.address])
   
-  const setAddress = useCallback((cep: CEP) => {
+  const setAddress = (cep: CEP) => {
     if(cep?.state) setValue("address.state", cep.state)
     if(cep?.city) setValue("address.city", cep.city)
     if(cep?.neighborhood) setValue("address.neighborhood", cep.neighborhood)
     if(cep?.street) setValue("address.street", cep.street)
-  }, [])
+  }
 
   const {cep, handleCepChange} = useCep(setAddress)
 
@@ -104,7 +106,7 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
             <Input {...register("govID")} defaultValue={preventNull(entity?.govID)} label="CPF" placeholder="Digite o CPF" isClearable isInvalid={!!errors.govID} color={getInputColor(errors.govID)} errorMessage={getInputErrorMessage(errors.govID)} />
             <Input type="email" {...register("email")} defaultValue={preventNull(entity?.email)} label="Email" placeholder="Digite o e-mail" isClearable isInvalid={!!errors.email} color={getInputColor(errors.email)} errorMessage={getInputErrorMessage(errors.email)} />
             <Input type="tel" {...register("phone")} defaultValue={preventNull(entity?.phone)} label="Telephone" placeholder="Digite o celular" isClearable isInvalid={!!errors.phone} color={getInputColor(errors.phone)} errorMessage={getInputErrorMessage(errors.phone)} />
-            <Controller
+            {session?.data?.user?.type === 'ADMIN' && <Controller
               name="type"
               control={control}
               render={({ field }) => (
@@ -121,7 +123,7 @@ export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string
                   {({value, label}: {value: string, label: string}) => <SelectItem key={value} value={value}>{label}</SelectItem>}
                 </Select>
               )}
-            />
+            />}
             {operation === 'insert' &&
               <>
                 <Input type="password" {...register("password")} label="Senha" placeholder="Escolha uma senha" />

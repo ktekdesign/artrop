@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../utils/client';
 import { User } from '@prisma/client';
+import { getUserRole } from '../../../../utils/api-action';
 //import { encrypt, hash } from '../../../../security';
 
-function excludePassword(user: User) {
+export function excludePassword(user: User) {
   const { password, ...data } = user;
   return data;
 }
@@ -33,10 +34,12 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { id: string[] } }
 ) {
   const data = await req.json();
+  const role = await getUserRole(req);
+  if (role !== 'ADMIN') delete data.type;
   const id = params?.id[0];
   return NextResponse.json(
     excludePassword(

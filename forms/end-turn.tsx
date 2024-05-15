@@ -17,7 +17,7 @@ const schema = yup
   })
   .required()
 
-export default memo(function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOpen: boolean, onOpenChange(): void, onClose(): void, startedAt?: Date}) {
+export default memo(function EndTurnForm ({isOpen, onOpenChange, onClose, startedKm}: {isOpen: boolean, onOpenChange(): void, onClose(): void, startedAt?: Date, startedKm: number}) {
   const {
     register,
     handleSubmit,
@@ -34,7 +34,7 @@ export default memo(function EndTurnForm ({isOpen, onOpenChange, onClose}: {isOp
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader className="flex flex-col gap-1">Encerrar turno</ModalHeader>
           <ModalBody>
-            <Input type="number" {...register("endedKm")} label="Kilometragem do vehiculo" placeholder="Insira a kilometragem para finalisar o turno" isClearable isInvalid={!!errors.endedKm} color={getInputColor(errors.endedKm)} errorMessage={getInputErrorMessage(errors.endedKm)} />
+            <Input type="number" {...register("endedKm")} min={startedKm} label="Kilometragem do Veículo" placeholder="Insira a kilometragem para finalisar o turno" isClearable isInvalid={!!errors.endedKm} color={getInputColor(errors.endedKm)} errorMessage={getInputErrorMessage(errors.endedKm)} />
           </ModalBody>
           <ModalFormFooter isLoading={isHandlingMutation} buttonLabel="Encerrar" handleClose={onClose} />
         </form>

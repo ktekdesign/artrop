@@ -46,8 +46,8 @@ export default memo(function ChangeVehicleForm ({isOpen, onOpenChange, onClose, 
                   <Select
                     {...field}
                     items={vehicles}
-                    label="Vehiculo"
-                    placeholder="Escolha o Vehiculo"
+                    label="Veículo"
+                    placeholder="Escolha o Veículo"
                   >
                     {(vehicle: Vehicle) => <SelectItem key={vehicle.id}>{vehicle.licence_plate_1}</SelectItem>}
                   </Select>
