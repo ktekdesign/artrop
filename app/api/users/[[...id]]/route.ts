@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../utils/client';
-import { User } from '@prisma/client';
 import { getUserRole } from '../../../../utils/api-action';
+import { excludePassword } from '../../../../utils/exclude-password';
 //import { encrypt, hash } from '../../../../security';
 
-export function excludePassword(user: User) {
-  const { password, ...data } = user;
-  return data;
-}
 export async function GET(
   req: Request,
   { params }: { params: { id: string[] } }
@@ -19,7 +15,7 @@ export async function GET(
     if (user) return NextResponse.json(excludePassword(user));
   }
   return NextResponse.json(
-    (await prisma.user.findMany()).map((user: User) => excludePassword(user))
+    (await prisma.user.findMany()).map((user) => excludePassword(user))
   );
 }
 

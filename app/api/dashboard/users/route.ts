@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../utils/client';
-import { excludePassword } from '../../users/[[...id]]/route';
 import { getUserInfo } from '../../../../utils/api-action';
+import { excludePassword } from '../../../../utils/exclude-password';
 
 export async function POST(req: NextRequest) {
   const { interval, start, end } = await req.json();

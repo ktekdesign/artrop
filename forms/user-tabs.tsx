@@ -17,6 +17,7 @@ import { memo, useCallback, useMemo } from "react";
 import useCep from "../hooks/useCep";
 import { CEP } from "cep-promise";
 import { useSession } from "next-auth/react";
+import { API_USER_URL } from "../utils/constants";
 
 const schema = yup
   .object({
@@ -42,7 +43,7 @@ interface UserRegister extends Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'pa
   cnh_expires?: string | null;
 }
 
-export default memo(function UserTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
+export default memo(function UserTabs ({buttonLabel, url = API_USER_URL}: {buttonLabel?: string, url?: string }) {
   const {
     register,
     handleSubmit,

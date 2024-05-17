@@ -6,6 +6,7 @@ import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import { Status } from "@prisma/client";
 import { memo } from "react";
 import ModalFormFooter from "../app/modal-form-footer";
+import NumberInput from "../app/number-input";
 
 const schema = yup
   .object({
@@ -24,8 +25,7 @@ export interface Weight {
 export default memo(function WeightForm ({isOpen, onOpenChange, onClose, field, handleWeight, isHandlingMutation}: {isOpen: boolean, onOpenChange(): void, onClose(): void, field: string, handleWeight: (data: Weight) => void, isHandlingMutation: boolean}) {
   const {
     register,
-    handleSubmit,
-    formState: { errors },
+    handleSubmit
   } = useForm({
     resolver: yupResolver(schema),
   })
@@ -38,7 +38,12 @@ export default memo(function WeightForm ({isOpen, onOpenChange, onClose, field, 
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleWeight)}>
           <ModalHeader className="flex flex-col gap-1">Informe o Peso</ModalHeader>
           <ModalBody>
-            <Input type="number" {...register(field)} label="Peso" placeholder="Informe o peso" isClearable isInvalid={!!errors[field]} color={getInputColor(errors[field])} errorMessage={getInputErrorMessage(errors[field])} />
+            <NumberInput 
+              label="Peso"
+              {...register(field)}
+              maxLength={6}
+              placeholder="Informe o peso"
+            />
           </ModalBody>
           <ModalFormFooter isLoading={isHandlingMutation} buttonLabel="Enviar" handleClose={onClose} />
         </form>

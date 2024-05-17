@@ -6,9 +6,6 @@ import Nav from './nav';
 import AppProvider from './providers';
 import { ToastContainer } from 'react-toastify';
 import type { Viewport } from 'next'
-import EntityModal from './entity-modal';
-import UserTabs from '../forms/user-tabs';
-import { API_USER_URL } from '../utils/constants';
  
 export const viewport: Viewport = {
   width: 'device-width',
@@ -35,9 +32,6 @@ export default async function RootLayout({
         <AppProvider>
           <Nav />
           {children}
-          <EntityModal url={API_USER_URL} label=''>
-            <UserTabs />
-          </EntityModal>
           <ToastContainer />
         </AppProvider>
         <Analytics />

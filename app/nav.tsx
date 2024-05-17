@@ -14,10 +14,14 @@ import { Navigation } from '../interfaces';
 import { usePathname } from 'next/navigation';
 import NavMenuItem from './nav-menu-item';
 import useModal from '../hooks/useModal';
+import EntityModal from './entity-modal';
+import UserTabs from '../forms/user-tabs';
+import { API_USER_URL } from '../utils/constants';
+import { Role } from '@prisma/client';
 
 export default memo(function Nav() {
   const pathname = usePathname();
-  const { navigation, isMenuOpen, toggleMenu, userId } = useNav()
+  const { navigation, isMenuOpen, toggleMenu, userId, role } = useNav()
   const { id, operation, isSuccess, startedKm } = useTurn()
   const {onOpen, handleAction} = useModal()
   const handleUser = useCallback(() => {
@@ -60,6 +64,23 @@ export default memo(function Nav() {
                 </Button> 
               </DropdownTrigger>
             </NavbarItem>
+            {role === Role.ADMIN ?
+            <DropdownMenu
+              aria-label="Authentication"
+              className="absolute left-0 z-40 mt-2 w-48 origin-top-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              itemClasses={{
+                base: "gap-4",
+              }}
+            >
+              <DropdownItem
+                key="logout"
+                className={'flex w-full px-4 py-2 text-sm text-gray-700'}
+                onClick={handleSignOut}
+              >
+                Sair
+              </DropdownItem>
+            </DropdownMenu>
+            :
             <DropdownMenu
               aria-label="Authentication"
               className="absolute left-0 z-40 mt-2 w-48 origin-top-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
@@ -82,6 +103,7 @@ export default memo(function Nav() {
                 Sair
               </DropdownItem>
             </DropdownMenu>
+          }
           </Dropdown>  
         </NavbarContent>
         <NavbarMenu>
@@ -90,6 +112,11 @@ export default memo(function Nav() {
           </MapComponent>
         </NavbarMenu>
       </Navbar>
+      {role === Role.DRIVER && 
+        <EntityModal url={API_USER_URL}>
+          <UserTabs />
+        </EntityModal>
+      }
     </>
   );
 })

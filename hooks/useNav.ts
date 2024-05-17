@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import { useCallback, useMemo, useState, useTransition } from 'react';
 
@@ -10,7 +11,7 @@ const useNav = () => {
   );
   const session = useSession();
 
-  const { navigation, userId } = useMemo(() => {
+  const { navigation, userId, role } = useMemo(() => {
     const urlsAdmin = [
       { name: 'Usuários', href: '/users' },
       { name: 'Clientes', href: '/customers' },
@@ -27,19 +28,24 @@ const useNav = () => {
     ];
     const urlsDriver = [{ name: 'Meu Turno', href: '/' }];
     const navigation =
-      session?.data?.user?.type === 'ADMIN'
+      session?.data?.user?.type === Role.ADMIN
         ? urlsAdmin
-        : session?.data?.user?.type === 'DRIVER'
+        : session?.data?.user?.type === Role.DRIVER
           ? urlsDriver
           : [];
-    return { navigation, userId: session?.data?.user?.id };
+    return {
+      navigation,
+      userId: session?.data?.user?.id,
+      role: session?.data?.user?.type
+    };
   }, [session]);
 
   return {
     navigation,
     isMenuOpen,
     toggleMenu,
-    userId
+    userId,
+    role
   };
 };
 

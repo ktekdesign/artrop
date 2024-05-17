@@ -1,15 +1,15 @@
 "use client"
-import { Input, Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
 import { Turn } from "@prisma/client";
 import { API_TURN_URL } from "../utils/constants";
-import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import useSaveMutation from "../hooks/useSaveMutation";
 import { memo } from "react";
 import ModalFormFooter from "../app/modal-form-footer";
 import { transformNumber } from "../utils/transform";
+import NumberInput from "../app/number-input";
 
 const schema = yup
   .object({
@@ -21,11 +21,9 @@ export default memo(function EndTurnForm ({isOpen, onOpenChange, onClose, starte
   const {
     register,
     handleSubmit,
-    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   })
-  
   const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, Pick<Turn, "endedKm">>(API_TURN_URL, onClose)
 
   return (
@@ -34,7 +32,12 @@ export default memo(function EndTurnForm ({isOpen, onOpenChange, onClose, starte
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader className="flex flex-col gap-1">Encerrar turno</ModalHeader>
           <ModalBody>
-            <Input type="number" {...register("endedKm")} min={startedKm} label="Kilometragem do Veículo" placeholder="Insira a kilometragem para finalisar o turno" isClearable isInvalid={!!errors.endedKm} color={getInputColor(errors.endedKm)} errorMessage={getInputErrorMessage(errors.endedKm)} />
+            <NumberInput 
+              label="Kilometragem"
+              {...register("endedKm")}
+              min={startedKm}
+              placeholder="Digite a kilometragem final"
+            />
           </ModalBody>
           <ModalFormFooter isLoading={isHandlingMutation} buttonLabel="Encerrar" handleClose={onClose} />
         </form>
