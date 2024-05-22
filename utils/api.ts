@@ -1,4 +1,5 @@
 import { pk } from '../interfaces';
+import { API_VEHICLESTURN_URL } from './constants';
 
 const headers = {
   'Content-Type': 'application/json'
@@ -6,7 +7,13 @@ const headers = {
 export const options = {
   headers
 };
-
+export async function getMaxKm(id: string) {
+  return fetch(`${API_VEHICLESTURN_URL}${id}`, {
+    headers
+  })
+    .then((res) => res.json())
+    .then((data) => data._max.endedKm);
+}
 export async function getDashboard<T>({
   url,
   body

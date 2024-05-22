@@ -4,7 +4,9 @@ import {
   Status,
   Travel,
   Turn,
-  User
+  User,
+  Vehicle,
+  VehiclesTurn
 } from '@prisma/client';
 
 export interface pk {
@@ -35,6 +37,10 @@ export interface OperationInterf extends Operation {
 }
 export interface TurnData extends Turn {
   operation: OperationData;
+  vehiclesTurn: VehiclesTurnData[];
+}
+export interface VehiclesTurnData extends VehiclesTurn {
+  vehicle: Vehicle[];
 }
 export interface OperationData {
   type?: OperationType;

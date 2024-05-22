@@ -22,7 +22,8 @@ import { Role } from '@prisma/client';
 export default memo(function Nav() {
   const pathname = usePathname();
   const { navigation, isMenuOpen, toggleMenu, userId, role } = useNav()
-  const { id, operation, isSuccess, startedKm } = useTurn()
+  const { id, operation, isSuccess, startedAt, vehiclesTurn } = useTurn()
+  const startedKm = vehiclesTurn?.find(v => v.startedKm && !v.endedKm)?.startedKm ?? 0
   const {onOpen, handleAction} = useModal()
   const handleUser = useCallback(() => {
     handleAction({id: userId, operation: 'update'})
@@ -41,19 +42,23 @@ export default memo(function Nav() {
           <Link href='/' className='text-xl font-bold text-black'>
           ARTROP
           </Link>
-          <NavbarMenuToggle
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            className="md:hidden ml-4 h-6"
-          />
+          {role === Role.ADMIN && 
+            <NavbarMenuToggle
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              className="md:hidden ml-4 h-6"
+            />
+          }
         </NavbarBrand>
-        <NavbarContent className="hidden md:-my-px md:ml-4 md:flex md:space-x-4" justify='start'>
-          <MapComponent<Navigation> items={navigation}>
-            <MenuItem pathname={pathname} />
-          </MapComponent>
-        </NavbarContent>
+        {role === Role.ADMIN && 
+          <NavbarContent className="hidden md:-my-px md:ml-4 md:flex md:space-x-4" justify='start'>
+            <MapComponent<Navigation> items={navigation}>
+              <MenuItem pathname={pathname} />
+            </MapComponent>
+          </NavbarContent>
+        }
         <NavbarContent className='gap-1 md:gap-2' justify="end">
           <NavbarItem>
-            <TurnButton id={id} operationId={operation?.operationId} isSuccess={isSuccess} startedKm={startedKm} />
+            <TurnButton id={id} operationId={operation?.operationId} isSuccess={isSuccess} startedKm={startedKm} startedAt={startedAt} />
           </NavbarItem>
           <Dropdown>
             <NavbarItem>

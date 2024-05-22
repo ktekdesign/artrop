@@ -19,6 +19,11 @@ export async function GET(
     const turn = await prisma.turn.findFirst({
       where,
       include: {
+        vehiclesTurn: {
+          include: {
+            vehicle: true
+          }
+        },
         operation: {
           where: { status: false },
           include: {
@@ -48,7 +53,7 @@ export async function GET(
 }
 
 export async function POST(req: NextRequest) {
-  const { customerId, vehicleId, ...data } = await req.json();
+  const { customerId, vehicleId, startedKm, ...data } = await req.json();
   const token = await getToken({ req });
   if (!token) return NextResponse.json({ status: 401 });
   const turn = await prisma.turn.create({
@@ -59,40 +64,52 @@ export async function POST(req: NextRequest) {
       },
       user: {
         connect: { id: token.sub }
+      },
+      vehiclesTurn: {
+        create: [
+          {
+            startedKm,
+            vehicle: {
+              connect: { id: vehicleId }
+            },
+            user: {
+              connect: { id: token.sub }
+            }
+          }
+        ]
       }
     }
   });
-  await prisma.vehiclesTurn.create({
-    data: {
-      turn: {
-        connect: { id: turn.id }
-      },
-      vehicle: {
-        connect: { id: vehicleId }
-      },
-      user: {
-        connect: { id: token.sub }
-      }
-    }
-  });
+
   return turn ? NextResponse.json({ turnId: turn.id }) : NextResponse.json({});
 }
 
 export async function PUT(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { id: string[] } }
 ) {
-  const data = await req.json();
-  if (data.endedKm) {
+  const { endedKm, ...data } = await req.json();
+  const token = await getToken({ req });
+  if (!token) return NextResponse.json({ status: 401 });
+
+  if (endedKm) {
+    data.endedAt = new Date();
     data.duration = minutesDiff(data.endedAt, data.startedAt);
     data.status = true;
-    data.endedAt = new Date();
   }
   const id = params?.id[0];
   return NextResponse.json(
     await prisma.turn.update({
-      where: { id },
-      data
+      where: { id, userId: token.sub },
+      data: {
+        ...data,
+        vehiclesTurn: {
+          updateMany: {
+            where: { endedKm: 0, turnId: id, userId: token.sub },
+            data: { endedKm }
+          }
+        }
+      }
     })
   );
 }

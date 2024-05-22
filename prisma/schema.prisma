@@ -134,9 +134,7 @@ model Vehicle {
 model Turn {
   id           String         @id @default(cuid())
   startedAt    DateTime       @default(now())
-  startedKm    Int
   endedAt      DateTime?
-  endedKm      Int?
   status       Boolean?       @default(false)
   duration     Int?           @default(0)
   customer     Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
@@ -151,6 +149,8 @@ model VehiclesTurn {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  startedKm Int      @default(0)
+  endedKm   Int?     @default(0)
   vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
   vehicleId String
   turn      Turn     @relation(fields: [turnId], references: [id], onDelete: Cascade)

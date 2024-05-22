@@ -2,30 +2,30 @@ import { Input, Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
-import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
 import { Status } from "@prisma/client";
 import { memo } from "react";
 import ModalFormFooter from "../app/modal-form-footer";
-import NumberInput from "../app/number-input";
+import { InputNumberFormat } from "@react-input/number-format";
+import { getInputColor, getInputErrorMessage } from "../utils/input-errors";
 
 const schema = yup
   .object({
-    weight_load: yup.number().max(99999, 'O peso ultrapassou o maximo permitido'),
-    weight_unload: yup.number().max(99999, 'O peso ultrapassou o maximo permitido')
+    weight_load: yup.number(),
+    weight_unload: yup.number()
   })
   .required()
 
 export interface Weight {
   weight_load?: number,
-  operationId?: string
   weight_unload?: number,
   status?: Status
 }
 
 export default memo(function WeightForm ({isOpen, onOpenChange, onClose, field, handleWeight, isHandlingMutation}: {isOpen: boolean, onOpenChange(): void, onClose(): void, field: string, handleWeight: (data: Weight) => void, isHandlingMutation: boolean}) {
   const {
-    register,
-    handleSubmit
+    setValue,
+    handleSubmit,
+    formState: { errors }
   } = useForm({
     resolver: yupResolver(schema),
   })
@@ -38,14 +38,14 @@ export default memo(function WeightForm ({isOpen, onOpenChange, onClose, field, 
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleWeight)}>
           <ModalHeader className="flex flex-col gap-1">Informe o Peso</ModalHeader>
           <ModalBody>
-            <NumberInput 
-              label="Peso"
-              {...register(field)}
-              maxLength={6}
+            <InputNumberFormat<typeof Input> component={Input} label="Peso"
+              locales="pt-BR"
+              maximumIntegerDigits={5}
               placeholder="Informe o peso"
-            />
+              onNumberFormat={(e) => setValue(field, e.detail.number)}
+              isInvalid={!!errors[field]} color={getInputColor(errors[field])} errorMessage={getInputErrorMessage(errors[field])} />
           </ModalBody>
-          <ModalFormFooter isLoading={isHandlingMutation} buttonLabel="Enviar" handleClose={onClose} />
+          <ModalFormFooter buttonLabel="Enviar" isLoading={isHandlingMutation} handleClose={onClose} />
         </form>
       </ModalContent>
     </Modal>

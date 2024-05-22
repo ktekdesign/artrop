@@ -3,12 +3,11 @@ import dompurify from 'dompurify';
 
 export const sanitize = (value: string) => dompurify.sanitize(value).trim();
 
-export const transformDate = (value?: string) => {
-  const response = value ? new Date(value) : null;
-  return response;
-};
+export const transformDate = (value?: string) =>
+  value ? new Date(value) : null;
 
-export const transformNumber = (value: string) => Number(value) || 0;
+export const transformNumber = (value: string) =>
+  Number(value.toString().replaceAll('.', '')) ?? 0;
 
 export const getOnlyDigit = (data: string) => data.replaceAll(/[^0-9]/gi, '');
 

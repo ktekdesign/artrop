@@ -28,9 +28,10 @@ const useTravel = (operation: OperationData) => {
     const currentStatus = statusesFiltered.findIndex(
       (index) => index.status === status
     );
+    const next = currentStatus + 1;
     return {
       statusesFiltered,
-      nextStatus: currentStatus + 1,
+      nextStatus: { ...statusesFiltered[next], next },
       id,
       startedAt,
       operationId,
@@ -46,50 +47,45 @@ const useTravel = (operation: OperationData) => {
   );
 
   const updateStatus = useCallback(() => {
-    const status = statusesFiltered[nextStatus].status;
     const statusTime = new Date();
 
     const data =
       id && id !== undefined
         ? {
             id,
-            status,
+            status: nextStatus.status,
             startedAt,
-            ...JSON.parse(
-              `{"${statusesFiltered[nextStatus].id}": "${statusTime.toISOString()}"}`
-            )
+            ...JSON.parse(`{"${nextStatus.id}": "${statusTime.toISOString()}"}`)
           }
         : {
             status: Status.INICIO_VIAGEM,
             operationId
           };
     onSubmit(data);
-  }, [statusesFiltered, nextStatus, id, startedAt, operationId, onSubmit]);
+  }, [nextStatus, id, startedAt, operationId, onSubmit]);
 
   const handleWeight = useCallback(
     (data: Weight) => {
-      const statusToUpdate = statusesFiltered[nextStatus].status;
-
       onSubmit({
         id,
-        status: statusToUpdate,
+        status: nextStatus.status,
         ...data
       });
     },
-    [id, nextStatus, onSubmit, statusesFiltered]
+    [id, nextStatus, onSubmit]
   );
   return {
     statuses: statusesFiltered,
-    nextStatus: statusesFiltered[nextStatus],
+    nextStatus,
     isHandlingMutation,
     updateStatus,
     operationId,
     handleWeight,
     operationStartedAt,
     toggleButton:
-      statusesFiltered[nextStatus].status !== Status.PESO_CARREGADO &&
-      statusesFiltered[nextStatus].status !== Status.PESO_DESCARREGADO,
-    toggleColor: Boolean(nextStatus % 2)
+      nextStatus.status !== Status.PESO_CARREGADO &&
+      nextStatus.status !== Status.PESO_DESCARREGADO,
+    toggleColor: Boolean(nextStatus.next % 2)
   };
 };
 

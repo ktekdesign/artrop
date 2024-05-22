@@ -39,14 +39,12 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const { id, ...data } = await req.json();
   if (data.endedAt) data.duration = minutesDiff(data.endedAt, data.startedAt);
-
   const userId = await getUserId(req);
-  return NextResponse.json(
-    await prisma.travel.update({
-      where: { id, userId },
-      data
-    })
-  );
+  const travel = await prisma.travel.update({
+    where: { id, userId },
+    data
+  });
+  return NextResponse.json(travel);
 }
 
 export async function DELETE(
