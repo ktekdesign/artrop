@@ -7,7 +7,7 @@ import {CheckboxGroup, Checkbox} from "@nextui-org/react";
 import ModalFormFooter from "../app/modal-form-footer";
 import { Customer, OperationType } from "@prisma/client";
 import preventNull from "../utils/prevent-null";
-import { cpfRegExp, phoneRegExp } from "../utils/regex";
+import { phoneRegExp } from "../utils/regex";
 import { getOnlyDigit, sanitize, transformJsonValue } from "../utils/transform";
 import enumValue from "../utils/enumValue";
 import { operations } from "../utils/constants";
@@ -21,7 +21,7 @@ import { CEP } from "cep-promise";
 const schema = yup
   .object({
     name: yup.string().transform(value => sanitize(value)).required(errorMessage.name.required),
-    govID: yup.string().matches(cpfRegExp, errorMessage.cnpj.invalid).transform(value => getOnlyDigit(value)).required(errorMessage.cnpj.required),
+    govID: yup.string().transform(value => getOnlyDigit(value)).required(errorMessage.cnpj.required),
     phone: yup.string().matches(phoneRegExp, errorMessage.phone.invalid).transform(value => getOnlyDigit(value)).required(errorMessage.phone.required),
     email: yup.string().email().required(),
     operation: yup.array<OperationType[]>().transform(value => enumValue(value, Object.values(OperationType))).default([]),

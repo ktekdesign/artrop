@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
         }
       : true;
   const drivers = await prisma.user.findMany({
-    where: { type: 'DRIVER' },
+    //where: { type: 'DRIVER' },
     select: {
       name: true,
       _count: {

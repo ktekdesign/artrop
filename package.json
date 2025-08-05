@@ -13,6 +13,7 @@
     "@internationalized/date": "^3.5.3",
     "@nextui-org/react": "^2.3.6",
     "@prisma/client": "5.13.0",
+    "@prisma/extension-accelerate": "^2.0.2",
     "@react-input/number-format": "^1.0.26",
     "@tanstack/react-query": "^5.35.1",
     "@types/js-cookie": "^3.0.6",
@@ -53,6 +54,8 @@
     "@types/node": "20.8.9",
     "prisma": "^5.13.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "5.2.2"
-  }
+  },
+  "packageManager": "pnpm@9.0.6+sha512.f6d863130973207cb7a336d6b439a242a26ac8068077df530d6a86069419853dc1ffe64029ec594a9c505a3a410d19643c870aba6776330f5cfddcf10a9c1617"
 }
