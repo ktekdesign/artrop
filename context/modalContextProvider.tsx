@@ -3,7 +3,7 @@ import {
   useState,
 } from "react";
 
-import { useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@heroui/react";
 import { Action } from "../interfaces";
 import ModalContext from "./modalContext";
 

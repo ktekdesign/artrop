@@ -19,6 +19,7 @@ export const dateFormatter = new DateFormatter('pt-BR', {
   hour12: false,
   timeZone: getLocalTimeZone()
 });
+
 export const timeFormatter = new DateFormatter('pt-BR', {
   hour: 'numeric',
   minute: 'numeric',

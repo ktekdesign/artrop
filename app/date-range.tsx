@@ -1,4 +1,4 @@
-import { RadioGroup } from "@nextui-org/react"
+import { RadioGroup } from "@heroui/react"
 import { memo } from "react"
 import Radio from "./custom-radio"
 

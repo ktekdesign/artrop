@@ -1,5 +1,5 @@
 "use client"
-import { Modal, ModalBody, ModalContent, ModalHeader, Select, SelectItem } from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, ModalHeader, Select, SelectItem } from "@heroui/react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"

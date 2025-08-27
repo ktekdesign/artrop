@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { PieData } from '../app/pie-chart-dashboard';
 import { API_DASHBOARD_URL } from '../utils/constants';
 import { useMemo } from 'react';
-import { DateValue, RangeValue } from '@nextui-org/react';
+import { DateValue, RangeValue } from '@heroui/react';
 import { getLocalTimeZone } from '@internationalized/date';
 interface DashboardData {
   name: string;

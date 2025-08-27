@@ -6,7 +6,7 @@ import Nav from './nav';
 import AppProvider from './providers';
 import { ToastContainer } from 'react-toastify';
 import type { Viewport } from 'next'
- 
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,

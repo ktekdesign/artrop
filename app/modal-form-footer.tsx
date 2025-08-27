@@ -1,4 +1,4 @@
-import { Button, ModalFooter } from "@nextui-org/react";
+import { Button, ModalFooter } from "@heroui/react";
 import { memo } from "react";
 
 export default memo(function ModalFormFooter ({isLoading, buttonLabel, handleClose}: {isLoading: boolean, buttonLabel?: string, handleClose(): void}) {

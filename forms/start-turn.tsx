@@ -1,5 +1,5 @@
 "use client"
-import { Input, Modal, ModalBody, ModalContent, ModalHeader, Select, SelectItem } from "@nextui-org/react";
+import { Input, Modal, ModalBody, ModalContent, ModalHeader, Select, SelectItem } from "@heroui/react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
@@ -12,6 +12,7 @@ import { memo } from "react";
 import ModalFormFooter from "../app/modal-form-footer";
 import { InputNumberFormat } from "@react-input/number-format";
 import { getMaxKm } from "../utils/api";
+import Loading from "../app/loading";
 
 const schema = yup
   .object({
@@ -41,8 +42,8 @@ export default memo(function StartTurnForm ({isOpen, onOpenChange, onClose}: {is
   
   const {isHandlingMutation, onSubmit} = useSaveMutation<Turn, TurnInit>(API_TURN_URL, onClose)
   
-  const {entities: customers} = useEntities<Customer>(API_CUSTOMER_URL)
-  const {entities: vehicles} = useEntities<Vehicle>(API_VEHICLE_URL)
+  const {entities: customers, isPending: isPendingCustomer} = useEntities<Customer>(API_CUSTOMER_URL)
+  const {entities: vehicles, isPending: isPendingVehicle} = useEntities<Vehicle>(API_VEHICLE_URL)
   const handleData = async (data: TurnInit) => {
     const min = await getMaxKm(data.vehicleId)
     if(data.startedKm < min) return setError("startedKm", {message: `O valor deve ser maior ou igual a ${min}`})
@@ -51,6 +52,7 @@ export default memo(function StartTurnForm ({isOpen, onOpenChange, onClose}: {is
   return (
       <Modal placement='center' isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
+          <Loading isLoading={isPendingCustomer && isPendingVehicle}>
             <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleData)}>
               <ModalHeader className="flex flex-col gap-1">Iniciar turno</ModalHeader>
               <ModalBody>
@@ -94,6 +96,7 @@ export default memo(function StartTurnForm ({isOpen, onOpenChange, onClose}: {is
                   <ModalFormFooter isLoading={isHandlingMutation} buttonLabel="Iniciar" handleClose={onClose} />
               </ModalBody>
             </form>
+          </Loading>
         </ModalContent>
       </Modal>
   )

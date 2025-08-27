@@ -1,10 +1,10 @@
-import { Input, Select, SelectItem, Tab, Tabs } from "@nextui-org/react";
+import { Input, Select, SelectItem, Tab, Tabs } from "@heroui/react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
 import { Bodytruck, Truck, Vehicle } from "@prisma/client";
 import ModalFormFooter from "../app/modal-form-footer";
-import preventNull from "../utils/prevent-null";
+import falsy from "../utils/prevent-falsy";
 import { sanitize, transformJsonValue, transformNumber } from "../utils/transform";
 import useEntity from "../hooks/useEntity";
 import Loading from "../app/loading";
@@ -23,7 +23,7 @@ const schema = yup
       model: yup.string().transform(value => sanitize(value)),
       year: yup.number().transform(value => transformNumber(value)),
       color: yup.string().transform(value => sanitize(value)),
-    }),
+    }).default(null),
     capacity: yup.number().transform(value => transformNumber(value)).required(errorMessage.generic.required)
   })
   .required()
@@ -34,7 +34,7 @@ interface VehicleRegister extends Omit<Vehicle, "id" | "createdAt" | "updatedAt"
     model?: string;
     year?: number;
     color?: string;
-  }
+  } | null
 }
 
 export default memo(function VehicleTabs ({buttonLabel, url}: {buttonLabel?: string, url?: string }) {
@@ -55,11 +55,13 @@ export default memo(function VehicleTabs ({buttonLabel, url}: {buttonLabel?: str
     return {trucks, bodytrucks, info}
   }, [entity?.info])
   
+  const {licence_plate_1, licence_plate_2, licence_plate_3} = entity || {}
+
   const handleData = async (data: VehicleRegister) => onSubmit({
     ...data,
-    licence_plate_2: data.licence_plate_2 ?? preventNull(entity?.licence_plate_2),
-    licence_plate_3: data.licence_plate_3 ?? preventNull(entity?.licence_plate_3),
-    info: data.info ?? info ?? undefined,
+    licence_plate_2: data.licence_plate_2 ?? falsy(entity?.licence_plate_2) ?? null,
+    licence_plate_3: data.licence_plate_3 ?? falsy(entity?.licence_plate_3) ?? null,
+    info: data.info ?? info ?? null,
     capacity: data.capacity ?? entity?.capacity ?? null,
     truck: data.truck ?? entity?.truck ?? null,
     bodytruck: data.bodytruck ?? entity?.bodytruck ?? null
@@ -76,10 +78,10 @@ export default memo(function VehicleTabs ({buttonLabel, url}: {buttonLabel?: str
             onSelectionChange={setSelected}
           >
             <Tab className="flex flex-col gap-2" title="Dados do Caminhão">
-                <Input {...register("licence_plate_1")} defaultValue={preventNull(entity?.licence_plate_1)} label="Placa" placeholder="Digite a placa 1" isClearable isInvalid={!!errors.licence_plate_1} color={getInputColor(errors.licence_plate_1)} errorMessage={getInputErrorMessage(errors.licence_plate_1)} />
-                <Input {...register("licence_plate_2")} defaultValue={preventNull(entity?.licence_plate_2)} label="Placa 2" placeholder="Digite a placa 2" isClearable />
-                <Input {...register("licence_plate_3")} defaultValue={preventNull(entity?.licence_plate_3)} label="Placa 3" placeholder="Digite a placa 3" isClearable />
-                <Input {...register("capacity")} type="number" defaultValue={preventNull(entity?.capacity?.toString())} label="Capacidade" isClearable />
+                <Input {...register("licence_plate_1")} defaultValue={falsy(licence_plate_1)} label="Placa" placeholder="Digite a placa 1" isClearable isInvalid={!!errors.licence_plate_1} color={getInputColor(errors.licence_plate_1)} errorMessage={getInputErrorMessage(errors.licence_plate_1)} />
+                <Input {...register("licence_plate_2")} defaultValue={falsy(licence_plate_2 || undefined)} label="Placa 2" placeholder="Digite a placa 2" isClearable />
+                <Input {...register("licence_plate_3")} defaultValue={falsy(licence_plate_3 || undefined)} label="Placa 3" placeholder="Digite a placa 3" isClearable />
+                <Input {...register("capacity")} type="number" defaultValue={falsy(entity?.capacity?.toString())} label="Capacidade" isClearable />
                 <Controller
                   name="truck"
                   control={control}
@@ -94,7 +96,7 @@ export default memo(function VehicleTabs ({buttonLabel, url}: {buttonLabel?: str
                       errorMessage={getInputErrorMessage(errors.truck)}
                       isInvalid={!!errors.truck}
                     >
-                      {({value, label}: {value: Truck, label: string}) => <SelectItem key={value} value={value}>{label}</SelectItem>}
+                      {({value, label}: {value: Truck, label: string}) => <SelectItem key={value}>{label}</SelectItem>}
                     </Select>
                   )}
                 />
@@ -112,7 +114,7 @@ export default memo(function VehicleTabs ({buttonLabel, url}: {buttonLabel?: str
                       errorMessage={getInputErrorMessage(errors.bodytruck)}
                       isInvalid={!!errors.bodytruck}
                     >
-                      {({value, label}: {value: Bodytruck, label: string}) => <SelectItem key={value} value={value}>{label}</SelectItem>}
+                      {({value, label}: {value: Bodytruck, label: string}) => <SelectItem key={value}>{label}</SelectItem>}
                     </Select>
                   )}
                 />
@@ -120,10 +122,10 @@ export default memo(function VehicleTabs ({buttonLabel, url}: {buttonLabel?: str
             </Tab>
             {operation === 'update' && (
               <Tab title="Características">
-                <Input {...register("info.brand")} defaultValue={preventNull(info?.brand)} label="Marca" isClearable />
-                <Input {...register("info.model")} defaultValue={preventNull(info?.model)} label="Modelo" isClearable />
-                <Input {...register("info.year")} type="number" defaultValue={preventNull(info?.year?.toString())} label="Ano" isClearable />
-                <Input {...register("info.color")} defaultValue={preventNull(info?.color)} label="Cor" isClearable />
+                <Input {...register("info.brand")} defaultValue={falsy(info?.brand?.toString())} label="Marca" isClearable />
+                <Input {...register("info.model")} defaultValue={falsy(info?.model?.toString())} label="Modelo" isClearable />
+                <Input {...register("info.year")} type="number" defaultValue={falsy(info?.year?.toString())} label="Ano" isClearable />
+                <Input {...register("info.color")} defaultValue={falsy(info?.color?.toString())} label="Cor" isClearable />
                 <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
               </Tab>
             )}

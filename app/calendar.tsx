@@ -1,4 +1,4 @@
-import {Button, DateValue, Modal, ModalBody, ModalContent, ModalFooter, RangeCalendar, RangeValue} from "@nextui-org/react";
+import {Button, DateValue, Modal, ModalBody, ModalContent, ModalFooter, RangeCalendar, RangeValue} from "@heroui/react";
 import {today, getLocalTimeZone} from "@internationalized/date";
 import { memo } from "react";
 

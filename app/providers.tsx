@@ -1,7 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
-import {NextUIProvider} from "@nextui-org/react";
+import {HeroUIProvider} from '@heroui/react'
 import ModalContextProvider from "../context/modalContextProvider";
 import {
   QueryClient,
@@ -16,13 +16,13 @@ type Props = {
 
 const AppProvider = ({ children }: Props) => (
   <SessionProvider>
-    <NextUIProvider>
+    <HeroUIProvider>
       <QueryClientProvider client={queryClient}>
         <ModalContextProvider>
           {children}
         </ModalContextProvider>
       </QueryClientProvider>
-    </NextUIProvider>
+    </HeroUIProvider>
   </SessionProvider>
 )
  export default AppProvider

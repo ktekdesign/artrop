@@ -1,11 +1,11 @@
 import type { Config } from 'tailwindcss';
-const { nextui } = require('@nextui-org/react');
+const { heroui } = require('@heroui/react');
 export default {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './node_modules/@tremor/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}'
+    './node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}'
   ],
   theme: {
     transparent: 'transparent',
@@ -93,6 +93,6 @@ export default {
         /^(fill-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/
     }
   ],
-  plugins: [nextui()],
+  plugins: [heroui()],
   darkMode: 'class'
 } satisfies Config;

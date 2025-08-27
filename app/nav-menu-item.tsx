@@ -1,4 +1,4 @@
-import { Link, NavbarMenuItem } from "@nextui-org/react"
+import { Link, NavbarMenuItem } from "@heroui/react"
 import { memo } from "react"
 import { Navigation } from "../interfaces"
 import DropdownMenu from "./dropdown-menu"
@@ -9,7 +9,7 @@ interface Props extends Navigation {
 
 const NavMenuItem = ({name, href, pathname, items}: Props) => (
   items ?
-    <DropdownMenu {...{name, href, items}} />
+    <DropdownMenu {...{name, href, items, pathname, key: 0}} />
   :
     <NavbarMenuItem isActive={href === pathname}>
       <Link color="foreground"

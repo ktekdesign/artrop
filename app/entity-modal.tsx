@@ -1,6 +1,6 @@
 "use client"
 import { Children, ReactNode, cloneElement, isValidElement, memo, useMemo } from 'react'
-import {Modal, ModalContent, ModalHeader, ModalBody} from "@nextui-org/react";
+import {Modal, ModalContent, ModalHeader, ModalBody} from "@heroui/react";
 import { renderButtonLabel } from "../utils/constants";
 import useModal from '../hooks/useModal';
 

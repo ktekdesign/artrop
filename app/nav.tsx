@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useCallback } from 'react';
-import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, NavbarMenuToggle, NavbarMenu, Link} from "@nextui-org/react";
+import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, NavbarMenuToggle, NavbarMenu, Link} from "@heroui/react";
 
 import { signOut } from 'next-auth/react';
 import TurnButton from './turn-button';
@@ -36,7 +36,7 @@ export default memo(function Nav() {
 
   return (
     <>
-      <Operation operation={operation} turnId={id} />
+      {id && <Operation operation={operation} turnId={id} />}
       <Navbar isBordered onMenuOpenChange={toggleMenu} maxWidth="full" className='header'>
         <NavbarBrand className="flex flex-grow-0 items-center">
           <Link href='/' className='text-xl font-bold text-black'>
@@ -80,7 +80,7 @@ export default memo(function Nav() {
               <DropdownItem
                 key="logout"
                 className={'flex w-full px-4 py-2 text-sm text-gray-700'}
-                onClick={handleSignOut}
+                onPress={handleSignOut}
               >
                 Sair
               </DropdownItem>
@@ -96,14 +96,14 @@ export default memo(function Nav() {
               <DropdownItem
                 key="update"
                 className={'flex w-full px-4 py-2 text-sm text-gray-700'}
-                onClick={handleUser}
+                onPress={handleUser}
               >
                 Editar meu perfil
               </DropdownItem>
               <DropdownItem
                 key="logout"
                 className={'flex w-full px-4 py-2 text-sm text-gray-700'}
-                onClick={handleSignOut}
+                onPress={handleSignOut}
               >
                 Sair
               </DropdownItem>

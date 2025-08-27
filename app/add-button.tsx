@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import useModal from "../hooks/useModal";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { memo } from "react";

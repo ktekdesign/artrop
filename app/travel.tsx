@@ -1,5 +1,5 @@
 "use client"
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import WeightButton from "./weight-button";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { OperationData } from "../interfaces";

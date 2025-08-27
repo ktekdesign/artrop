@@ -1,5 +1,5 @@
 import { JsonValue } from '@prisma/client/runtime/library';
 
-export default function preventNull(data?: JsonValue) {
+export default function falsy(data?: JsonValue) {
   return data?.toString() || '';
 }

@@ -1,11 +1,11 @@
-import { Input, Tab, Tabs } from "@nextui-org/react";
+import { Input, Tab, Tabs } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
 import { Ship } from "@prisma/client";
 import ModalFormFooter from "../app/modal-form-footer";
 import formatDate from "../utils/formatDate";
-import preventNull from "../utils/prevent-null";
+import falsy from "../utils/prevent-falsy";
 import { sanitize, transformDate } from "../utils/transform";
 import useEntity from "../hooks/useEntity";
 import Loading from "../app/loading";
@@ -50,11 +50,11 @@ export default memo(function ShipTabs ({buttonLabel, url}: {buttonLabel?: string
       >
         <Tab title="Dados do navio">
           <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleShip)}>
-            <Input {...register("name")} defaultValue={preventNull(entity?.name)} label="Nome" placeholder="Digite o nome" isClearable isInvalid={!!errors.name} color={getInputColor(errors.name)} errorMessage={getInputErrorMessage(errors.name)} />
-            <Input {...register("line_up")} defaultValue={preventNull(entity?.line_up)} label="Line Up" placeholder="Digite o Line Up" isClearable isInvalid={!!errors.line_up} color={getInputColor(errors.line_up)} errorMessage={getInputErrorMessage(errors.line_up)} />
-            <Input {...register("product")} defaultValue={preventNull(entity?.product)} label="Produto" placeholder="Digite o produto" isClearable isInvalid={!!errors.product} color={getInputColor(errors.product)} errorMessage={getInputErrorMessage(errors.product)} />
-            <Input type="date" {...register("landingAt")} defaultValue={preventNull(formatDate(entity?.landingAt))} label="Data atracação" isInvalid={!!errors.landingAt} color={getInputColor(errors.landingAt)} errorMessage={getInputErrorMessage(errors.landingAt)} />
-            <Input type="date" {...register("departAt")} defaultValue={preventNull(formatDate(entity?.departAt))} label="Data Desatracação" />
+            <Input {...register("name")} defaultValue={falsy(entity?.name)} label="Nome" placeholder="Digite o nome" isClearable isInvalid={!!errors.name} color={getInputColor(errors.name)} errorMessage={getInputErrorMessage(errors.name)} />
+            <Input {...register("line_up")} defaultValue={falsy(entity?.line_up)} label="Line Up" placeholder="Digite o Line Up" isClearable isInvalid={!!errors.line_up} color={getInputColor(errors.line_up)} errorMessage={getInputErrorMessage(errors.line_up)} />
+            <Input {...register("product")} defaultValue={falsy(entity?.product)} label="Produto" placeholder="Digite o produto" isClearable isInvalid={!!errors.product} color={getInputColor(errors.product)} errorMessage={getInputErrorMessage(errors.product)} />
+            <Input type="date" {...register("landingAt")} defaultValue={falsy(formatDate(entity?.landingAt))} label="Data atracação" isInvalid={!!errors.landingAt} color={getInputColor(errors.landingAt)} errorMessage={getInputErrorMessage(errors.landingAt)} />
+            <Input type="date" {...register("departAt")} defaultValue={falsy(formatDate(entity?.departAt))} label="Data Desatracação" />
             <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
           </form>
         </Tab>

@@ -1,4 +1,4 @@
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@heroui/react";
 import { TruckIcon } from "@heroicons/react/24/solid";
 import ChangeVehicleForm from "../forms/change-vehicle";
 import useModal from "../hooks/useModal";

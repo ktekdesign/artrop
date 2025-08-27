@@ -59,6 +59,7 @@ export const initialOperationData = {} as TurnData;
 export interface NavigationBase {
   name?: string;
   href?: string;
+  key?: string | number;
 }
 export interface Navigation extends NavigationBase {
   items?: NavigationBase[];

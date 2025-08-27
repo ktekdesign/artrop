@@ -1,15 +1,28 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import useDateInterval from '../hooks/useDateInterval';
 import LoadingData from './loading-data';
-import { Card, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, getKeyValue } from '@nextui-org/react';
+import { Card, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, getKeyValue, useDisclosure } from '@heroui/react';
 import useReports from '../hooks/useReports';
 import { dateFormatter, timeFormatter } from '../utils/formatDate';
+import useModal from '../hooks/useModal';
+import StartTurnForm from "../forms/start-turn";
+import useTurn from '../hooks/useTurn';
 
 export default memo(function DashboardPage() {
   const {interval, custom} = useDateInterval();
   const {data, travelColumns} = useReports(interval, custom);
+  const {onOpen, isOpen, onClose, onOpenChange} = useDisclosure()
+  const {handleAction} = useModal()
+  const { id, isSuccess } = useTurn()
+  
+  useEffect(() => {
+    if(data && data[0]?.type === 'DRIVER' && isSuccess && !id) {
+      handleAction({operation: "insert"});
+      onOpen()
+    }
+  }, [data, id, isSuccess])
 
   return (
     <main className="mx-auto max-w-7xl p-4 md:p-10">
@@ -32,19 +45,18 @@ export default memo(function DashboardPage() {
                             <span className='mx-2'>|</span>Total de Toneladas Transportadas: <b>{operation.travel.reduce((acc, curr) => acc + (curr.weight_load && curr.weight_unload ? Math.abs(curr.weight_load - curr.weight_unload) : 0), 0)}</b>
                             <span className='mx-2'>|</span>Total de Viagens: <b>{operation.travel.length}</b>
                           </h4>
-                      
-                            <Table key={operation.id} aria-label='Lista das viagens' className='ml-6 my-4'>
-                              <TableHeader columns={travelColumns}>
-                                {(column) => <TableColumn key={column.id}>{column.report}</TableColumn>}
-                              </TableHeader>
-                              <TableBody items={operation.travel}>
-                                {(item) => (
-                                  <TableRow key={item.id}>
-                                    {(columnKey) => <TableCell>{getKeyValue(item, columnKey)?.toString().includes("-") ? timeFormatter.format(new Date(getKeyValue(item, columnKey))) : getKeyValue(item, columnKey)}</TableCell>}
-                                  </TableRow>
-                                )}
-                              </TableBody>
-                            </Table>
+                          <Table key={operation.id} aria-label='Lista das viagens' className='ml-6 my-4'>
+                            <TableHeader columns={travelColumns}>
+                              {(column) => <TableColumn key={column.id}>{column.report}</TableColumn>}
+                            </TableHeader>
+                            <TableBody items={operation.travel}>
+                              {(item) => (
+                                <TableRow key={item.id}>
+                                  {(columnKey) => <TableCell>{getKeyValue(item, columnKey)?.toString().includes("-") ? timeFormatter.format(new Date(getKeyValue(item, columnKey))) : getKeyValue(item, columnKey)}</TableCell>}
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
                         </li>
                       )}
                     </ul>
@@ -58,6 +70,7 @@ export default memo(function DashboardPage() {
           </ul>
         </LoadingData>
       </div>
+      <StartTurnForm {...{isOpen, onClose, onOpenChange}} />
     </main>
   );
 })

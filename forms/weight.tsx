@@ -1,4 +1,4 @@
-import { Input, Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
+import { Input, Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"

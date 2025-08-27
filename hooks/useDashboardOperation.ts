@@ -2,7 +2,7 @@ import { getDashboard } from '../utils/api';
 import { useQuery } from '@tanstack/react-query';
 import { API_DASHBOARD_OPERATION_URL } from '../utils/constants';
 import { useMemo, useState } from 'react';
-import { DateValue, RangeValue } from '@nextui-org/react';
+import { DateValue, RangeValue } from '@heroui/react';
 import { getLocalTimeZone } from '@internationalized/date';
 interface DashboardData {
   type: string;

@@ -1,5 +1,5 @@
 import { getLocalTimeZone, today } from '@internationalized/date';
-import { DateValue, RangeValue, useDisclosure } from '@nextui-org/react';
+import { DateValue, RangeValue, useDisclosure } from '@heroui/react';
 import { useState } from 'react';
 
 const useDateInterval = () => {

@@ -1,6 +1,6 @@
 "use client"
 import { BoltIcon } from "@heroicons/react/24/solid";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@heroui/react";
 import StartOperationForm from "../forms/start-operation";
 import useModal from "../hooks/useModal";
 import { memo, useCallback } from "react";

@@ -2,7 +2,7 @@
 
 import Chart from '../pie-chart-dashboard';
 import useDashboard from '../../hooks/useDashboard';
-import { Card, CardBody, CardHeader } from '@nextui-org/react';
+import { Card, CardBody, CardHeader } from '@heroui/react';
 import Loading from '../loading';
 import useDashboardOperation from '../../hooks/useDashboardOperation';
 import { memo } from 'react';

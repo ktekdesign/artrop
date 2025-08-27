@@ -1,11 +1,9 @@
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, NavbarItem } from "@nextui-org/react"
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, NavbarItem } from "@heroui/react"
 import { memo } from "react"
-import MapComponent from "./map-component"
-import { Navigation, NavigationBase } from "../interfaces"
-import DropdownMenuItem from "./dropdown-menu-item"
+import { Navigation } from "../interfaces"
 import { ChevronDownIcon } from "@heroicons/react/24/solid"
 
-const CustomDropdownMenu = ({name, href, items}: Navigation) => (
+const CustomDropdownMenu = ({name, items}: Navigation) => (
     <Dropdown>
       <NavbarItem>
         <DropdownTrigger>
@@ -29,7 +27,7 @@ const CustomDropdownMenu = ({name, href, items}: Navigation) => (
       >
         {(item) => (
           <DropdownItem
-            key={item.name}
+            key={item.key || 0}
             className={'flex w-full px-4 py-2 text-sm text-gray-700'}
             href={item.href}
           >

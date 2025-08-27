@@ -1,5 +1,5 @@
 import { PairKeyLabel, pk } from '../interfaces';
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, getKeyValue } from '@nextui-org/react';
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, getKeyValue } from '@heroui/react';
 import ActionsButton from './actions-button';
 import LoadingData from './loading-data';
 

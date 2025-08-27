@@ -1,7 +1,7 @@
 'use client';
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { Input } from '@nextui-org/react';
+import { Input } from '@heroui/react';
 import { useCallback, useRef, useTransition } from 'react';
 import { pk } from '../interfaces';
 

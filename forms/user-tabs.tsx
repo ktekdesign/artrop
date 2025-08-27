@@ -1,12 +1,12 @@
 "use client"
-import { Input, Select, SelectItem, Tab, Tabs } from "@nextui-org/react";
+import { Input, Select, SelectItem, Tab, Tabs } from "@heroui/react";
 import { Role, User } from "@prisma/client";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup"
 import ModalFormFooter from "../app/modal-form-footer";
 import formatDate from "../utils/formatDate";
-import preventNull from "../utils/prevent-null";
+import falsy from "../utils/prevent-falsy";
 import { cpfRegExp, phoneRegExp } from "../utils/regex";
 import { getOnlyDigit, sanitize, transformDate, transformJsonValue } from "../utils/transform";
 import AddressForm, {schemaAddress} from "./address";
@@ -18,11 +18,18 @@ import useCep from "../hooks/useCep";
 import { CEP } from "cep-promise";
 import { useSession } from "next-auth/react";
 import { API_USER_URL } from "../utils/constants";
+import {cpf} from 'cpf-cnpj-validator'
 
 const schema = yup
   .object({
     name: yup.string().transform(value => sanitize(value)).required(errorMessage.name.required),
-    govID: yup.string().matches(cpfRegExp, errorMessage.cpf.invalid).transform(value => getOnlyDigit(value)).required(errorMessage.cpf.required),
+    govID: yup.string().test(
+      'is-cnpj', // Test name
+      errorMessage.cpf.invalid, // Error message
+      function(value) {
+        return !!value && cpf.isValid(value); // Accessing other field value
+      }
+    ).transform(value => getOnlyDigit(value)).required(errorMessage.cpf.required),
     phone: yup.string().matches(phoneRegExp, errorMessage.phone.invalid).transform(value => getOnlyDigit(value)).required(errorMessage.phone.required),
     email: yup.string().email(errorMessage.email.invalid).required(errorMessage.email.required),
     password: yup.string().transform(value => sanitize(value)).notRequired(),
@@ -81,10 +88,10 @@ export default memo(function UserTabs ({buttonLabel, url = API_USER_URL}: {butto
 
   const handleUpdate = useCallback((data: UserRegister) => {
     const [cnhData, addressData] = transformJsonValue([data.cnh, data.address])
-    const cnh_expires = preventNull(cnhData?.expires)
+    const cnh_expires = falsy(cnhData?.expires)
     if(!addressData?.code && address?.code) data.address = address
     if(!cnhData?.id && cnh?.id) data.cnh = cnh
-    data.cnh_expires = transformDate(cnh_expires || cnh?.expires?.toString())?.toISOString()
+    data.cnh_expires = transformDate(cnh_expires?.toString() || cnh?.expires?.toString())?.toISOString()
     if((!data.type || data.type === Role.DRIVER) && entity?.type) data.type = entity.type
     return data
   }, [address, cnh, entity?.type])
@@ -103,10 +110,10 @@ export default memo(function UserTabs ({buttonLabel, url = API_USER_URL}: {butto
       >
         <Tab title="Dados pessoais">
           <div className="form-row">
-            <Input {...register("name")} defaultValue={preventNull(entity?.name)} label="Nome" placeholder="Digite o nome" isClearable isInvalid={!!errors.name} color={getInputColor(errors.name)} errorMessage={getInputErrorMessage(errors.name)} />
-            <Input {...register("govID")} defaultValue={preventNull(entity?.govID)} label="CPF" placeholder="Digite o CPF" isClearable isInvalid={!!errors.govID} color={getInputColor(errors.govID)} errorMessage={getInputErrorMessage(errors.govID)} />
-            <Input type="email" {...register("email")} defaultValue={preventNull(entity?.email)} label="Email" placeholder="Digite o e-mail" isClearable isInvalid={!!errors.email} color={getInputColor(errors.email)} errorMessage={getInputErrorMessage(errors.email)} />
-            <Input type="tel" {...register("phone")} defaultValue={preventNull(entity?.phone)} label="Telephone" placeholder="Digite o celular" isClearable isInvalid={!!errors.phone} color={getInputColor(errors.phone)} errorMessage={getInputErrorMessage(errors.phone)} />
+            <Input {...register("name")} defaultValue={falsy(entity?.name)} label="Nome" placeholder="Digite o nome" isClearable isInvalid={!!errors.name} color={getInputColor(errors.name)} errorMessage={getInputErrorMessage(errors.name)} />
+            <Input {...register("govID")} defaultValue={falsy(entity?.govID)} label="CPF" placeholder="Digite o CPF" isClearable isInvalid={!!errors.govID} color={getInputColor(errors.govID)} errorMessage={getInputErrorMessage(errors.govID)} />
+            <Input type="email" {...register("email")} defaultValue={falsy(entity?.email)} label="Email" placeholder="Digite o e-mail" isClearable isInvalid={!!errors.email} color={getInputColor(errors.email)} errorMessage={getInputErrorMessage(errors.email)} />
+            <Input type="tel" {...register("phone")} defaultValue={falsy(entity?.phone)} label="Telephone" placeholder="Digite o celular" isClearable isInvalid={!!errors.phone} color={getInputColor(errors.phone)} errorMessage={getInputErrorMessage(errors.phone)} />
             {session?.data?.user?.type === 'ADMIN' && <Controller
               name="type"
               control={control}
@@ -121,7 +128,7 @@ export default memo(function UserTabs ({buttonLabel, url = API_USER_URL}: {butto
                   errorMessage={getInputErrorMessage(errors.type)}
                   isInvalid={!!errors.type}
                 >
-                  {({value, label}: {value: string, label: string}) => <SelectItem key={value} value={value}>{label}</SelectItem>}
+                  {({value, label}: {value: string, label: string}) => <SelectItem key={value}>{label}</SelectItem>}
                 </Select>
               )}
             />}
@@ -137,9 +144,9 @@ export default memo(function UserTabs ({buttonLabel, url = API_USER_URL}: {butto
         {operation === 'update' && (
           <Tab title="CNH">
             <div className="form-row">
-              <Input isClearable {...register("cnh.id")} defaultValue={preventNull(cnh?.id)} label="CNH" placeholder="Digite o registro da CNH" />
-              <Input type="date" {...register("cnh.expires")} defaultValue={preventNull(formatDate(cnh?.expires))} label="Expiração" placeholder="Qual é a data de expiração" />
-              <Input isClearable {...register("cnh.category")} defaultValue={preventNull(cnh?.category)} label="Categoria" placeholder="Digite a categoria da CNH" />
+              <Input isClearable {...register("cnh.id")} defaultValue={falsy(cnh?.id?.toString())} label="CNH" placeholder="Digite o registro da CNH" />
+              <Input type="date" {...register("cnh.expires")} defaultValue={falsy(formatDate(cnh?.expires))} label="Expiração" placeholder="Qual é a data de expiração" />
+              <Input isClearable {...register("cnh.category")} defaultValue={falsy(cnh?.category?.toString())} label="Categoria" placeholder="Digite a categoria da CNH" />
               <ModalFormFooter isLoading={isHandlingMutation} buttonLabel={buttonLabel} handleClose={handleClose} />
             </div>
           </Tab>

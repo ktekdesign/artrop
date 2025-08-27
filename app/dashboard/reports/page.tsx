@@ -4,7 +4,7 @@ import { memo } from 'react';
 import DateRange from '../../date-range';
 import useDateInterval from '../../../hooks/useDateInterval';
 import LoadingData from '../../loading-data';
-import { Card, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, getKeyValue } from '@nextui-org/react';
+import { Card, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, getKeyValue } from '@heroui/react';
 import useReports from '../../../hooks/useReports';
 import Calendar from '../../calendar';
 import { dateFormatter, timeFormatter } from '../../../utils/formatDate';

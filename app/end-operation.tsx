@@ -1,6 +1,6 @@
 "use client"
 import { LockClosedIcon } from "@heroicons/react/24/solid";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { API_OPERATION_URL } from "../utils/constants";
 import { Operation } from "@prisma/client";
 import { minutesDiff } from "../utils/transform";
